@@ -41,16 +41,6 @@ class Table
      */
     private $user;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Table::class, mappedBy="user")
-     */
-    private $User;
-
-    public function __construct()
-    {
-        $this->User = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -92,36 +82,14 @@ class Table
         return $this;
     }
 
-    public function getUser(): ?self
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function setUser(?self $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
-
-        return $this;
-    }
-
-    public function addUser(self $user): self
-    {
-        if (!$this->User->contains($user)) {
-            $this->User[] = $user;
-            $user->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(self $user): self
-    {
-        if ($this->User->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getUser() === $this) {
-                $user->setUser(null);
-            }
-        }
 
         return $this;
     }
