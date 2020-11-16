@@ -18,4 +18,32 @@ class TableValueRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, TableValue::class);
     }
+
+    /**
+     * @param int $leftTopRow
+     * @param int $leftTopColumn
+     * @param int $rightBottomRow
+     * @param int $rightBottomColumn
+     * @return TableValue[]|[]
+     */
+    public function findByRange(int $tableId, int $leftTopRow, int $leftTopColumn, int $rightBottomRow, int $rightBottomColumn): array
+    {
+        return $this->createQueryBuilder('t')
+                    ->select('t.row,t.column,t.value')
+                    ->where('t.table = :table_id')
+                    ->andWhere('t.row >= :left_top_row')
+                    ->andWhere('t.row <= :right_bottom_row')
+                    ->andWhere('t.column >= :left_top_column')
+                    ->andWhere('t.column <= :right_bottom_column')
+                    ->setParameters(
+                        [
+                            'table_id'            => $tableId,
+                            'left_top_row'        => $leftTopRow,
+                            'left_top_column'     => $leftTopColumn,
+                            'right_bottom_row'    => $rightBottomRow,
+                            'right_bottom_column' => $rightBottomColumn
+                        ]
+                    )
+                    ->getQuery()->getResult();
+    }
 }
