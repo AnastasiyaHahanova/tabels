@@ -46,6 +46,126 @@ class TableController extends AbstractController
         return new JsonResponse($result, Response::HTTP_OK);
     }
 
+    /**
+     * @Rest\Get("/{id}/rows/sum", name="tables.rows.sum")
+     * @Rest\QueryParam(name="row_index", nullable=false)
+     * @Entity("table", options={"mapping": {"id": "id"}})
+     *
+     * @param ParamFetcherInterface $params
+     * @return JsonResponse
+     */
+    public function sumRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    {
+        $rowIndex = (int)$params->get('row_index');
+        $rows     = $tableValueRepository->findByRow($table->getId(), $rowIndex);
+
+        return new JsonResponse([
+            'row' => $rowIndex,
+            'sum' => $this->calculateSum($rows)
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * @Rest\Get("/{id}/columns/sum", name="tables.columns.sum")
+     * @Rest\QueryParam(name="column_index", nullable=false)
+     * @Entity("table", options={"mapping": {"id": "id"}})
+     *
+     * @param ParamFetcherInterface $params
+     * @return JsonResponse
+     */
+    public function sumColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    {
+        $columnIndex = (int)$params->get('column_index');
+        $rows        = $tableValueRepository->findByColumn($table->getId(), $columnIndex);
+
+        return new JsonResponse([
+            'column' => $columnIndex,
+            'sum'    => $this->calculateSum($rows)
+        ], Response::HTTP_OK);
+
+    }
+
+    /**
+     * @Rest\Get("/{id}/rows/percentile", name="tables.rows.percentile")
+     * @Rest\QueryParam(name="row_index", nullable=false)
+     * @Rest\QueryParam(name="percentile", nullable=false)
+     * @Entity("table", options={"mapping": {"id": "id"}})
+     *
+     * @param ParamFetcherInterface $params
+     * @return JsonResponse
+     */
+    public function percentileRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    {
+        $rowIndex = (int)$params->get('row_index');
+        $rows     = $tableValueRepository->findByRow($table->getId(), $rowIndex);
+        $this->calculatePercentile((int)$params->get('percentile'), $rows);
+
+        return new JsonResponse([
+            'row'        => $rowIndex,
+            'percentile' => $this->calculatePercentile((int)$params->get('percentile'), $rows)
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * @Rest\Get("/{id}/columns/percentile", name="tables.columns.percentile")
+     * @Rest\QueryParam(name="column_index", nullable=false)
+     * @Rest\QueryParam(name="percentile", nullable=false)
+     * @Entity("table", options={"mapping": {"id": "id"}})
+     *
+     * @param ParamFetcherInterface $params
+     * @return JsonResponse
+     */
+    public function percentileColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    {
+        $columnIndex = (int)$params->get('column_index');
+        $rows        = $tableValueRepository->findByColumn($table->getId(), $columnIndex);
+
+        return new JsonResponse([
+            'column'     => $columnIndex,
+            'percentile' => $this->calculatePercentile((int)$params->get('percentile'), $rows)
+        ], Response::HTTP_OK);
+
+    }
+
+    /**
+     * @Rest\Get("/{id}/rows/sum", name="tables.rows.sum")
+     * @Rest\QueryParam(name="row_index", nullable=false)
+     * @Entity("table", options={"mapping": {"id": "id"}})
+     *
+     * @param ParamFetcherInterface $params
+     * @return JsonResponse
+     */
+    public function averageRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    {
+        $rowIndex = (int)$params->get('row_index');
+        $rows     = $tableValueRepository->findByRow($table->getId(), $rowIndex);
+
+        return new JsonResponse([
+            'row' => $rowIndex,
+            'sum' => $this->calculateSum($rows)
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * @Rest\Get("/{id}/columns/sum", name="tables.columns.sum")
+     * @Rest\QueryParam(name="column_index", nullable=false)
+     * @Entity("table", options={"mapping": {"id": "id"}})
+     *
+     * @param ParamFetcherInterface $params
+     * @return JsonResponse
+     */
+    public function averageColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    {
+        $columnIndex = (int)$params->get('column_index');
+        $rows        = $tableValueRepository->findByColumn($table->getId(), $columnIndex);
+
+        return new JsonResponse([
+            'column' => $columnIndex,
+            'sum'    => $this->calculateSum($rows)
+        ], Response::HTTP_OK);
+
+    }
+
     public function extractRangeParameters(string $range, int $horizontalOffset, int $verticalOffset): array
     {
         [$leftTop, $rightBottom] = explode(':', $range);
@@ -77,5 +197,49 @@ class TableController extends AbstractController
         }
 
         return $rangeParameters;
+    }
+
+    public function calculateSum(array $rows): int
+    {
+        $result = 0;
+        foreach ($rows as $row) {
+            $result = $result + $row['value'];
+        }
+
+        return $result;
+    }
+
+    public function calculateAverage(array $rows): int
+    {
+        if (empty($rows)) {
+            return 0;
+        }
+
+        $sum   = 0;
+        $count = 0;
+        foreach ($rows as $row) {
+            $sum = $sum + $row['value'];
+            $count++;
+        }
+
+        return $sum / $count;
+    }
+
+    public function calculatePercentile(int $percentile, array $rows): int
+    {
+        $values = [];
+        $count  = 0;
+        foreach ($rows as $row) {
+            array_push($values, $row['value']);
+            $count++;
+        }
+
+        sort($values);
+        $percentileIndex = round($percentile * 0.01 * $count) - 1;
+        if (isset($values[$percentileIndex])) {
+            return $values[$percentileIndex];
+        }
+
+        return 0;
     }
 }

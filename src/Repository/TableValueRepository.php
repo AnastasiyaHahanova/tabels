@@ -46,4 +46,42 @@ class TableValueRepository extends ServiceEntityRepository
                     )
                     ->getQuery()->getResult();
     }
+
+    /**
+     * @param int $rowIndex
+     * @return TableValue[]|[]
+     */
+    public function findByRow(int $tableId, int $rowIndex): array
+    {
+        return $this->createQueryBuilder('t')
+                    ->select('t.row,t.column,t.value')
+                    ->where('t.table = :table_id')
+                    ->andWhere('t.row = :row_index')
+                    ->setParameters(
+                        [
+                            'table_id'  => $tableId,
+                            'row_index' => $rowIndex
+                        ]
+                    )
+                    ->getQuery()->getResult();
+    }
+
+    /**
+     * @param int $columnIndex
+     * @return TableValue[]|[]
+     */
+    public function findByColumn(int $tableId, int $columnIndex): array
+    {
+        return $this->createQueryBuilder('t')
+                    ->select('t.row,t.column,t.value')
+                    ->where('t.table = :table_id')
+                    ->andWhere('t.row = :row_index')
+                    ->setParameters(
+                        [
+                            'table_id'  => $tableId,
+                            'row_index' => $columnIndex
+                        ]
+                    )
+                    ->getQuery()->getResult();
+    }
 }
