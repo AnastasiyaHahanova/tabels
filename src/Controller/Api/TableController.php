@@ -45,17 +45,17 @@ class TableController extends AbstractController
     /**
      * @Rest\Put("/{id}", name="tables.update")
      * @Entity("table", options={"mapping": {"id": "id"}})
-     * @return Response
+     * @return JsonResponse
      */
     public function updateTable(EntityManagerInterface $entityManager,
                                 UserRepository $userRepository,
-                                Request $request, Table $table): Response
+                                Request $request, Table $table): JsonResponse
     {
         $content = $request->request->all();
         if (isset($content['user_id'])) {
             $user = $userRepository->findOneById((int)$content['user_id']);
             if (empty($user)) {
-                return new Response(sprintf('No user with id %s exist', $content['user_id']));
+                return new JsonResponse(sprintf('No user with id %s exist', $content['user_id']));
             }
 
             $table->setUser($user);
@@ -75,9 +75,9 @@ class TableController extends AbstractController
     }
 
     /**
-     * @Rest\Delete("/{id}", name="tables.update")
+     * @Rest\Delete("/{id}", name="tables.delete")
      * @Entity("table", options={"mapping": {"id": "id"}})
-     * @return Response
+     * @return JsonResponse
      */
     public function deleteTable(EntityManagerInterface $entityManager, Table $table): JsonResponse
     {
