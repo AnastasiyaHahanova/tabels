@@ -36,7 +36,7 @@ class Table
     private $deleted = false;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Table::class, inversedBy="User")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="User")
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
