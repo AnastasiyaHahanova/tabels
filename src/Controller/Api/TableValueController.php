@@ -235,7 +235,7 @@ class TableValueController extends AbstractController
         }
 
         sort($values);
-        $percentileIndex = round($percentile * 0.01 * $count) - 1;
+        $percentileIndex = round($percentile * 0.01 * $count);
         if (isset($values[$percentileIndex])) {
             return $values[$percentileIndex];
         }
