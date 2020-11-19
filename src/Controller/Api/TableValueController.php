@@ -21,9 +21,9 @@ class TableValueController extends AbstractController
     /**
      * @Rest\Get("/{id}/range_of_cells", name="tables.range_of_cells")
      *
-     * @Rest\QueryParam(name="start_range", nullable=false)
-     * @Rest\QueryParam(name="horizontal_offset", nullable=true)
-     * @Rest\QueryParam(name="vertical_offset", nullable=true)
+     * @Rest\QueryParam(name="start_range", nullable=false,requirements="^\d+,\d+:\d+,\d+$", strict=true)
+     * @Rest\QueryParam(name="horizontal_offset", nullable=true, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="vertical_offset", nullable=true, requirements="^\d+$", strict=true)
      *
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
@@ -48,7 +48,7 @@ class TableValueController extends AbstractController
 
     /**
      * @Rest\Get("/{id}/rows/sum", name="tables.rows.sum")
-     * @Rest\QueryParam(name="row_index", nullable=false)
+     * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -67,7 +67,7 @@ class TableValueController extends AbstractController
 
     /**
      * @Rest\Get("/{id}/columns/sum", name="tables.columns.sum")
-     * @Rest\QueryParam(name="column_index", nullable=false)
+     * @Rest\QueryParam(name="column_index", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -87,8 +87,8 @@ class TableValueController extends AbstractController
 
     /**
      * @Rest\Get("/{id}/rows/percentile", name="tables.rows.percentile")
-     * @Rest\QueryParam(name="row_index", nullable=false)
-     * @Rest\QueryParam(name="percentile", nullable=false)
+     * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="percentile", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -108,8 +108,8 @@ class TableValueController extends AbstractController
 
     /**
      * @Rest\Get("/{id}/columns/percentile", name="tables.columns.percentile")
-     * @Rest\QueryParam(name="column_index", nullable=false)
-     * @Rest\QueryParam(name="percentile", nullable=false)
+     * @Rest\QueryParam(name="column_index", nullable=false, requirements="^\d+$", strict=true,)
+     * @Rest\QueryParam(name="percentile", nullable=false, requirements="^\d{1,2}$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -129,7 +129,7 @@ class TableValueController extends AbstractController
 
     /**
      * @Rest\Get("/{id}/rows/sum", name="tables.rows.sum")
-     * @Rest\QueryParam(name="row_index", nullable=false)
+     * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -148,7 +148,7 @@ class TableValueController extends AbstractController
 
     /**
      * @Rest\Get("/{id}/columns/sum", name="tables.columns.sum")
-     * @Rest\QueryParam(name="column_index", nullable=false)
+     * @Rest\QueryParam(name="column_index", nullable=false,requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
