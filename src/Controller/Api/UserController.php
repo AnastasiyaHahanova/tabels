@@ -23,11 +23,11 @@ class UserController extends AbstractController
      */
     public function createUser(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-        $content = $request->request->all();
-        $username  = $content['name'];
-        $password  = $content['password'];
-        $email  = $content['email'];
-        $user =  (new User)
+        $content  = $request->request->all();
+        $username = $content['name'];
+        $password = $content['password'];
+        $email    = $content['email'];
+        $user     = (new User)
             ->setUsername($username)
             ->setPassword($password)
             ->setEmail($email);
