@@ -92,6 +92,8 @@ class TableValueController extends AbstractController
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
+     * @param TableValueRepository  $tableValueRepository
+     * @param Table                 $table
      * @return JsonResponse
      */
     public function percentileRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
