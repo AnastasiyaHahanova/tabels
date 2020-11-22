@@ -4,6 +4,9 @@ namespace App\Repository;
 
 use App\Entity\TableValue;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -49,6 +52,7 @@ class TableValueRepository extends ServiceEntityRepository
 
     /**
      * @param int $rowIndex
+     * @param int $tableId
      * @return TableValue[]|[]
      */
     public function findByRow(int $tableId, int $rowIndex): array
@@ -68,6 +72,7 @@ class TableValueRepository extends ServiceEntityRepository
 
     /**
      * @param int $columnIndex
+     * @param int $tableId
      * @return TableValue[]|[]
      */
     public function findByColumn(int $tableId, int $columnIndex): array
@@ -75,13 +80,105 @@ class TableValueRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('t')
                     ->select('t.row,t.column,t.value')
                     ->where('t.table = :table_id')
+                    ->andWhere('t.column = :column_index')
+                    ->setParameters(
+                        [
+                            'table_id'     => $tableId,
+                            'column_index' => $columnIndex
+                        ]
+                    )
+                    ->getQuery()->getResult();
+    }
+
+    /**
+     * @param int $rowIndex
+     * @param int $tableId
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @return TableValue[]|[]
+     */
+    public function findSumByRow(int $tableId, int $rowIndex): array
+    {
+        return $this->createQueryBuilder('t')
+                    ->select('SUM(t.value) as sum')
+                    ->where('t.table = :table_id')
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
                             'table_id'  => $tableId,
-                            'row_index' => $columnIndex
+                            'row_index' => $rowIndex
                         ]
                     )
-                    ->getQuery()->getResult();
+                    ->getQuery()
+                    ->getSingleResult();
+    }
+
+    /**
+     * @param int $columnIndex
+     * @param int $tableId
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @return TableValue[]|[]
+     */
+    public function findSumByColumn(int $tableId, int $columnIndex): array
+    {
+        return $this->createQueryBuilder('t')
+                    ->select('SUM(t.value) as sum')
+                    ->where('t.table = :table_id')
+                    ->andWhere('t.column = :column_index')
+                    ->setParameters(
+                        [
+                            'table_id'     => $tableId,
+                            'column_index' => $columnIndex
+                        ]
+                    )
+                    ->getQuery()
+                    ->getSingleResult();
+    }
+
+    /**
+     * @param int $rowIndex
+     * @param int $tableId
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @return TableValue[]|[]
+     */
+    public function findAvgByRow(int $tableId, int $rowIndex): array
+    {
+        return $this->createQueryBuilder('t')
+                    ->select('AVG(t.value) as sum')
+                    ->where('t.table = :table_id')
+                    ->andWhere('t.row = :row_index')
+                    ->setParameters(
+                        [
+                            'table_id'  => $tableId,
+                            'row_index' => $rowIndex
+                        ]
+                    )
+                    ->getQuery()
+                    ->getSingleResult();
+    }
+
+    /**
+     * @param int $columnIndex
+     * @param int $tableId
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @return TableValue[]|[]
+     */
+    public function findAvgByColumn(int $tableId, int $columnIndex): array
+    {
+        return $this->createQueryBuilder('t')
+                    ->select('AVG(t.value) as sum')
+                    ->where('t.table = :table_id')
+                    ->andWhere('t.column = :column_index')
+                    ->setParameters(
+                        [
+                            'table_id'     => $tableId,
+                            'column_index' => $columnIndex
+                        ]
+                    )
+                    ->getQuery()
+                    ->getSingleResult();
     }
 }

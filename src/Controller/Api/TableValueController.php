@@ -57,11 +57,11 @@ class TableValueController extends AbstractController
     public function sumRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
     {
         $rowIndex = (int)$params->get('row_index');
-        $rows     = $tableValueRepository->findByRow($table->getId(), $rowIndex);
+        $sum      = $tableValueRepository->findSumByRow($table->getId(), $rowIndex)['sum'] ?? 0;
 
         return new JsonResponse([
             'row' => $rowIndex,
-            'sum' => $this->calculateSum($rows)
+            'sum' => $sum
         ], Response::HTTP_OK);
     }
 
@@ -76,11 +76,11 @@ class TableValueController extends AbstractController
     public function sumColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
     {
         $columnIndex = (int)$params->get('column_index');
-        $rows        = $tableValueRepository->findByColumn($table->getId(), $columnIndex);
+        $sum         = $tableValueRepository->findByColumn($table->getId(), $columnIndex)['sum'] ?? 0;
 
         return new JsonResponse([
             'column' => $columnIndex,
-            'sum'    => $this->calculateSum($rows)
+            'sum'    => $sum
         ], Response::HTTP_OK);
 
     }
@@ -130,7 +130,7 @@ class TableValueController extends AbstractController
     }
 
     /**
-     * @Rest\Get("/{id}/rows/sum", name="tables.rows.sum")
+     * @Rest\Get("/{id}/rows/avg", name="tables.rows.sum")
      * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
@@ -140,16 +140,16 @@ class TableValueController extends AbstractController
     public function averageRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
     {
         $rowIndex = (int)$params->get('row_index');
-        $rows     = $tableValueRepository->findByRow($table->getId(), $rowIndex);
+        $sum      = $tableValueRepository->findAvgByRow($table->getId(), $rowIndex)['avg'] ?? 0;
 
         return new JsonResponse([
             'row' => $rowIndex,
-            'sum' => $this->calculateSum($rows)
+            'avg' => $sum
         ], Response::HTTP_OK);
     }
 
     /**
-     * @Rest\Get("/{id}/columns/sum", name="tables.columns.sum")
+     * @Rest\Get("/{id}/columns/avg", name="tables.columns.sum")
      * @Rest\QueryParam(name="column_index", nullable=false,requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
@@ -159,11 +159,11 @@ class TableValueController extends AbstractController
     public function averageColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
     {
         $columnIndex = (int)$params->get('column_index');
-        $rows        = $tableValueRepository->findByColumn($table->getId(), $columnIndex);
+        $avg         = $tableValueRepository->findAvgByColumn($table->getId(), $columnIndex)['avg'] ?? 0;
 
         return new JsonResponse([
             'column' => $columnIndex,
-            'sum'    => $this->calculateSum($rows)
+            'avg'    => $avg
         ], Response::HTTP_OK);
 
     }
@@ -199,32 +199,6 @@ class TableValueController extends AbstractController
         }
 
         return $rangeParameters;
-    }
-
-    public function calculateSum(array $rows): int
-    {
-        $result = 0;
-        foreach ($rows as $row) {
-            $result = $result + $row['value'];
-        }
-
-        return $result;
-    }
-
-    public function calculateAverage(array $rows): int
-    {
-        if (empty($rows)) {
-            return 0;
-        }
-
-        $sum   = 0;
-        $count = 0;
-        foreach ($rows as $row) {
-            $sum = $sum + $row['value'];
-            $count++;
-        }
-
-        return $sum / $count;
     }
 
     public function calculatePercentile(int $percentile, array $rows): int
