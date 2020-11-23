@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
@@ -23,17 +24,17 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         $this->userRepository = $userRepository;
     }
 
-    public function createAuthenticatedToken(UserInterface $user, string $providerKey)
+    public function createAuthenticatedToken(UserInterface $user, string $providerKey): PostAuthenticationGuardToken
     {
         return parent::createAuthenticatedToken($user, $providerKey);
     }
 
-    public function supports(Request $request):bool
+    public function supports(Request $request): bool
     {
         return $request->headers->has('X-AUTH-TOKEN');
     }
 
-    public function getCredentials(Request $request):array
+    public function getCredentials(Request $request): array
     {
         if (!$token = $request->headers->get('X-AUTH-TOKEN')) {
             $token = null;
@@ -44,6 +45,11 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         ];
     }
 
+    /**
+     * @param mixed                 $credentials
+     * @param UserProviderInterface $userProvider
+     * @return User|null
+     */
     public function getUser($credentials, UserProviderInterface $userProvider): ?User
     {
         $token = $credentials['token'] ?? '';
@@ -51,7 +57,12 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return $this->userRepository->findUserByToken($token);
     }
 
-    public function checkCredentials($credentials, UserInterface $user):bool
+    /**
+     * @param mixed         $credentials
+     * @param UserInterface $user
+     * @return bool
+     */
+    public function checkCredentials($credentials, UserInterface $user): bool
     {
         if (empty($user)) {
             return false;
@@ -60,9 +71,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return true;
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): void
     {
-        return null;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): JsonResponse
@@ -74,7 +84,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return new JsonResponse($data, Response::HTTP_FORBIDDEN);
     }
 
-    public function start(Request $request, AuthenticationException $authException = null) : JsonResponse
+    public function start(Request $request, AuthenticationException $authException = null): JsonResponse
     {
         $data = [
             'message' => 'Authentication Required'
@@ -83,7 +93,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function supportsRememberMe():bool
+    public function supportsRememberMe(): bool
     {
         return false;
     }
