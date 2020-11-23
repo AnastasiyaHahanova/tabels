@@ -22,6 +22,7 @@ RUN apt-get update && apt-get upgrade -y \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN /usr/bin/composer self-update --stable
 RUN /usr/bin/composer --version
+RUN /usr/bin/composer require vimeo/psalm:version
 COPY . /app
 RUN groupadd -r table && useradd -m -g table table
 RUN chown -R table /app
