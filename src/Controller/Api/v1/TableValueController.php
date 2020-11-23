@@ -30,7 +30,7 @@ class TableValueController extends AbstractController
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
-    public function getRangeOfCells(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    public function getRangeOfCells(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table):JsonResponse
     {
         $result          = [];
         $rangeParameters = $this->extractRangeParameters($params->get('start_range'), (int)$params->get('horizontal_offset'), (int)$params->get('vertical_offset'));
@@ -54,7 +54,7 @@ class TableValueController extends AbstractController
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
-    public function sumRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    public function sumRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table):JsonResponse
     {
         $rowIndex = (int)$params->get('row_index');
         $sum      = $tableValueRepository->findSumByRow($table->getId(), $rowIndex)['sum'] ?? 0;
@@ -73,7 +73,7 @@ class TableValueController extends AbstractController
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
-    public function sumColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    public function sumColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table):JsonResponse
     {
         $columnIndex = (int)$params->get('column_index');
         $sum         = $tableValueRepository->findByColumn($table->getId(), $columnIndex)['sum'] ?? 0;
@@ -96,7 +96,7 @@ class TableValueController extends AbstractController
      * @param Table                 $table
      * @return JsonResponse
      */
-    public function percentileRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    public function percentileRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table):JsonResponse
     {
         $rowIndex = (int)$params->get('row_index');
         $rows     = $tableValueRepository->findByRow($table->getId(), $rowIndex);
@@ -117,7 +117,7 @@ class TableValueController extends AbstractController
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
-    public function percentileColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    public function percentileColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table):JsonResponse
     {
         $columnIndex = (int)$params->get('column_index');
         $rows        = $tableValueRepository->findByColumn($table->getId(), $columnIndex);
@@ -137,7 +137,7 @@ class TableValueController extends AbstractController
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
-    public function averageRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    public function averageRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table):JsonResponse
     {
         $rowIndex = (int)$params->get('row_index');
         $sum      = $tableValueRepository->findAvgByRow($table->getId(), $rowIndex)['avg'] ?? 0;
@@ -156,7 +156,7 @@ class TableValueController extends AbstractController
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
-    public function averageColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table)
+    public function averageColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table):JsonResponse
     {
         $columnIndex = (int)$params->get('column_index');
         $avg         = $tableValueRepository->findAvgByColumn($table->getId(), $columnIndex)['avg'] ?? 0;

@@ -91,16 +91,16 @@ class User implements UserInterface
         return $this;
     }
 
-    public function eraseCredentials():void
+    public function eraseCredentials(): void
     {
     }
 
-    public function getRoles():array
+    public function getRoles(): array
     {
-        return array('ROLE_USER');
+        return ['ROLE_USER'];
     }
 
-    public function getSalt():void
+    public function getSalt(): void
     {
     }
 }
