@@ -23,4 +23,9 @@ class UserRepository extends ServiceEntityRepository
     {
         return $this->findOneBy(['id' => $id]);
     }
+
+    public function findUserByToken(string $token): ?User
+    {
+        return $this->findOneBy(['token'=>$token]);
+    }
 }

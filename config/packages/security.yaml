@@ -4,7 +4,7 @@ security:
         your_db_provider:
             entity:
                 class: App\Entity\User
-                property: token
+                property: username
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/

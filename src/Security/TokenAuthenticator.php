@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,13 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
+    /** @var UserRepository */
+    private $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
 
     public function createAuthenticatedToken(UserInterface $user, string $providerKey)
     {
@@ -37,13 +45,13 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $apiKey = $credentials['token'];
+        $token = $credentials['token'];
 
-        if (null === $apiKey) {
+        if (null === $token) {
             return;
         }
 
-        return $userProvider->loadUserByUsername($apiKey);
+        return $this->userRepository->findUserByToken($token);
     }
 
     public function checkCredentials($credentials, UserInterface $user)
