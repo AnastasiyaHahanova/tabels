@@ -52,11 +52,3 @@ codestyle-cs-fixer:
         - docker run --rm -v "$(pwd)/src":/code gitlab.artvisio.com:4567/cdnnow/php-cs-fixer:1.0 /code
     only:
         - main
-
-tests:
-    stage: tests
-    script:
-        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-        - cd docker && docker-compose -f docker-compose.test.yaml pull && docker-compose -f docker-compose.test.yaml up --abort-on-container-exit --exit-code-from php
-    only:
-        - main
