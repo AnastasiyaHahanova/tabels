@@ -91,7 +91,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials():void
     {
     }
 
@@ -100,7 +100,7 @@ class User implements UserInterface
         return array('ROLE_USER');
     }
 
-    public function getSalt()
+    public function getSalt():void
     {
     }
 }

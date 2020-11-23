@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,12 +28,12 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return parent::createAuthenticatedToken($user, $providerKey);
     }
 
-    public function supports(Request $request)
+    public function supports(Request $request):bool
     {
         return $request->headers->has('X-AUTH-TOKEN');
     }
 
-    public function getCredentials(Request $request)
+    public function getCredentials(Request $request):array
     {
         if (!$token = $request->headers->get('X-AUTH-TOKEN')) {
             $token = null;
@@ -43,18 +44,14 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         ];
     }
 
-    public function getUser($credentials, UserProviderInterface $userProvider)
+    public function getUser($credentials, UserProviderInterface $userProvider): ?User
     {
-        $token = $credentials['token'];
-
-        if (null === $token) {
-            return;
-        }
+        $token = $credentials['token'] ?? '';
 
         return $this->userRepository->findUserByToken($token);
     }
 
-    public function checkCredentials($credentials, UserInterface $user)
+    public function checkCredentials($credentials, UserInterface $user):bool
     {
         if (empty($user)) {
             return false;
@@ -68,7 +65,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return null;
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): JsonResponse
     {
         $data = [
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
@@ -77,7 +74,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return new JsonResponse($data, Response::HTTP_FORBIDDEN);
     }
 
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null) : JsonResponse
     {
         $data = [
             'message' => 'Authentication Required'
@@ -86,7 +83,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function supportsRememberMe()
+    public function supportsRememberMe():bool
     {
         return false;
     }
