@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Api;
+namespace App\Controller\Api\v1;
 
 use App\Entity\Table;
 use App\Repository\TableValueRepository;
@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 
 /**
- * @Route("/tables")
+ * @Route("/api/v1/tables")
  */
 class TableValueController extends AbstractController
 {
@@ -130,7 +130,7 @@ class TableValueController extends AbstractController
     }
 
     /**
-     * @Rest\Get("/{id}/rows/avg", name="tables.rows.sum")
+     * @Rest\Get("/{id}/rows/avg", name="tables.rows.avg")
      * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
@@ -149,7 +149,7 @@ class TableValueController extends AbstractController
     }
 
     /**
-     * @Rest\Get("/{id}/columns/avg", name="tables.columns.sum")
+     * @Rest\Get("/{id}/columns/avg", name="tables.columns.avg")
      * @Rest\QueryParam(name="column_index", nullable=false,requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
