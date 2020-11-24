@@ -19,7 +19,7 @@ linter-noverify:
         - docker pull gitlab.artvisio.com:4567/cdnnow/noverify-linter
         - docker run --rm -v "$(pwd)/src":/code gitlab.artvisio.com:4567/cdnnow/noverify-linter
             -exclude-checks accessLevel,caseContinue,deprecated,misspellComment,phpdoc,phpdocLint,phpdocType,redundantCast,undefined,complexity,callStatic
-            /code
+            /code/src
     only:
         - main
 

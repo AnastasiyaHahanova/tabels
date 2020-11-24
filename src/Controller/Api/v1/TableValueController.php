@@ -37,7 +37,12 @@ class TableValueController extends AbstractController
         if (empty($rangeParameters)) {
             return new JsonResponse('Wrong range parameters', Response::HTTP_BAD_REQUEST);
         }
-        $rows = $tableValueRepository->findByRange($table->getId(), $rangeParameters['left_top_row'], $rangeParameters['left_top_column'], $rangeParameters['right_bottom_row'], $rangeParameters['right_bottom_column']);
+
+        $leftTopRow        = $rangeParameters['left_top_row'] ?? 0;
+        $leftTopColumn     = $rangeParameters['left_top_column'] ?? 0;
+        $rightBottomRow    = $rangeParameters['right_bottom_row'] ?? 0;
+        $rightBottomColumn = $rangeParameters['right_bottom_column'] ?? 0;
+        $rows              = $tableValueRepository->findByRange((int)$table->getId(), $leftTopRow, $leftTopColumn, $rightBottomRow, $rightBottomColumn);
 
         foreach ($rows as $row) {
             $result[sprintf('%s,%s', $row['row'], $row['column'])] = $row['value'];
@@ -57,7 +62,7 @@ class TableValueController extends AbstractController
     public function sumRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
         $rowIndex = (int)$params->get('row_index');
-        $sum      = $tableValueRepository->findSumByRow($table->getId(), $rowIndex)['sum'] ?? 0;
+        $sum      = $tableValueRepository->findSumByRow((int)$table->getId(), $rowIndex)['sum'] ?? 0;
 
         return new JsonResponse([
             'row' => $rowIndex,
@@ -76,7 +81,7 @@ class TableValueController extends AbstractController
     public function sumColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
         $columnIndex = (int)$params->get('column_index');
-        $sum         = $tableValueRepository->findByColumn($table->getId(), $columnIndex)['sum'] ?? 0;
+        $sum         = $tableValueRepository->findByColumn((int)$table->getId(), $columnIndex)['sum'] ?? 0;
 
         return new JsonResponse([
             'column' => $columnIndex,
@@ -99,7 +104,7 @@ class TableValueController extends AbstractController
     public function percentileRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
         $rowIndex = (int)$params->get('row_index');
-        $rows     = $tableValueRepository->findByRow($table->getId(), $rowIndex);
+        $rows     = $tableValueRepository->findByRow((int)$table->getId(), $rowIndex);
         $this->calculatePercentile((int)$params->get('percentile'), $rows);
 
         return new JsonResponse([
@@ -120,7 +125,7 @@ class TableValueController extends AbstractController
     public function percentileColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
         $columnIndex = (int)$params->get('column_index');
-        $rows        = $tableValueRepository->findByColumn($table->getId(), $columnIndex);
+        $rows        = $tableValueRepository->findByColumn((int)$table->getId(), $columnIndex);
 
         return new JsonResponse([
             'column'     => $columnIndex,
@@ -140,7 +145,7 @@ class TableValueController extends AbstractController
     public function averageRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
         $rowIndex = (int)$params->get('row_index');
-        $sum      = $tableValueRepository->findAvgByRow($table->getId(), $rowIndex)['avg'] ?? 0;
+        $sum      = $tableValueRepository->findAvgByRow((int)$table->getId(), $rowIndex)['avg'] ?? 0;
 
         return new JsonResponse([
             'row' => $rowIndex,
@@ -159,7 +164,7 @@ class TableValueController extends AbstractController
     public function averageColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
         $columnIndex = (int)$params->get('column_index');
-        $avg         = $tableValueRepository->findAvgByColumn($table->getId(), $columnIndex)['avg'] ?? 0;
+        $avg         = $tableValueRepository->findAvgByColumn((int)$table->getId(), $columnIndex)['avg'] ?? 0;
 
         return new JsonResponse([
             'column' => $columnIndex,
@@ -211,7 +216,7 @@ class TableValueController extends AbstractController
         }
 
         sort($values);
-        $percentileIndex = round($percentile * 0.01 * $count);
+        $percentileIndex = (int)round($percentile * 0.01 * $count);
         if (isset($values[$percentileIndex])) {
             return $values[$percentileIndex];
         }

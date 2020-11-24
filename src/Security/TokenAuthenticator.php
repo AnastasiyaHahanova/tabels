@@ -64,7 +64,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function checkCredentials($credentials, UserInterface $user): bool
     {
-        if (empty($user)) {
+        if (empty($user->getRoles())) {
             return false;
         }
 
