@@ -33,7 +33,7 @@ linter-psalm:
         - docker rm -v $container_id
         - docker run --rm -v "$(pwd)":/code gitlab.artvisio.com:4567/cdnnow/psalm-linter:1.0 /code/
     only:
-        - main
+        - mains
 
 codestyle-phpstorm:
     stage: linter/codestyle
