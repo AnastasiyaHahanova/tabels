@@ -12,12 +12,12 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201121204552 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return '';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE tables DROP FOREIGN KEY FK_84470221A76ED395');
@@ -25,7 +25,7 @@ final class Version20201121204552 extends AbstractMigration
         $this->addSql('ALTER TABLE user ADD token VARCHAR(255) NOT NULL');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE `tables` DROP FOREIGN KEY FK_84470221A76ED395');

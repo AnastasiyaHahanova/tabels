@@ -118,7 +118,7 @@ class User implements UserInterface
 
         return $roles;
     }
-    
+
     public function setRoles(array $roles)
     {
         $collection = new ArrayCollection();
