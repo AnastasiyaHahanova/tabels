@@ -16,8 +16,8 @@ linter-noverify:
     stage: linter/codestyle
     script:
         - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-        - docker pull gitlab.artvisio.com:4567/cdnnow/psalm-linter:1.0
-        - docker run --rm -v "$(pwd)":/code gitlab.artvisio.com:4567/cdnnow/psalm-linter:1.0
+        - docker pull gitlab.artvisio.com:4567/cdnnow/noverify-linter
+        - docker run --rm -v "$(pwd)/src":/code gitlab.artvisio.com:4567/cdnnow/noverify-linter
             -exclude-checks accessLevel,caseContinue,deprecated,misspellComment,phpdoc,phpdocLint,phpdocType,redundantCast,undefined,complexity,callStatic
             /code/
     only:
@@ -31,7 +31,7 @@ linter-psalm:
         - container_id=$(docker create $CI_REGISTRY/$CI_PROJECT_PATH)
         - docker cp $container_id:/app/vendor "$(pwd)"/vendor
         - docker rm -v $container_id
-        - docker run --rm -v "$(pwd)":/code gitlab.artvisio.com:4567/cdnnow/psalm-linter:1.0
+        - docker run --rm -v "$(pwd)":/code gitlab.artvisio.com:4567/cdnnow/psalm-linter:1.0 /code/src
     only:
         - main
 
