@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @Route("/users")
@@ -19,9 +20,12 @@ class UserController extends AbstractController
 {
     /**
      * @Rest\Post("/create", name="users.create")
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @param UserPasswordEncoderInterface $encoder
      * @return JsonResponse
      */
-    public function createUser(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    public function createUser(EntityManagerInterface $entityManager, Request $request,UserPasswordEncoderInterface $encoder): JsonResponse
     {
         $content  = $request->request->all();
         $username = $content['name'];
@@ -29,8 +33,10 @@ class UserController extends AbstractController
         $email    = $content['email'];
         $user     = (new User)
             ->setUsername($username)
-            ->setPassword($password)
             ->setEmail($email);
+        $entityManager->persist($user);
+        $entityManager->flush();
+        $user->setPassword($encoder->encodePassword($user,$password));
         $entityManager->persist($user);
         $entityManager->flush();
 
@@ -40,9 +46,13 @@ class UserController extends AbstractController
     /**
      * @Rest\Put("/{id}", name="users.update")
      * @Entity("user", options={"mapping": {"id": "id"}})
+     * @param EntityManagerInterface       $entityManager
+     * @param Request                      $request
+     * @param UserPasswordEncoderInterface $encoder
+     * @param User                         $user
      * @return JsonResponse
      */
-    public function updateUser(EntityManagerInterface $entityManager, Request $request, User $user): JsonResponse
+    public function updateUser(EntityManagerInterface $entityManager, Request $request, User $user,UserPasswordEncoderInterface $encoder): JsonResponse
     {
         $content = $request->request->all();
         if (isset($content['username'])) {
@@ -50,7 +60,7 @@ class UserController extends AbstractController
         }
 
         if (isset($content['password'])) {
-            $user->setPassword($content['password']);
+            $user->setPassword($encoder->encodePassword($user,$content['password']));
         }
 
         if (isset($content['email'])) {

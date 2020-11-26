@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -37,6 +39,18 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      */
     private $token = '';
+
+    /**
+     * @var Collection|Role[]
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\Role")
+     * @ORM\JoinTable(
+     *     name="user_role",
+     *     joinColumns={@ORM\JoinColumn(name="user", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="role", referencedColumnName="id")}
+     * )
+     */
+    private $roles;
 
     public function getId(): ?int
     {
@@ -97,7 +111,26 @@ class User implements UserInterface
 
     public function getRoles(): array
     {
-        return ['ROLE_USER'];
+        $roles = [];
+        foreach ($this->roles as $role) {
+            $roles[] = $role->getName();
+        }
+
+        return $roles;
+    }
+    
+    public function setRoles(array $roles)
+    {
+        $collection = new ArrayCollection();
+        foreach ($roles as $role) {
+            if (!$collection->contains($role)) {
+                $collection->add($role);
+            }
+        }
+
+        $this->roles = $collection;
+
+        return $this;
     }
 
     public function getSalt(): void

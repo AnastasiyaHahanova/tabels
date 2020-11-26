@@ -20,6 +20,9 @@ class TableController extends AbstractController
 {
     /**
      * @Rest\Post("/create", name="tables.create")
+     * @param EntityManagerInterface $entityManager
+     * @param UserRepository $userRepository
+     * @param Request $request
      * @return JsonResponse
      */
     public function createTable(EntityManagerInterface $entityManager, UserRepository $userRepository, Request $request): JsonResponse
@@ -45,6 +48,10 @@ class TableController extends AbstractController
     /**
      * @Rest\Put("/{id}", name="tables.update")
      * @Entity("table", options={"mapping": {"id": "id"}})
+     * @param EntityManagerInterface $entityManager
+     * @param UserRepository $userRepository
+     * @param Request $request
+     * @param  Table $table
      * @return JsonResponse
      */
     public function updateTable(EntityManagerInterface $entityManager,
@@ -77,6 +84,8 @@ class TableController extends AbstractController
     /**
      * @Rest\Delete("/{id}", name="tables.delete")
      * @Entity("table", options={"mapping": {"id": "id"}})
+     * @param EntityManagerInterface $entityManager
+     * @param Table $table
      * @return JsonResponse
      */
     public function deleteTable(EntityManagerInterface $entityManager, Table $table): JsonResponse
