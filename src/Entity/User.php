@@ -119,7 +119,7 @@ class User implements UserInterface
         return $roles;
     }
 
-    public function setRoles(array $roles)
+    public function setRoles(array $roles): self
     {
         $collection = new ArrayCollection();
         foreach ($roles as $role) {
