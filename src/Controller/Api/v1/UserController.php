@@ -20,12 +20,12 @@ class UserController extends AbstractController
 {
     /**
      * @Rest\Post("/create", name="users.create")
-     * @param EntityManagerInterface $entityManager
-     * @param Request $request
+     * @param EntityManagerInterface       $entityManager
+     * @param Request                      $request
      * @param UserPasswordEncoderInterface $encoder
      * @return JsonResponse
      */
-    public function createUser(EntityManagerInterface $entityManager, Request $request,UserPasswordEncoderInterface $encoder): JsonResponse
+    public function createUser(EntityManagerInterface $entityManager, Request $request, UserPasswordEncoderInterface $encoder): JsonResponse
     {
         $content  = $request->request->all();
         $username = $content['name'];
@@ -36,7 +36,7 @@ class UserController extends AbstractController
             ->setEmail($email);
         $entityManager->persist($user);
         $entityManager->flush();
-        $user->setPassword($encoder->encodePassword($user,$password));
+        $user->setPassword($encoder->encodePassword($user, $password));
         $entityManager->persist($user);
         $entityManager->flush();
 
@@ -52,7 +52,7 @@ class UserController extends AbstractController
      * @param User                         $user
      * @return JsonResponse
      */
-    public function updateUser(EntityManagerInterface $entityManager, Request $request, User $user,UserPasswordEncoderInterface $encoder): JsonResponse
+    public function updateUser(EntityManagerInterface $entityManager, Request $request, User $user, UserPasswordEncoderInterface $encoder): JsonResponse
     {
         $content = $request->request->all();
         if (isset($content['username'])) {
@@ -60,7 +60,7 @@ class UserController extends AbstractController
         }
 
         if (isset($content['password'])) {
-            $user->setPassword($encoder->encodePassword($user,$content['password']));
+            $user->setPassword($encoder->encodePassword($user, $content['password']));
         }
 
         if (isset($content['email'])) {

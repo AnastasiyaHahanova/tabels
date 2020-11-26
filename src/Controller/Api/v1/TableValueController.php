@@ -28,8 +28,8 @@ class TableValueController extends AbstractController
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param TableValueRepository $tableValueRepository
-     * @param Table $table
+     * @param TableValueRepository  $tableValueRepository
+     * @param Table                 $table
      * @return JsonResponse
      */
     public function getRangeOfCells(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
@@ -59,8 +59,8 @@ class TableValueController extends AbstractController
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param TableValueRepository $tableValueRepository
-     * @param Table $table
+     * @param TableValueRepository  $tableValueRepository
+     * @param Table                 $table
      * @return JsonResponse
      */
     public function sumRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
@@ -79,8 +79,8 @@ class TableValueController extends AbstractController
      * @Rest\QueryParam(name="column_index", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
-     * @param TableValueRepository $tableValueRepository
-     * @param Table $table
+     * @param TableValueRepository  $tableValueRepository
+     * @param Table                 $table
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
@@ -126,8 +126,8 @@ class TableValueController extends AbstractController
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param TableValueRepository $tableValueRepository
-     * @param Table $table
+     * @param TableValueRepository  $tableValueRepository
+     * @param Table                 $table
      * @return JsonResponse
      */
     public function percentileColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
@@ -147,8 +147,8 @@ class TableValueController extends AbstractController
      * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
-     * @param TableValueRepository $tableValueRepository
-     * @param Table $table
+     * @param TableValueRepository  $tableValueRepository
+     * @param Table                 $table
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
@@ -168,8 +168,8 @@ class TableValueController extends AbstractController
      * @Rest\QueryParam(name="column_index", nullable=false,requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
-     * @param TableValueRepository $tableValueRepository
-     * @param Table $table
+     * @param TableValueRepository  $tableValueRepository
+     * @param Table                 $table
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
