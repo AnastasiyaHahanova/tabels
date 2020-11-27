@@ -184,9 +184,9 @@ class TableValueRepository extends ServiceEntityRepository
 
     public function calculatePercentile(int $percentile)
     {
-        return $query   = $this->_em->createQuery
+        return $query = $this->_em->createQuery
         (sprintf('SELECT * FROM 
         (SELECT t.*,  @row_num :=@row_num + 1 AS row_num FROM App\Entity\TableValue t, (SELECT @row_num:=0) counter ORDER BY value) temp
-        WHERE temp.row_num = ROUND (.%s* @row_num)',$percentile))->getOneOrNullResult();
+        WHERE temp.row_num = ROUND (.%s* @row_num)', $percentile))->getOneOrNullResult();
     }
 }

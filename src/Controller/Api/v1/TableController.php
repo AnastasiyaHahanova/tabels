@@ -28,7 +28,7 @@ class TableController extends AbstractController
     public function createTable(EntityManagerInterface $entityManager, UserRepository $userRepository, Request $request): JsonResponse
     {
         $content = $request->getContent();
-        $data = json_decode($content,true);
+        $data    = json_decode($content, true);
         $userId  = (int)$data['user_id'];
         $columns = $data['columns'] ?? [];
         $user    = $userRepository->findOneById($userId);
@@ -36,10 +36,9 @@ class TableController extends AbstractController
             return new JsonResponse(sprintf('No user with id %s exist', $userId), Response::HTTP_BAD_REQUEST);
         }
 
-        $validationErrors = Validator::validate($data,['name']);
-        if ($validationErrors)
-        {
-            return new JsonResponse($validationErrors,Response::HTTP_BAD_REQUEST);
+        $validationErrors = Validator::validate($data, ['name']);
+        if ($validationErrors) {
+            return new JsonResponse($validationErrors, Response::HTTP_BAD_REQUEST);
         }
 
         $table = (new Table())
@@ -66,10 +65,9 @@ class TableController extends AbstractController
                                 Request $request, Table $table): JsonResponse
     {
         $content = $request->getContent();
-        $data = json_decode($content,true);
-        if(!is_array($data))
-        {
-            return new JsonResponse('Invalid json',Response::HTTP_BAD_REQUEST);
+        $data    = json_decode($content, true);
+        if (!is_array($data)) {
+            return new JsonResponse('Invalid json', Response::HTTP_BAD_REQUEST);
         }
 
         if (isset($content['user_id'])) {
@@ -83,11 +81,9 @@ class TableController extends AbstractController
 
         $validationErrors = Validator::validate($data);
 
-        if ($validationErrors)
-        {
-            return new JsonResponse($validationErrors,Response::HTTP_BAD_REQUEST);
+        if ($validationErrors) {
+            return new JsonResponse($validationErrors, Response::HTTP_BAD_REQUEST);
         }
-
 
         if (isset($content['columns'])) {
             $table->setColumns($content['columns']);

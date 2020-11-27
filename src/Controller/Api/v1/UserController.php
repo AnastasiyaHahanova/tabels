@@ -33,13 +33,12 @@ class UserController extends AbstractController
             return new JsonResponse('Invalid json', Response::HTTP_BAD_REQUEST);
         }
 
-        $validateErrors = Validator::validate($data,['name','password','email']);
-        if ($validateErrors)
-        {
-            return new JsonResponse($validateErrors,Response::HTTP_BAD_REQUEST);
+        $validateErrors = Validator::validate($data, ['name', 'password', 'email']);
+        if ($validateErrors) {
+            return new JsonResponse($validateErrors, Response::HTTP_BAD_REQUEST);
         }
 
-        $user     = (new User)
+        $user = (new User)
             ->setUsername((string)$data['name'])
             ->setEmail($data['email']);
         $entityManager->persist($user);
@@ -62,16 +61,15 @@ class UserController extends AbstractController
      */
     public function updateUser(EntityManagerInterface $entityManager, Request $request, User $user, UserPasswordEncoderInterface $encoder): JsonResponse
     {
-        $json = $request->getContent();
-        $content = json_decode($json,true);
+        $json    = $request->getContent();
+        $content = json_decode($json, true);
         if (!is_array($content)) {
             return new JsonResponse('Invalid json', Response::HTTP_BAD_REQUEST);
         }
 
         $validateErrors = Validator::validate($content);
-        if ($validateErrors)
-        {
-            return new JsonResponse($validateErrors,Response::HTTP_BAD_REQUEST);
+        if ($validateErrors) {
+            return new JsonResponse($validateErrors, Response::HTTP_BAD_REQUEST);
         }
 
         if (isset($content['username'])) {
