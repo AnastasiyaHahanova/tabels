@@ -3,8 +3,10 @@
 namespace App\Controller\Api\v1;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -104,4 +106,29 @@ class UserController extends AbstractController
         return new JsonResponse(['id' => $user->getId()], Response::HTTP_OK);
     }
 
+    /**
+     * @Rest\Get("/list", name="users.list")
+     * @Rest\QueryParam(name="page", nullable=true, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="items_on_page", nullable=true, requirements="^\d+$", strict=true)
+     *
+     * @param PaginatorInterface $paginator
+     * @param UserRepository     $userRepository
+     * @param Request            $request
+     * @return JsonResponse
+     */
+    public function getUserList(Request $request, PaginatorInterface $paginator, UserRepository $userRepository): JsonResponse
+    {
+        $page          = $request->request->get('page') ?? 1;
+        $itemsOnPage   = $request->request->get('items_on_page') ?? 20;
+        $allBooksQuery = $userRepository->createQueryBuilder('u');
+        $users         = $paginator->paginate($allBooksQuery, $request->query->getInt('page', $page), $itemsOnPage);
+        $result        = [
+            'total_count'   => $users->getTotalItemCount(),
+            'page'          => $page,
+            'items_on_page' => $itemsOnPage,
+            'users'         => $users->getItems()
+        ];
+
+        return new JsonResponse($result, Response::HTTP_OK);
+    }
 }
