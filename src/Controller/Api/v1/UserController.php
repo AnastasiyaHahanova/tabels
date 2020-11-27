@@ -120,8 +120,8 @@ class UserController extends AbstractController
     {
         $page          = $request->request->get('page') ?? 1;
         $itemsOnPage   = $request->request->get('items_on_page') ?? 20;
-        $allBooksQuery = $userRepository->createQueryBuilder('u');
-        $users         = $paginator->paginate($allBooksQuery, $request->query->getInt('page', $page), $itemsOnPage);
+        $allUsersQuery = $userRepository->createQueryBuilder('u');
+        $users         = $paginator->paginate($allUsersQuery, $request->query->getInt('page', $page), $itemsOnPage);
         $result        = [
             'total_count'   => $users->getTotalItemCount(),
             'page'          => $page,
