@@ -38,12 +38,14 @@ class UserController extends AbstractController
             return new JsonResponse($validateErrors, Response::HTTP_BAD_REQUEST);
         }
 
+        ['name' => $name, 'password' => $password, 'email' => $email] = $data;
+
         $user = (new User)
-            ->setUsername((string)$data['name'])
-            ->setEmail($data['email']);
+            ->setUsername($name)
+            ->setEmail($email);
         $entityManager->persist($user);
         $entityManager->flush();
-        $user->setPassword($encoder->encodePassword($user, $data['password']));
+        $user->setPassword($encoder->encodePassword($user, $password));
         $entityManager->persist($user);
         $entityManager->flush();
 
