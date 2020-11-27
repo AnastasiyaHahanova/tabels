@@ -37,7 +37,8 @@ class TableValueController extends AbstractController
         $result          = [];
         $rangeParameters = $this->extractRangeParameters($params->get('start_range'), (int)$params->get('horizontal_offset'), (int)$params->get('vertical_offset'));
         if (empty($rangeParameters)) {
-            return new JsonResponse('Wrong range parameters', Response::HTTP_BAD_REQUEST);
+            return new JsonResponse('Wrong range parameters. Please make sure that you have entered the correct coordinates of the upper left and lower right corners',
+                Response::HTTP_BAD_REQUEST);
         }
 
         $leftTopRow        = $rangeParameters['left_top_row'] ?? 0;
@@ -47,7 +48,8 @@ class TableValueController extends AbstractController
         $rows              = $tableValueRepository->findByRange((int)$table->getId(), $leftTopRow, $leftTopColumn, $rightBottomRow, $rightBottomColumn);
 
         foreach ($rows as $row) {
-            $result[sprintf('%s,%s', $row['row'], $row['column'])] = $row['value'];
+            $key          = sprintf('%s,%s', $row['row'], $row['column']);
+            $result[$key] = $row['value'];
         }
 
         return new JsonResponse($result, Response::HTTP_OK);
