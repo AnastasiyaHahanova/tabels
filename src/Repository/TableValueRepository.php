@@ -27,6 +27,7 @@ class TableValueRepository extends ServiceEntityRepository
      * @param int $leftTopColumn
      * @param int $rightBottomRow
      * @param int $rightBottomColumn
+     * @param int $tableId
      * @return TableValue[]|[]
      */
     public function findByRange(int $tableId, int $leftTopRow, int $leftTopColumn, int $rightBottomRow, int $rightBottomColumn): array
@@ -176,6 +177,129 @@ class TableValueRepository extends ServiceEntityRepository
                         [
                             'table_id'     => $tableId,
                             'column_index' => $columnIndex
+                        ]
+                    )
+                    ->getQuery()
+                    ->getSingleResult();
+    }
+
+    /**
+     * @param int $rowIndex
+     * @param int $tableId
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @return TableValue[]|[]
+     */
+    public function findCountByRow(int $tableId, int $rowIndex): array
+    {
+        return $this->createQueryBuilder('t')
+                    ->select('COUNT(t.value) as count')
+                    ->where('t.table = :table_id')
+                    ->andWhere('t.row = :row_index')
+                    ->setParameters(
+                        [
+                            'table_id'  => $tableId,
+                            'row_index' => $rowIndex
+                        ]
+                    )
+                    ->getQuery()
+                    ->getSingleResult();
+    }
+
+    /**
+     * @param int $columnIndex
+     * @param int $tableId
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @return TableValue[]|[]
+     */
+    public function findCountByColumn(int $tableId, int $columnIndex): array
+    {
+        return $this->createQueryBuilder('t')
+                    ->select('COUNT(t.value) as count')
+                    ->where('t.table = :table_id')
+                    ->andWhere('t.column = :column_index')
+                    ->setParameters(
+                        [
+                            'table_id'     => $tableId,
+                            'column_index' => $columnIndex
+                        ]
+                    )
+                    ->getQuery()
+                    ->getSingleResult();
+    }
+
+    /**
+     * @param int $columnIndex
+     * @param int $tableId
+     * @param int $offset
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @return TableValue[]|[]
+     */
+    public function findPercentileByColumn(int $tableId, int $columnIndex, int $offset): array
+    {
+        return $this->createQueryBuilder('t')
+                    ->select('(t.value) as percentile')
+                    ->where('t.table = :table_id')
+                    ->andWhere('t.column = :column_index')
+                    ->setParameters(
+                        [
+                            'table_id'     => $tableId,
+                            'column_index' => $columnIndex
+                        ]
+                    )
+                    ->orderBy('t.value', 'ASC')
+                    ->setMaxResults(1)
+                    ->setFirstResult($offset)
+                    ->getQuery()
+                    ->getSingleResult();
+    }
+
+    /**
+     * @param int $rowIndex
+     * @param int $tableId
+     * @param int $offset
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @return TableValue[]|[]
+     */
+    public function findPercentileByRow(int $tableId, int $rowIndex, int $offset): array
+    {
+        return $this->createQueryBuilder('t')
+                    ->select('(t.value) as percentile')
+                    ->where('t.table = :table_id')
+                    ->andWhere('t.row = :row_index')
+                    ->setParameters(
+                        [
+                            'table_id'  => $tableId,
+                            'row_index' => $rowIndex
+                        ]
+                    )
+                    ->orderBy('t.value', 'ASC')
+                    ->setMaxResults(1)
+                    ->setFirstResult($offset)
+                    ->getQuery()
+                    ->getSingleResult();
+    }
+
+    /**
+     * @param int $rowIndex
+     * @param int $tableId
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @return TableValue[]|[]
+     */
+    public function countOfValuesByRow(int $rowIndex, int $tableId): array
+    {
+        return $this->createQueryBuilder('t')
+                    ->select('COUNT(t.value) as percentile')
+                    ->where('t.table = :table_id')
+                    ->andWhere('t.row = :row_index')
+                    ->setParameters(
+                        [
+                            'table_id'  => $tableId,
+                            'row_index' => $rowIndex
                         ]
                     )
                     ->getQuery()
