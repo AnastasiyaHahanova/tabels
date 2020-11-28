@@ -70,6 +70,7 @@ class TableValueController extends AbstractV1Controller
     /**
      * @Rest\Get("/{id}/rows/sum", name="tables.rows.sum")
      * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -80,6 +81,11 @@ class TableValueController extends AbstractV1Controller
      */
     public function sumRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
+        $errors = $this->checkTableOwnership($table, $params->get('user_id'));
+        if ($errors) {
+            return $this->jsonError($errors);
+        }
+
         $rowIndex = (int)$params->get('row_index');
         $sum      = $tableValueRepository->findSumByRow((int)$table->getId(), $rowIndex)['sum'] ?? 0;
 
@@ -91,6 +97,7 @@ class TableValueController extends AbstractV1Controller
     /**
      * @Rest\Get("/{id}/columns/sum", name="tables.columns.sum")
      * @Rest\QueryParam(name="column_index", nullable=false, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param TableValueRepository  $tableValueRepository
@@ -100,6 +107,11 @@ class TableValueController extends AbstractV1Controller
      */
     public function sumColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
+        $errors = $this->checkTableOwnership($table, $params->get('user_id'));
+        if ($errors) {
+            return $this->jsonError($errors);
+        }
+
         $columnIndex = (int)$params->get('column_index');
         $sum         = $tableValueRepository->findByColumn((int)$table->getId(), $columnIndex)['sum'] ?? 0;
 
@@ -122,10 +134,14 @@ class TableValueController extends AbstractV1Controller
      */
     public function percentileRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
+        $errors = $this->checkTableOwnership($table, $params->get('user_id'));
+        if ($errors) {
+            return $this->jsonError($errors);
+        }
 
         $rowIndex      = $params->get('row_index');
-        $tableId       = $table->getId();
-        $countOfValues = $tableValueRepository->findCountByRow((int)$table->getId(), $rowIndex)['count'] ?? 0;
+        $tableId       = (int)$table->getId();
+        $countOfValues = $tableValueRepository->findCountByRow($tableId, $rowIndex)['count'] ?? 0;
         $offset        = $countOfValues * 0.01 * $params->get('percentile');
         $percentile    = $tableValueRepository->findPercentileByRow($tableId, $rowIndex, $offset)['percentile'] ?? 0;
 
@@ -148,6 +164,11 @@ class TableValueController extends AbstractV1Controller
      */
     public function percentileColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
+        $errors = $this->checkTableOwnership($table, $params->get('user_id'));
+        if ($errors) {
+            return $this->jsonError($errors);
+        }
+
         $columnIndex   = $params->get('column_index');
         $countOfValues = $tableValueRepository->findCountByColumn((int)$table->getId(), $columnIndex)['count'] ?? 0;
         $offset        = $params->get('percentile') * 0.01 * $countOfValues;
@@ -163,6 +184,7 @@ class TableValueController extends AbstractV1Controller
     /**
      * @Rest\Get("/{id}/rows/avg", name="tables.rows.avg")
      * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param TableValueRepository  $tableValueRepository
@@ -172,6 +194,11 @@ class TableValueController extends AbstractV1Controller
      */
     public function averageRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
+        $errors = $this->checkTableOwnership($table, $params->get('user_id'));
+        if ($errors) {
+            return $this->jsonError($errors);
+        }
+
         $rowIndex      = (int)$params->get('row_index');
         $countOfValues = $tableValueRepository->findCountByRow((int)$table->getId(), $rowIndex)['count'] ?? 0;
         $offset        = $params->get('percentile') * 0.01 * $countOfValues;
@@ -195,6 +222,11 @@ class TableValueController extends AbstractV1Controller
      */
     public function averageColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
+        $errors = $this->checkTableOwnership($table, $params->get('user_id'));
+        if ($errors) {
+            return $this->jsonError($errors);
+        }
+
         $columnIndex = (int)$params->get('column_index');
         $avg         = $tableValueRepository->findAvgByColumn((int)$table->getId(), $columnIndex)['avg'] ?? 0;
 
