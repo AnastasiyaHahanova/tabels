@@ -24,9 +24,9 @@ https://gist.github.com/AnastasiyaHahanova/5b470e8c739fb844dd883e63e8e5982a
 ``
 
 ### Предварительные требования
-- php >= 7.4 
-- mysql
-- composer
+- PHP >= 7.4 
+- MySQL
+- Composer
 
 ## Запуск тестов
 ``
