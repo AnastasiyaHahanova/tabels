@@ -6,13 +6,9 @@
 
 1. Склонировать репозиторий в нужную директорию<br><br>
 ``
-git clone git@gitlab.artvisio.com:anastasiya.h/tables.git (склонировать проект в новую директорию под названием tables)
+git clone git@gitlab.artvisio.com:anastasiya.h/tables.git 
 ``
-<br>
-``
-git clone git@gitlab.artvisio.com:anastasiya.h/tables.git (склонировать проект в текущую директорию)
-``
-<br><br>
+
 2. Зайти в директорию, в которую был склонирован проект, и в консоли запустить следующую команду<br><br>
 ``
 sh bin/install.sh 
@@ -35,8 +31,8 @@ sh bin/test.sh
 
 ## Построен с помощью
 
-* Фреймворк [Symfony] (https://symfony.com/what-is-symfony)
+* Фреймворк **Symfony** (https://symfony.com/what-is-symfony)
 
 ## Автор
 
-* ** Анастасия Хаханова ** - * Начальная работа * - [AnastasiyaHahanova] (https://github.com/PurpleBooth)
+* **Анастасия Хаханова** - (https://github.com/AnastasiyaHahanova)
