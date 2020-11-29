@@ -19,7 +19,7 @@ sh bin/install.sh
 https://gist.github.com/AnastasiyaHahanova/5b470e8c739fb844dd883e63e8e5982a
 ``
 
-### Предварительные требования
+### Предварительные требования 
 - PHP >= 7.4 
 - MySQL
 - Composer
