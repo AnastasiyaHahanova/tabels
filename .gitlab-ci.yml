@@ -10,7 +10,7 @@ build:
         - docker build --build-arg SSH_PRIVATE_KEY="$(cat $HOME/.ssh/id_rsa)" -t $CI_REGISTRY/$CI_PROJECT_PATH .
         - docker push $CI_REGISTRY/$CI_PROJECT_PATH
     only:
-        - main
+        - master
 
 linter-noverify:
     stage: linter/codestyle
@@ -21,7 +21,7 @@ linter-noverify:
             -exclude-checks accessLevel,caseContinue,deprecated,misspellComment,phpdoc,phpdocLint,phpdocType,redundantCast,undefined,complexity,callStatic
             /code/
     only:
-        - main
+        - master
 
 linter-psalm:
     stage: linter/codestyle
@@ -34,7 +34,7 @@ linter-psalm:
         - docker run --rm -v "$(pwd)":/code gitlab.artvisio.com:4567/cdnnow/psalm-linter:1.0
             /code/src
     only:
-        - main
+        - master
 
 codestyle-phpstorm:
     stage: linter/codestyle
@@ -43,7 +43,7 @@ codestyle-phpstorm:
         - docker pull gitlab.artvisio.com:4567/cdnnow/phpstorm-formatter
         - docker run --rm -v "$(pwd)/src":/home/developer/workplace gitlab.artvisio.com:4567/cdnnow/phpstorm-formatter:1.0
     only:
-        - main
+        - master
 
 codestyle-cs-fixer:
     stage: linter/codestyle
@@ -55,4 +55,4 @@ codestyle-cs-fixer:
             /code/Entity
             /code/Repository
     only:
-        - main
+        - master
