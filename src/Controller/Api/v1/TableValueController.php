@@ -36,9 +36,8 @@ class TableValueController extends AbstractV1Controller
     {
         $result  = [];
         $tableId = (int)$table->getId();
-        $errors  = $this->checkTableOwnership($table, $params->get('user_id'));
-        if ($errors) {
-            return $this->jsonError($errors);
+        if ($params->get('user_id') !== $table->getId()) {
+            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
         }
 
         $rangeParameters = $this->extractRangeParameters(
@@ -47,11 +46,8 @@ class TableValueController extends AbstractV1Controller
             $params->get('vertical_offset')
         );
         if (empty($rangeParameters)) {
-            return $this->jsonError(
-                [
-                    'title'  => 'Wrong range parameters.',
-                    'detail' => 'Please make sure that you have entered the correct coordinates of the upper left and lower right corners'
-                ]);
+            return $this->error('Please make sure that you have entered the correct coordinates of the upper left and lower right corners',
+                'Wrong range parameters.');
         }
 
         $leftTopRow        = $rangeParameters['left_top_row'] ?? 0;
@@ -64,7 +60,7 @@ class TableValueController extends AbstractV1Controller
             $result[$key] = $row['value'];
         }
 
-        return $this->jsonSuccess($result);
+        return $this->jsonData($result);
     }
 
     /**
@@ -81,15 +77,14 @@ class TableValueController extends AbstractV1Controller
      */
     public function sumRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
-        $errors = $this->checkTableOwnership($table, $params->get('user_id'));
-        if ($errors) {
-            return $this->jsonError($errors);
+        if ($params->get('user_id') !== $table->getId()) {
+            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
         }
 
         $rowIndex = (int)$params->get('row_index');
         $sum      = $tableValueRepository->findSumByRow((int)$table->getId(), $rowIndex)['sum'] ?? 0;
 
-        return $this->jsonSuccess([
+        return $this->jsonData([
             'row' => $rowIndex,
             'sum' => $sum]);
     }
@@ -107,15 +102,14 @@ class TableValueController extends AbstractV1Controller
      */
     public function sumColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
-        $errors = $this->checkTableOwnership($table, $params->get('user_id'));
-        if ($errors) {
-            return $this->jsonError($errors);
+        if ($params->get('user_id') !== $table->getId()) {
+            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
         }
 
         $columnIndex = (int)$params->get('column_index');
         $sum         = $tableValueRepository->findByColumn((int)$table->getId(), $columnIndex)['sum'] ?? 0;
 
-        return $this->jsonSuccess([
+        return $this->jsonData([
             'column' => $columnIndex,
             'sum'    => $sum
         ]);
@@ -134,9 +128,8 @@ class TableValueController extends AbstractV1Controller
      */
     public function percentileRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
-        $errors = $this->checkTableOwnership($table, $params->get('user_id'));
-        if ($errors) {
-            return $this->jsonError($errors);
+        if ($params->get('user_id') !== $table->getId()) {
+            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
         }
 
         $rowIndex      = $params->get('row_index');
@@ -145,7 +138,7 @@ class TableValueController extends AbstractV1Controller
         $offset        = $countOfValues * 0.01 * $params->get('percentile');
         $percentile    = $tableValueRepository->findPercentileByRow($tableId, $rowIndex, $offset)['percentile'] ?? 0;
 
-        return $this->jsonSuccess([
+        return $this->jsonData([
             'row'        => $rowIndex,
             'percentile' => $percentile
         ]);
@@ -164,9 +157,8 @@ class TableValueController extends AbstractV1Controller
      */
     public function percentileColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
-        $errors = $this->checkTableOwnership($table, $params->get('user_id'));
-        if ($errors) {
-            return $this->jsonError($errors);
+        if ($params->get('user_id') !== $table->getId()) {
+            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
         }
 
         $columnIndex   = $params->get('column_index');
@@ -174,7 +166,7 @@ class TableValueController extends AbstractV1Controller
         $offset        = $params->get('percentile') * 0.01 * $countOfValues;
         $percentile    = $tableValueRepository->findPercentileByColumn((int)$table->getId(), $columnIndex, $offset)['percentile'] ?? 0;
 
-        return $this->jsonSuccess([
+        return $this->jsonData([
             'column'     => $columnIndex,
             'percentile' => $percentile
         ]);
@@ -194,9 +186,8 @@ class TableValueController extends AbstractV1Controller
      */
     public function averageRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
-        $errors = $this->checkTableOwnership($table, $params->get('user_id'));
-        if ($errors) {
-            return $this->jsonError($errors);
+        if ($params->get('user_id') !== $table->getId()) {
+            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
         }
 
         $rowIndex      = (int)$params->get('row_index');
@@ -204,7 +195,7 @@ class TableValueController extends AbstractV1Controller
         $offset        = $params->get('percentile') * 0.01 * $countOfValues;
         $percentile    = $tableValueRepository->findPercentileByColumn((int)$table->getId(), $rowIndex, $offset)['percentile'] ?? 0;
 
-        return $this->jsonSuccess([
+        return $this->jsonData([
             'row' => $rowIndex,
             'avg' => $percentile
         ]);
@@ -222,15 +213,14 @@ class TableValueController extends AbstractV1Controller
      */
     public function averageColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
-        $errors = $this->checkTableOwnership($table, $params->get('user_id'));
-        if ($errors) {
-            return $this->jsonError($errors);
+        if ($params->get('user_id') !== $table->getId()) {
+            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
         }
 
         $columnIndex = (int)$params->get('column_index');
         $avg         = $tableValueRepository->findAvgByColumn((int)$table->getId(), $columnIndex)['avg'] ?? 0;
 
-        return $this->jsonSuccess([
+        return $this->jsonData([
             'column' => $columnIndex,
             'avg'    => $avg
         ]);
@@ -269,14 +259,8 @@ class TableValueController extends AbstractV1Controller
         return $rangeParameters;
     }
 
-    public function checkTableOwnership(Table $table, int $userId): array
+    public function getAccessDeniedError(string $tableName, string $userId): JsonResponse
     {
-        if ($userId !== $table->getUser()->getId()) {
-            return [
-                'title'  => 'Access denied',
-                'detail' => sprintf('User with ID "%s" does not have access to the table %s', $userId, $table->getName())];
-        }
-
-        return [];
+        return $this->error(sprintf('User with ID "%s" does not have access to the table %s', $userId, $tableName), 'Access denied');
     }
 }

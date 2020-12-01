@@ -13,18 +13,24 @@ class AbstractV1Controller extends AbstractController
         return new Response($message, Response::HTTP_OK);
     }
 
-    public function jsonSuccess(array $data): JsonResponse
+    public function jsonData(array $data): JsonResponse
     {
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
-    public function error(string $message): Response
+    public function errors(array $errors, $title = 'Errors'): JsonResponse
     {
-        return new Response($message, Response::HTTP_BAD_REQUEST);
+        return new JsonResponse([
+            'title'          => $title,
+            'invalid-params' => $errors
+        ], Response::HTTP_BAD_REQUEST);
     }
 
-    public function jsonError(array $errors): JsonResponse
+    public function error(string $message, string $title = 'Error'): JsonResponse
     {
-        return new JsonResponse($errors, Response::HTTP_OK);
+        return new JsonResponse([
+            'title'  => $title,
+            'detail' => $message
+        ], Response::HTTP_BAD_REQUEST);
     }
 }

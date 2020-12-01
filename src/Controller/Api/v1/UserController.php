@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +17,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 /**
  * @Route("api/v1/users")
  */
-class UserController extends AbstractController
+class UserController extends AbstractV1Controller
 {
     /**
      * @Rest\Post("/", name="users.create")
@@ -48,10 +47,12 @@ class UserController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
         $user->setPassword($encoder->encodePassword($user, $password));
+        $token = hash('ripemd320', sprintf('%s-%s-%s', $user->getUsername(), $password, microtime()));
+        $user->setToken($token);
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new JsonResponse(['id' => $user->getId()], Response::HTTP_OK);
+        return $this->jsonData(['id' => $user->getId()]);
     }
 
     /**
@@ -90,7 +91,7 @@ class UserController extends AbstractController
 
         $entityManager->flush();
 
-        return new JsonResponse(['id' => $user->getId()], Response::HTTP_OK);
+        return $this->jsonData(['id' => $user->getId()]);
     }
 
     /**
@@ -103,7 +104,7 @@ class UserController extends AbstractController
         $entityManager->remove($user);
         $entityManager->flush();
 
-        return new JsonResponse(['id' => $user->getId()], Response::HTTP_OK);
+        return $this->jsonData(['id' => $user->getId()]);
     }
 
     /**
@@ -129,6 +130,6 @@ class UserController extends AbstractController
             'users'         => $users->getItems()
         ];
 
-        return new JsonResponse($result, Response::HTTP_OK);
+        return $this->jsonData($result);
     }
 }
