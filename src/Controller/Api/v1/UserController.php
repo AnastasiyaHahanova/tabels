@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api\v1;
 
+use App\Entity\Role;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,7 +44,8 @@ class UserController extends AbstractV1Controller
 
         $user = (new User)
             ->setUsername($name)
-            ->setEmail($email);
+            ->setEmail($email)
+            ->setRoles([Role::USER]);
         $entityManager->persist($user);
         $entityManager->flush();
         $user->setPassword($encoder->encodePassword($user, $password));
