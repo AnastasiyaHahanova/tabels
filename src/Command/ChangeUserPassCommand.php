@@ -39,7 +39,7 @@ class ChangeUserPassCommand extends Command
     {
         $io       = new SymfonyStyle($input, $output);
         $username = $input->getArgument('username');
-        $user = $this->userRepository->finOneByUsername($username);
+        $user     = $this->userRepository->finOneByUsername($username);
 
         if (empty($user)) {
             $io->error(sprintf('No user found with username %s ', $username));
@@ -66,7 +66,7 @@ class ChangeUserPassCommand extends Command
             return Command::FAILURE;
         }
 
-        $user->setPassword($this->encoder->encodePassword($user,$password));
+        $user->setPassword($this->encoder->encodePassword($user, $password));
         $this->entityManager->flush();
 
         $io->success('Password changed successfully!');
