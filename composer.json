@@ -26,6 +26,7 @@
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.23",
+        "symfony/phpunit-bridge": "^5.2",
         "symfony/web-server-bundle": "^4.4.2"
     },
     "config": {

@@ -64,6 +64,8 @@ class User implements UserInterface
      */
     private $roles;
 
+    public const PASSWORD_LENGTH = 8;
+
     public function getId(): ?int
     {
         return $this->id;

@@ -14,7 +14,7 @@ git clone git@gitlab.artvisio.com:anastasiya.h/tables.git
 sh bin/install.sh 
 ``
 
-3. Прочитать документацию для грамтного использования<br><br>
+3. Прочитать документацию для грамотного использования<br><br>
 ``
 https://gist.github.com/AnastasiyaHahanova/5b470e8c739fb844dd883e63e8e5982a
 ``
