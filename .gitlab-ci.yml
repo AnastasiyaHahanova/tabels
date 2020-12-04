@@ -1,7 +1,6 @@
 stages:
     - build
     - linter/codestyle
-    - tests
 
 build:
     stage: build
