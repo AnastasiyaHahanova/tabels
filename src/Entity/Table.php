@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\NameConstraints as TableNameAssert;
 
-
 /**
  * @ORM\Entity(repositoryClass=TableRepository::class)
  * @ORM\Table(name="`tables`")

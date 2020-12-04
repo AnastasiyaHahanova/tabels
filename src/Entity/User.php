@@ -165,13 +165,12 @@ class User implements UserInterface
     {
     }
 
-
     public function getRawPassword(): string
     {
         return $this->rawPassword;
     }
 
-    public function setRawPassword(string $rawPassword) : self
+    public function setRawPassword(string $rawPassword): self
     {
         $this->rawPassword = $rawPassword;
 

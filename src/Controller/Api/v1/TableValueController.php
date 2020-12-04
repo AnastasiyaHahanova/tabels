@@ -78,7 +78,7 @@ class TableValueController extends AbstractV1Controller
     public function sumRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
         $userId = (int)$params->get('user_id');
-        if ( $userId !== $table->getUser()->getId()) {
+        if ($userId !== $table->getUser()->getId()) {
             return $this->getAccessDeniedError($table->getName(), $userId);
         }
 
@@ -270,8 +270,8 @@ class TableValueController extends AbstractV1Controller
         return $this->error(sprintf('User with ID "%s" does not have access to the table %s', $userId, $tableName), 'Access denied');
     }
 
-    public function formatValue(float $value) : float
+    public function formatValue(float $value): float
     {
-        return sprintf("%.2f",$value);
+        return sprintf("%.2f", $value);
     }
 }
