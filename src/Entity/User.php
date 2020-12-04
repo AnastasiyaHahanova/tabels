@@ -3,11 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Validator\PasswordConstraints;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\UserConstraints as UsernameAssert;
+use App\Validator\PasswordConstraints as PasswordAssert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -23,22 +26,26 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Type(
-     *     type="string",
-     *     message="The value {{ value }} is not a valid {{ type }}."
+     * @Assert\NotBlank()
+     * @UsernameAssert(
+     *     message="The username {{ value }} has wrong format."
      * )
      */
     private $username = '';
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @PasswordAssert(
+     *     message="The password {{ value }} has wrong format."
+     * )
      */
     private $password = '';
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Email(
-     *     message = "The email '{{ value }}' is not a valid email."
+     *     message = "The email {{ value }} is not a valid email."
      * )
      */
     private $email = '';

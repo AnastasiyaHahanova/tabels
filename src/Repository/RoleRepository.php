@@ -18,4 +18,9 @@ class RoleRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Role::class);
     }
+
+    public function findOneByName(string $name): ?Role
+    {
+        return $this->findOneBy(['name' => $name]);
+    }
 }

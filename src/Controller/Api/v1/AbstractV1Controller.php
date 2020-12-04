@@ -5,6 +5,8 @@ namespace App\Controller\Api\v1;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class AbstractV1Controller extends AbstractController
 {
@@ -32,5 +34,17 @@ class AbstractV1Controller extends AbstractController
             'title'  => $title,
             'detail' => $message
         ], Response::HTTP_BAD_REQUEST);
+    }
+
+    public function getErrorsMessageFromViolations(ConstraintViolationListInterface $list): array
+    {
+        $errorMessages = [];
+        $i             = 0;
+        while ($i < $list->count()) {
+            $errorMessages[] = $list->get($i)->getMessage();
+            $i++;
+        }
+
+        return $errorMessages;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Controller\Api\v1;
 
 use App\Entity\Role;
 use App\Entity\User;
+use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("api/v1/users")
@@ -27,27 +29,35 @@ class UserController extends AbstractV1Controller
      * @param UserPasswordEncoderInterface $encoder
      * @return JsonResponse
      */
-    public function createUser(EntityManagerInterface $entityManager, Request $request, UserPasswordEncoderInterface $encoder): JsonResponse
+    public function createUser(RoleRepository $roleRepository,
+                               ValidatorInterface $validator,
+                               EntityManagerInterface $entityManager,
+                               Request $request,
+                               UserPasswordEncoderInterface $encoder): JsonResponse
     {
         $content = $request->getContent();
         $data    = json_decode($content, true);
         if (!is_array($data)) {
-            return new JsonResponse('Invalid json', Response::HTTP_BAD_REQUEST);
+            return $this->error('Invalid json', 'Validation error');
         }
-
-        $validateErrors = Validator::validate($data, ['name', 'password', 'email']);
-        if ($validateErrors) {
-            return new JsonResponse($validateErrors, Response::HTTP_BAD_REQUEST);
-        }
-
         ['name' => $name, 'password' => $password, 'email' => $email] = $data;
 
-        $user = (new User)
+        $role             = $roleRepository->findOneByName(Role::USER);
+        $user             = (new User)
             ->setUsername($name)
             ->setEmail($email)
-            ->setRoles([Role::USER]);
+            ->setPassword($password)
+            ->setRoles([$role]);
+        $validationErrors = $validator->validate($user);
+        if ($validationErrors->count() > 0) {
+            $errors = $this->getErrorsMessageFromViolations($validationErrors);
+
+            return $this->errors($errors, 'Invalid user parameters');
+        }
+
         $entityManager->persist($user);
         $entityManager->flush();
+
         $user->setPassword($encoder->encodePassword($user, $password));
         $token = hash('ripemd320', sprintf('%s-%s-%s', $user->getUsername(), $password, microtime()));
         $user->setToken($token);
