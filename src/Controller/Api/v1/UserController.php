@@ -76,17 +76,16 @@ class UserController extends AbstractV1Controller
      * @param User                         $user
      * @return JsonResponse
      */
-    public function updateUser(EntityManagerInterface $entityManager, Request $request, User $user, UserPasswordEncoderInterface $encoder): JsonResponse
+    public function updateUser(User $user,
+                               Request $request,
+                               EntityManagerInterface $entityManager,
+                               ValidatorInterface $validator,
+                               UserPasswordEncoderInterface $encoder): JsonResponse
     {
         $json    = $request->getContent();
         $content = json_decode($json, true);
         if (!is_array($content)) {
             return new JsonResponse('Invalid json', Response::HTTP_BAD_REQUEST);
-        }
-
-        $validateErrors = Validator::validate($content);
-        if ($validateErrors) {
-            return new JsonResponse($validateErrors, Response::HTTP_BAD_REQUEST);
         }
 
         if (isset($content['username'])) {
@@ -99,6 +98,13 @@ class UserController extends AbstractV1Controller
 
         if (isset($content['email'])) {
             $user->setEmail($content['email']);
+        }
+
+        $validationErrors = $validator->validate($user);
+        if ($validationErrors->count() > 0) {
+            $errors = $this->getErrorsMessageFromViolations($validationErrors);
+
+            return $this->errors($errors, 'Invalid user parameters');
         }
 
         $entityManager->flush();
