@@ -35,7 +35,6 @@ linter-psalm:
             /code/Entity
             /code/Repository
             /code/Security
-            /code/Exception
             /code/Command
             /code/EventListener
             /code/EventSubscriber
