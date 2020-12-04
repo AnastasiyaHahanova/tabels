@@ -36,7 +36,8 @@ class TableValueController extends AbstractV1Controller
     {
         $result  = [];
         $tableId = (int)$table->getId();
-        if ((int)$params->get('user_id') !== $table->getId()) {
+        $userId  = (int)$params->get('user_id');
+        if ($userId !== $table->getUser()->getId()) {
             return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
         }
 

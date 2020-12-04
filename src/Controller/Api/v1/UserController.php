@@ -40,8 +40,10 @@ class UserController extends AbstractV1Controller
         if (!is_array($data)) {
             return $this->error('Invalid json', 'Validation error');
         }
-        ['username' => $name, 'password' => $password, 'email' => $email] = $data;
 
+        $name             = $data['username'] ?? '';
+        $password         = $data['password'] ?? '';
+        $email            = $data['email'] ?? '';
         $role             = $roleRepository->findOneByName(Role::USER);
         $user             = (new User)
             ->setUsername($name)
@@ -50,9 +52,7 @@ class UserController extends AbstractV1Controller
             ->setRoles([$role]);
         $validationErrors = $validator->validate($user);
         if ($validationErrors->count() > 0) {
-            $errors = $this->getErrorsMessageFromViolations($validationErrors);
-
-            return $this->errors($errors, 'Invalid user parameters');
+            return $this->error((string)$validationErrors, 'Invalid user parameters');
         }
 
         $entityManager->persist($user);
