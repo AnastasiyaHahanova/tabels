@@ -19,7 +19,7 @@ class AbstractV1Controller extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
-    public function errors(array $errors, $title = 'Errors'): JsonResponse
+    public function errors(array $errors, string $title = 'Errors'): JsonResponse
     {
         return new JsonResponse([
             'title'          => $title,
