@@ -30,15 +30,15 @@ linter-psalm:
         - container_id=$(docker create $CI_REGISTRY/$CI_PROJECT_PATH)
         - docker cp $container_id:/app/vendor "$(pwd)"/vendor
         - docker rm -v $container_id
-        - docker run --rm -v "$(pwd)":/code/ gitlab.artvisio.com:4567/cdnnow/psalm-linter:1.0
-            /src/Controller
-            /src/Entity
-            /src/Repository
-            /src/Security
-            /src/Exception
-            /src/Command
-            /src/EventListener
-            /src/EventSubscriber
+        - docker run --rm -v "$(pwd)/src":/code gitlab.artvisio.com:4567/cdnnow/psalm-linter:1.0
+            /code/Controller
+            /code/Entity
+            /code/Repository
+            /code/Security
+            /code/Exception
+            /code/Command
+            /code/EventListener
+            /code/EventSubscriber
     only:
         - master
 
