@@ -8,13 +8,13 @@ use Symfony\Component\Validator\Constraint;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-class UserConstraints extends Constraint
+class NameConstraints extends Constraint
 {
     public $message = 'Invalid user parameters';
 
     public function validatedBy()
     {
-        return UserConstraintsValidator::class;
+        return NameConstraintsValidator::class;
     }
 
 }

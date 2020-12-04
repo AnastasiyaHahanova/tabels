@@ -36,7 +36,7 @@ class TableValueController extends AbstractV1Controller
     {
         $result  = [];
         $tableId = (int)$table->getId();
-        if ($params->get('user_id') !== $table->getId()) {
+        if ((int)$params->get('user_id') !== $table->getId()) {
             return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
         }
 
@@ -77,16 +77,18 @@ class TableValueController extends AbstractV1Controller
      */
     public function sumRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
-        if ($params->get('user_id') !== $table->getId()) {
-            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
+        $userId = (int)$params->get('user_id');
+        if ( $userId !== $table->getUser()->getId()) {
+            return $this->getAccessDeniedError($table->getName(), $userId);
         }
 
         $rowIndex = (int)$params->get('row_index');
-        $sum      = $tableValueRepository->findSumByRow((int)$table->getId(), $rowIndex)['sum'] ?? 0;
+        $sum      = (float)$tableValueRepository->findSumByRow((int)$table->getId(), $rowIndex)['sum'];
 
         return $this->jsonData([
             'row' => $rowIndex,
-            'sum' => $sum]);
+            'sum' => $this->formatValue($sum)
+        ]);
     }
 
     /**
@@ -102,16 +104,17 @@ class TableValueController extends AbstractV1Controller
      */
     public function sumColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
-        if ($params->get('user_id') !== $table->getId()) {
-            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
+        $userId = (int)$params->get('user_id');
+        if ($userId !== $table->getUser()->getId()) {
+            return $this->getAccessDeniedError($table->getName(), $userId);
         }
 
         $columnIndex = (int)$params->get('column_index');
-        $sum         = $tableValueRepository->findByColumn((int)$table->getId(), $columnIndex)['sum'] ?? 0;
+        $sum         = (float)$tableValueRepository->findSumByColumn((int)$table->getId(), $columnIndex)['sum'];
 
         return $this->jsonData([
             'column' => $columnIndex,
-            'sum'    => $sum
+            'sum'    => $this->formatValue($sum)
         ]);
     }
 
@@ -119,6 +122,7 @@ class TableValueController extends AbstractV1Controller
      * @Rest\Get("/{id}/rows/percentile", name="tables.rows.percentile")
      * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
      * @Rest\QueryParam(name="percentile", nullable=false, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -128,19 +132,19 @@ class TableValueController extends AbstractV1Controller
      */
     public function percentileRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
-        if ($params->get('user_id') !== $table->getId()) {
+        if ((int)$params->get('user_id') !== $table->getUser()->getId()) {
             return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
         }
 
-        $rowIndex      = $params->get('row_index');
+        $rowIndex      = (int)$params->get('row_index');
         $tableId       = (int)$table->getId();
         $countOfValues = $tableValueRepository->findCountByRow($tableId, $rowIndex)['count'] ?? 0;
         $offset        = $countOfValues * 0.01 * $params->get('percentile');
-        $percentile    = $tableValueRepository->findPercentileByRow($tableId, $rowIndex, $offset)['percentile'] ?? 0;
+        $percentile    = (float)$tableValueRepository->findPercentileByRow($tableId, $rowIndex, $offset)['percentile'] ?? 0;
 
         return $this->jsonData([
             'row'        => $rowIndex,
-            'percentile' => $percentile
+            'percentile' => $this->formatValue($percentile)
         ]);
     }
 
@@ -148,6 +152,7 @@ class TableValueController extends AbstractV1Controller
      * @Rest\Get("/{id}/columns/percentile", name="tables.columns.percentile")
      * @Rest\QueryParam(name="column_index", nullable=false, requirements="^\d+$", strict=true,)
      * @Rest\QueryParam(name="percentile", nullable=false, requirements="^\d{1,2}$", strict=true)
+     * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -157,18 +162,19 @@ class TableValueController extends AbstractV1Controller
      */
     public function percentileColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
-        if ($params->get('user_id') !== $table->getId()) {
+        $userId = (int)$params->get('user_id');
+        if ($userId !== $table->getUser()->getId()) {
             return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
         }
 
-        $columnIndex   = $params->get('column_index');
+        $columnIndex   = (int)$params->get('column_index');
         $countOfValues = $tableValueRepository->findCountByColumn((int)$table->getId(), $columnIndex)['count'] ?? 0;
         $offset        = $params->get('percentile') * 0.01 * $countOfValues;
-        $percentile    = $tableValueRepository->findPercentileByColumn((int)$table->getId(), $columnIndex, $offset)['percentile'] ?? 0;
+        $percentile    = (float)$tableValueRepository->findPercentileByColumn((int)$table->getId(), $columnIndex, $offset)['percentile'];
 
         return $this->jsonData([
             'column'     => $columnIndex,
-            'percentile' => $percentile
+            'percentile' => $this->formatValue($percentile)
         ]);
 
     }
@@ -186,24 +192,23 @@ class TableValueController extends AbstractV1Controller
      */
     public function averageRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
-        if ($params->get('user_id') !== $table->getId()) {
+        if ((int)$params->get('user_id') !== $table->getUser()->getId()) {
             return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
         }
 
-        $rowIndex      = (int)$params->get('row_index');
-        $countOfValues = $tableValueRepository->findCountByRow((int)$table->getId(), $rowIndex)['count'] ?? 0;
-        $offset        = $params->get('percentile') * 0.01 * $countOfValues;
-        $percentile    = $tableValueRepository->findPercentileByColumn((int)$table->getId(), $rowIndex, $offset)['percentile'] ?? 0;
+        $rowIndex = (int)$params->get('row_index');
+        $avg      = (float)$tableValueRepository->findAvgByRow($table->getId(), $rowIndex)['avg'];
 
         return $this->jsonData([
             'row' => $rowIndex,
-            'avg' => $percentile
+            'avg' => $this->formatValue($avg)
         ]);
     }
 
     /**
      * @Rest\Get("/{id}/columns/avg", name="tables.columns.avg")
      * @Rest\QueryParam(name="column_index", nullable=false,requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="user_id", nullable=false,requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param TableValueRepository  $tableValueRepository
@@ -213,16 +218,17 @@ class TableValueController extends AbstractV1Controller
      */
     public function averageColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
     {
-        if ($params->get('user_id') !== $table->getId()) {
-            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
+        $userId = (int)$params->get('user_id');
+        if ($userId !== $table->getUser()->getId()) {
+            return $this->getAccessDeniedError($table->getName(), $userId);
         }
 
         $columnIndex = (int)$params->get('column_index');
-        $avg         = $tableValueRepository->findAvgByColumn((int)$table->getId(), $columnIndex)['avg'] ?? 0;
+        $avg         = (float)$tableValueRepository->findAvgByColumn((int)$table->getId(), $columnIndex)['avg'];
 
         return $this->jsonData([
             'column' => $columnIndex,
-            'avg'    => $avg
+            'avg'    => $this->formatValue($avg)
         ]);
     }
 
@@ -262,5 +268,10 @@ class TableValueController extends AbstractV1Controller
     public function getAccessDeniedError(string $tableName, string $userId): JsonResponse
     {
         return $this->error(sprintf('User with ID "%s" does not have access to the table %s', $userId, $tableName), 'Access denied');
+    }
+
+    public function formatValue(float $value) : float
+    {
+        return sprintf("%.2f",$value);
     }
 }

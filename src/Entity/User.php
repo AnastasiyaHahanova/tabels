@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Validator\UserConstraints as UsernameAssert;
+use App\Validator\NameConstraints as UsernameAssert;
 use App\Validator\PasswordConstraints as PasswordAssert;
 
 /**
@@ -34,10 +34,6 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     * @PasswordAssert(
-     *     message="The password {{ value }} has wrong format."
-     * )
      */
     private $password = '';
 
@@ -69,6 +65,18 @@ class User implements UserInterface
      * )
      */
     private $roles;
+
+    /**
+     * @PasswordAssert(
+     *     message="The password {{ value }} has wrong format."
+     * )
+     */
+    private $rawPassword;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $deleted = false;
 
     public const PASSWORD_LENGTH = 8;
 
@@ -155,5 +163,30 @@ class User implements UserInterface
 
     public function getSalt(): void
     {
+    }
+
+
+    public function getRawPassword(): string
+    {
+        return $this->rawPassword;
+    }
+
+    public function setRawPassword(string $rawPassword) : self
+    {
+        $this->rawPassword = $rawPassword;
+
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): User
+    {
+        $this->deleted = $deleted;
+
+        return $this;
     }
 }

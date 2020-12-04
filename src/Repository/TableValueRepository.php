@@ -147,7 +147,7 @@ class TableValueRepository extends ServiceEntityRepository
     public function findAvgByRow(int $tableId, int $rowIndex): array
     {
         return $this->createQueryBuilder('t')
-                    ->select('AVG(t.value) as sum')
+                    ->select('AVG(t.value) as avg')
                     ->where('t.table = :table_id')
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
@@ -170,7 +170,7 @@ class TableValueRepository extends ServiceEntityRepository
     public function findAvgByColumn(int $tableId, int $columnIndex): array
     {
         return $this->createQueryBuilder('t')
-                    ->select('AVG(t.value) as sum')
+                    ->select('AVG(t.value) as avg')
                     ->where('t.table = :table_id')
                     ->andWhere('t.column = :column_index')
                     ->setParameters(

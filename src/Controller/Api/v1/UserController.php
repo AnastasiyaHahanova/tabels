@@ -40,13 +40,13 @@ class UserController extends AbstractV1Controller
         if (!is_array($data)) {
             return $this->error('Invalid json', 'Validation error');
         }
-        ['name' => $name, 'password' => $password, 'email' => $email] = $data;
+        ['username' => $name, 'password' => $password, 'email' => $email] = $data;
 
         $role             = $roleRepository->findOneByName(Role::USER);
         $user             = (new User)
             ->setUsername($name)
             ->setEmail($email)
-            ->setPassword($password)
+            ->setRawPassword($password)
             ->setRoles([$role]);
         $validationErrors = $validator->validate($user);
         if ($validationErrors->count() > 0) {
@@ -93,6 +93,7 @@ class UserController extends AbstractV1Controller
         }
 
         if (isset($content['password'])) {
+            $user->setRawPassword($content['password']);
             $user->setPassword($encoder->encodePassword($user, $content['password']));
         }
 
@@ -102,9 +103,9 @@ class UserController extends AbstractV1Controller
 
         $validationErrors = $validator->validate($user);
         if ($validationErrors->count() > 0) {
-            $errors = $this->getErrorsMessageFromViolations($validationErrors);
+            $errors = (string)($validationErrors);
 
-            return $this->errors($errors, 'Invalid user parameters');
+            return $this->error($errors, 'Invalid user parameters');
         }
 
         $entityManager->flush();
@@ -119,7 +120,7 @@ class UserController extends AbstractV1Controller
      */
     public function deleteUser(EntityManagerInterface $entityManager, User $user): JsonResponse
     {
-        $entityManager->remove($user);
+        $user->setDeleted(true);
         $entityManager->flush();
 
         return $this->jsonData(['id' => $user->getId()]);

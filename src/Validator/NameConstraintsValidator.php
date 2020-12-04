@@ -6,12 +6,12 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-class UserConstraintsValidator extends ConstraintValidator
+class NameConstraintsValidator extends ConstraintValidator
 {
     public function validate($name, Constraint $constraint)
     {
-        if (!$constraint instanceof UserConstraints) {
-            throw new UnexpectedTypeException($constraint, UserConstraints::class);
+        if (!$constraint instanceof NameConstraints) {
+            throw new UnexpectedTypeException($constraint, NameConstraints::class);
         }
 
         if (null === $name || '' === $name) {
