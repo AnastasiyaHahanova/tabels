@@ -38,7 +38,7 @@ class TableValueController extends AbstractV1Controller
         $tableId = (int)$table->getId();
         $userId  = (int)$params->get('user_id');
         if ($userId !== $table->getUser()->getId()) {
-            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
+            return $this->getAccessDeniedError($table->getName(), $userId);
         }
 
         $rangeParameters = $this->extractRangeParameters(
@@ -198,7 +198,7 @@ class TableValueController extends AbstractV1Controller
         }
 
         $rowIndex = (int)$params->get('row_index');
-        $avg      = $tableValueRepository->findAvgByRow($table->getId(), $rowIndex)['avg'] ?? 0;
+        $avg      = $tableValueRepository->findAvgByRow((int)$table->getId(), $rowIndex)['avg'] ?? 0;
 
         return $this->jsonData([
             'row' => $rowIndex,
@@ -266,7 +266,7 @@ class TableValueController extends AbstractV1Controller
         return $rangeParameters;
     }
 
-    public function getAccessDeniedError(string $tableName, string $userId): JsonResponse
+    public function getAccessDeniedError(string $tableName, int $userId): JsonResponse
     {
         return $this->error(sprintf('User with ID %s does not have access to the table %s', $userId, $tableName), 'Access denied');
     }

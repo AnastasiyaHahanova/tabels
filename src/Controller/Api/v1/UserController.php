@@ -142,32 +142,31 @@ class UserController extends AbstractV1Controller
      */
     public function getUserList(Request $request, PaginatorInterface $paginator, UserRepository $userRepository): JsonResponse
     {
-        $page          = $request->request->get('page') ?? 1;
-        $itemsOnPage   = $request->request->get('items_on_page') ?? 20;
-        $allUsersQuery = $userRepository->createQueryBuilder('u');
-        $users         = $paginator->paginate($allUsersQuery, $request->query->getInt('page', $page), $itemsOnPage);
-        $result        = [
-            'total_count'   => $users->getTotalItemCount(),
+        $page           = $request->request->get('page') ?? 1;
+        $itemsOnPage    = $request->request->get('items_on_page') ?? 20;
+        $allUsersQuery  = $userRepository->createQueryBuilder('u');
+        $usersPaginator = $paginator->paginate($allUsersQuery, $request->query->getInt('page', $page), $itemsOnPage);
+        $users          = [];
+        foreach ($usersPaginator->getItems() as $user) {
+            $users[] = $this->formatUsersData($user);
+        }
+
+        $result = [
+            'total_count'   => $usersPaginator->getTotalItemCount(),
             'page'          => $page,
             'items_on_page' => $itemsOnPage,
-            'users'         => $this->formatUsersData($users->getItems())
+            'users'         => $users
         ];
 
         return $this->jsonData($result);
     }
 
-    public function formatUsersData(array $users): array
+    public function formatUsersData(User $user): array
     {
-        $result = [];
-        foreach ($users as $user) {
-            $userData = [
-                'username' => $user->getUsername(),
-                'email'    => $user->getEmail(),
-                'roles'    => $user->getRoles()
-            ];
-            $result[] = $userData;
-        }
-
-        return $result;
+        return [
+            'username' => $user->getUsername(),
+            'email'    => $user->getEmail(),
+            'roles'    => $user->getRoles()
+        ];
     }
 }
