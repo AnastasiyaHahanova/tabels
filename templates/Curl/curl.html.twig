@@ -1,30 +1,3 @@
-##Операции над значениями
-
-###Получить диапазон ячеек
-    curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/range_of_cells?start_range=1,1:10,15&horizontal_offset=1&vertical_offset=1&user_id=1&"
-
-###Вычислить сумму
-####По строке
-    curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/rows/sum?user_id=1&row_index=1"
-
-####По столбцу
-    curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/columns/sum?user_id=1&column_index=1"
-
-###Вычислить среднее
-####По строке
-    curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/rows/avg?user_id=1&row_index=1"
-
-####По столбцу
-    curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/columns/avg?user_id=1&column_index=1"
-
-###Вычислить перцентиль
-####По строке:
-    curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/rows/percentile?percentile=30&user_id=1&row_index=1"
-
-####По столбцу:
-    curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/columns/percentile?percentile=30&user_id=1&column_index=1"
-
-
 ##Работа с пользователями
 ####Получить список пользователей
     curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X GET  http://{{ host }}/api/v1/users/list
@@ -48,3 +21,28 @@
 ####Удалить таблицу
     curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X DELETE  http://{{ host }}/api/v1/tables/14
 
+##Операции над значениями
+
+###Получить диапазон ячеек
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/range_of_cells?start_range=1,1:10,15&horizontal_offset=1&vertical_offset=1&user_id=1&"
+
+###Вычислить сумму
+####По строке
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/rows/sum?user_id=1&row_index=1"
+
+####По столбцу
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/columns/sum?user_id=1&column_index=1"
+
+###Вычислить среднее
+####По строке
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/rows/avg?user_id=1&row_index=1"
+
+####По столбцу
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/columns/avg?user_id=1&column_index=1"
+
+###Вычислить перцентиль
+####По строке:
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/rows/percentile?percentile=30&user_id=1&row_index=1"
+
+####По столбцу:
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/tables/1/columns/percentile?percentile=30&user_id=1&column_index=1"

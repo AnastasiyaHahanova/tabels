@@ -9,12 +9,17 @@
 git clone git@gitlab.artvisio.com:anastasiya.h/tables.git
 ```
 
-2. Зайти в директорию, в которую был склонирован проект, и в консоли запустить следующую команду
+2. Зайти в директорию, в которую был склонирован проект, и скопировать .env в .env.local, указав свои переменные окружения
+```
+ cp .env .env.mylocal 
+```
+
+3. В консоли проекта запустить следующую команду
 ```
 sh bin/install.sh 
 ```
 
-3. Прочитать документацию для грамотного использования
+4. Прочитать документацию для грамотного использования
 ```
 https://gist.github.com/AnastasiyaHahanova/5b470e8c739fb844dd883e63e8e5982a
 ```
@@ -33,9 +38,9 @@ php bin/console user:create <YOUR_USERNAME>
 php bin/console change:user:pass
 ```
    
-3. Запустить команду указав USERNAME созданного пользователя и имя хоста, на котором развернут проект
+3. Запустить команду указав USERNAME созданного пользователя и ИМЯ ХОСТА, на котором развернут проект
 ```
-php bin/console generate:curl Nastya tables
+php bin/console generate:curl <USERNAME> <HOST>
 ```
 <br>
 
@@ -45,9 +50,9 @@ php bin/console generate:curl Nastya tables
 - Composer
 
 ### Запуск тестов
-``
+```
 sh bin/test.sh 
-``
+```
 
 ### Построен с помощью
 
