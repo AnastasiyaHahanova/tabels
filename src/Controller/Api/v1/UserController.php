@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -81,9 +82,8 @@ class UserController extends AbstractV1Controller
                                ValidatorInterface $validator,
                                UserPasswordEncoderInterface $encoder): JsonResponse
     {
-        if($user->isDeleted())
-        {
-            return $this->error(sprintf('No user found with ID "%s"',$user->getId()),'Invalid user parameters');
+        if ($user->isDeleted()) {
+            return $this->error(sprintf('No user found with ID %s', $user->getId()), 'Invalid user parameters');
         }
 
         $json    = $request->getContent();
@@ -134,7 +134,7 @@ class UserController extends AbstractV1Controller
      * @Rest\Get("/list", name="users.list")
      * @Rest\QueryParam(name="page", nullable=true, requirements="^\d+$", strict=true)
      * @Rest\QueryParam(name="items_on_page", nullable=true, requirements="^\d+$", strict=true)
-     *
+     * @Security("is_granted('ROLE_ADMIN')")
      * @param PaginatorInterface $paginator
      * @param UserRepository     $userRepository
      * @param Request            $request
@@ -150,9 +150,24 @@ class UserController extends AbstractV1Controller
             'total_count'   => $users->getTotalItemCount(),
             'page'          => $page,
             'items_on_page' => $itemsOnPage,
-            'users'         => $users->getItems()
+            'users'         => $this->formatUsersData($users->getItems())
         ];
 
         return $this->jsonData($result);
+    }
+
+    public function formatUsersData(array $users): array
+    {
+        $result = [];
+        foreach ($users as $user) {
+            $userData = [
+                'username' => $user->getUsername(),
+                'email'    => $user->getEmail(),
+                'roles'    => $user->getRoles()
+            ];
+            $result[] = $userData;
+        }
+
+        return $result;
     }
 }

@@ -268,11 +268,11 @@ class TableValueController extends AbstractV1Controller
 
     public function getAccessDeniedError(string $tableName, string $userId): JsonResponse
     {
-        return $this->error(sprintf('User with ID "%s" does not have access to the table %s', $userId, $tableName), 'Access denied');
+        return $this->error(sprintf('User with ID %s does not have access to the table %s', $userId, $tableName), 'Access denied');
     }
 
     public function formatValue(float $value): float
     {
-        return sprintf("%.2f", $value);
+        return sprintf('%.2f', $value);
     }
 }

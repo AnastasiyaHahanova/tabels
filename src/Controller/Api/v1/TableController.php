@@ -72,6 +72,10 @@ class TableController extends AbstractV1Controller
                                 UserRepository $userRepository,
                                 Request $request, Table $table): JsonResponse
     {
+        if ($table->isDeleted()) {
+            return $this->error(sprintf('No table found with ID %s', $table->getId()));
+        }
+
         $content = $request->getContent();
         $data    = json_decode($content, true);
         if (!is_array($data)) {
