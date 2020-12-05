@@ -26,11 +26,11 @@ class CreateUserCommandTest extends KernelTestCase
 
     public function testExecute(): void
     {
-        $username = sprintf('TestUser%s',rand(1,100));
+        $username = sprintf('TestUser%s', rand(1, 100));
         $this->runCommand('download:roles', []);
         $this->runCommand('user:create', [
             'username' => $username,
-            'email'    => sprintf('%s@mail.ru',$username)
+            'email'    => sprintf('%s@mail.ru', $username)
         ]);
 
         $user = $this->userRepository->finOneByUsername($username);

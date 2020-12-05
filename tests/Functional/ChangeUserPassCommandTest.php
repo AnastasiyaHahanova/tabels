@@ -24,7 +24,7 @@ class ChangeUserPassCommandTest extends KernelTestCase
         $this->application    = new Application(self::$kernel);
         $this->userRepository = self::$container->get(UserRepository::class);
         $this->encoder        = self::$container->get(UserPasswordEncoderInterface::class);
-        $this->userModel  = self::$container->get(UserModel::class);
+        $this->userModel      = self::$container->get(UserModel::class);
         $this->application->setAutoExit(false);
     }
 
@@ -34,10 +34,9 @@ class ChangeUserPassCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
-        $user = $this->userRepository->finOneByUsername(TestParameters::USERNAME);
+        $user     = $this->userRepository->finOneByUsername(TestParameters::USERNAME);
         $password = User::generatePassword();
-        if(empty($user))
-        {
+        if (empty($user)) {
             $user = (new User())
                 ->setUsername(TestParameters::USERNAME)
                 ->setEmail(TestParameters::USER_EMAIL)
@@ -51,6 +50,6 @@ class ChangeUserPassCommandTest extends KernelTestCase
         $commandTester->execute(['username' => TestParameters::USERNAME]);
 
         $this->assertEquals(0, $commandTester->getStatusCode());
-        $this->assertTrue($this->encoder->isPasswordValid($user,TestParameters::USER_PASSWORD));
+        $this->assertTrue($this->encoder->isPasswordValid($user, TestParameters::USER_PASSWORD));
     }
 }

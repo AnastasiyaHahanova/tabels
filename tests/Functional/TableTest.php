@@ -8,7 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 
-
 class TableTest extends KernelTestCase
 {
     private $entityManager;
@@ -18,9 +17,9 @@ class TableTest extends KernelTestCase
     public function setUp(): void
     {
         self::bootKernel();
-        $this->application               = new Application(self::$kernel);
-        $this->userRepository            = self::$container->get(UserRepository::class);
-        $this->entityManager             = self::$container->get(EntityManagerInterface::class);
+        $this->application    = new Application(self::$kernel);
+        $this->userRepository = self::$container->get(UserRepository::class);
+        $this->entityManager  = self::$container->get(EntityManagerInterface::class);
         $this->application->setAutoExit(false);
     }
 
@@ -36,7 +35,7 @@ class TableTest extends KernelTestCase
 
     }
 
-    private function runCommand(string $commandName,array $inputs): void
+    private function runCommand(string $commandName, array $inputs): void
     {
         $command       = $this->application->find($commandName);
         $commandTester = new CommandTester($command);
