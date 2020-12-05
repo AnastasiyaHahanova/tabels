@@ -28,15 +28,15 @@ class CellController extends AbstractV1Controller
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param SpreadsheetRepository  $spreadsheetValueRepository
-     * @param Spreadsheet                 $spreadsheet
+     * @param SpreadsheetRepository $spreadsheetValueRepository
+     * @param Spreadsheet           $spreadsheet
      * @return JsonResponse
      */
     public function getRangeOfCells(ParamFetcherInterface $params, SpreadsheetRepository $spreadsheetValueRepository, Spreadsheet $spreadsheet): Response
     {
-        $result  = [];
+        $result        = [];
         $spreadsheetId = (int)$spreadsheet->getId();
-        $userId  = (int)$params->get('user_id');
+        $userId        = (int)$params->get('user_id');
         if ($userId !== $spreadsheet->getUser()->getId()) {
             return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
@@ -71,8 +71,8 @@ class CellController extends AbstractV1Controller
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param SpreadsheetRepository  $spreadsheetValueRepository
-     * @param Spreadsheet                 $spreadsheet
+     * @param SpreadsheetRepository $spreadsheetValueRepository
+     * @param Spreadsheet           $spreadsheet
      *
      * @return JsonResponse
      */
@@ -98,8 +98,8 @@ class CellController extends AbstractV1Controller
      * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
-     * @param SpreadsheetRepository  $spreadsheetValueRepository
-     * @param Spreadsheet                 $spreadsheet
+     * @param SpreadsheetRepository $spreadsheetValueRepository
+     * @param Spreadsheet           $spreadsheet
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
@@ -127,8 +127,8 @@ class CellController extends AbstractV1Controller
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param SpreadsheetRepository  $spreadsheetValueRepository
-     * @param Spreadsheet                 $spreadsheet
+     * @param SpreadsheetRepository $spreadsheetValueRepository
+     * @param Spreadsheet           $spreadsheet
      * @return JsonResponse
      */
     public function percentileRow(ParamFetcherInterface $params, SpreadsheetRepository $spreadsheetValueRepository, Spreadsheet $spreadsheet): JsonResponse
@@ -138,7 +138,7 @@ class CellController extends AbstractV1Controller
         }
 
         $rowIndex      = (int)$params->get('row_index');
-        $spreadsheetId       = (int)$spreadsheet->getId();
+        $spreadsheetId = (int)$spreadsheet->getId();
         $countOfValues = $spreadsheetValueRepository->findCountByRow($spreadsheetId, $rowIndex)['count'] ?? 0;
         $offset        = $countOfValues * 0.01 * $params->get('percentile');
         $percentile    = $spreadsheetValueRepository->findPercentileByRow($spreadsheetId, $rowIndex, $offset)['percentile'] ?? 0;
@@ -157,8 +157,8 @@ class CellController extends AbstractV1Controller
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param SpreadsheetRepository  $spreadsheetValueRepository
-     * @param Spreadsheet                 $spreadsheet
+     * @param SpreadsheetRepository $spreadsheetValueRepository
+     * @param Spreadsheet           $spreadsheet
      * @return JsonResponse
      */
     public function percentileColumn(ParamFetcherInterface $params, SpreadsheetRepository $spreadsheetValueRepository, Spreadsheet $spreadsheet): JsonResponse
@@ -186,8 +186,8 @@ class CellController extends AbstractV1Controller
      * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
-     * @param SpreadsheetRepository  $spreadsheetValueRepository
-     * @param Spreadsheet                 $spreadsheet
+     * @param SpreadsheetRepository $spreadsheetValueRepository
+     * @param Spreadsheet           $spreadsheet
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
@@ -212,8 +212,8 @@ class CellController extends AbstractV1Controller
      * @Rest\QueryParam(name="user_id", nullable=false,requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
-     * @param SpreadsheetRepository  $spreadsheetValueRepository
-     * @param Spreadsheet                 $spreadsheet
+     * @param SpreadsheetRepository $spreadsheetValueRepository
+     * @param Spreadsheet           $spreadsheet
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */

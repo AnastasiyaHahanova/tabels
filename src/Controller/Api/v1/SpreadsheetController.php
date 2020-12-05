@@ -26,9 +26,9 @@ class SpreadsheetController extends AbstractV1Controller
      * @return JsonResponse
      */
     public function createSpreadsheet(ValidatorInterface $validator,
-                                EntityManagerInterface $entityManager,
-                                UserRepository $userRepository,
-                                Request $request): JsonResponse
+                                      EntityManagerInterface $entityManager,
+                                      UserRepository $userRepository,
+                                      Request $request): JsonResponse
     {
         $content = $request->getContent();
         $data    = json_decode($content, true);
@@ -67,9 +67,9 @@ class SpreadsheetController extends AbstractV1Controller
      * @return JsonResponse
      */
     public function updateSpreadsheet(ValidatorInterface $validator,
-                                EntityManagerInterface $entityManager,
-                                UserRepository $userRepository,
-                                Request $request, Spreadsheet $spreadsheet): JsonResponse
+                                      EntityManagerInterface $entityManager,
+                                      UserRepository $userRepository,
+                                      Request $request, Spreadsheet $spreadsheet): JsonResponse
     {
         if ($spreadsheet->isDeleted()) {
             return $this->error(sprintf('No table found with ID %s', $spreadsheet->getId()));
@@ -112,7 +112,7 @@ class SpreadsheetController extends AbstractV1Controller
      * @Rest\Delete("/{id}", name="tables.delete")
      * @Entity("table", options={"mapping": {"id": "id"}})
      * @param EntityManagerInterface $entityManager
-     * @param Spreadsheet                 $spreadsheet
+     * @param Spreadsheet            $spreadsheet
      * @return JsonResponse
      */
     public function deleteSpreadsheet(EntityManagerInterface $entityManager, Spreadsheet $spreadsheet): JsonResponse

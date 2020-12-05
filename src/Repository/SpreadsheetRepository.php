@@ -21,6 +21,6 @@ class SpreadsheetRepository extends ServiceEntityRepository
 
     public function findOneByName(string $name): ?Spreadsheet
     {
-        return $this->findOneBy(['name'=>$name]);
+        return $this->findOneBy(['name' => $name]);
     }
 }

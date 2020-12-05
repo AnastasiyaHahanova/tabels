@@ -49,10 +49,10 @@ class UserController extends AbstractV1Controller
             ->setRawPassword($password);
         $validationErrors = $validator->validate($user);
         if ($validationErrors->count() > 0) {
-            return $this->error( (string)$validationErrors, 'Invalid user parameters');
+            return $this->error((string)$validationErrors, 'Invalid user parameters');
         }
 
-        $createdUser       = $userModel->createUser($user);
+        $createdUser = $userModel->createUser($user);
 
         return $this->jsonData(['id' => $createdUser->getId()]);
     }

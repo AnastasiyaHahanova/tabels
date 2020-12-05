@@ -60,8 +60,7 @@ class GenerateTestDataCommand extends Command
         }
 
         $spreadsheet = $this->spreadsheetRepository->findOneByName(TestParameters::TABLE_NAME);
-        if (empty($spreadsheet))
-        {
+        if (empty($spreadsheet)) {
             $spreadsheet = (new Spreadsheet())
                 ->setName(TestParameters::TABLE_NAME)
                 ->setUser($user);

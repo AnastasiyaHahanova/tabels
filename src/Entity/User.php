@@ -191,13 +191,13 @@ class User implements UserInterface
         return $this;
     }
 
-    public static function generatePassword()
+    public static function generatePassword(): string
     {
 
-        return substr(self::NACL,0,self::PASSWORD_LENGTH);
+        return substr(self::NACL, 0, self::PASSWORD_LENGTH);
     }
 
-    public static function generateToken(string $username, string $password) : string
+    public static function generateToken(string $username, string $password): string
     {
         return hash('ripemd320', sprintf('%s-%s-%s', $username, $password, microtime()));
     }

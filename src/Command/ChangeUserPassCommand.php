@@ -67,7 +67,7 @@ class ChangeUserPassCommand extends Command
         }
 
         $user->setPassword($this->encoder->encodePassword($user, $password));
-        $token = User::generateToken($user->getUsername(),$password);
+        $token = User::generateToken($user->getUsername(), $password);
         $user->setToken($token);
         $this->entityManager->flush();
 
