@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\Role;
 use App\Entity\User;
+use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -18,9 +19,11 @@ class CreateUserCommand extends Command
 
     private $userRepository;
     private $entityManager;
+    private $roleRepository;
 
-    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager)
+    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager,RoleRepository $roleRepository)
     {
+        $this->roleRepository = $roleRepository;
         $this->userRepository = $userRepository;
         $this->entityManager  = $entityManager;
         parent::__construct();
@@ -40,7 +43,7 @@ class CreateUserCommand extends Command
         $username = $input->getArgument('username');
         $email    = $input->getArgument('email') ?? '';
 
-        if ($username) {
+        if (empty($username)) {
             $io->error('Empty username');
 
             return Command::FAILURE;
@@ -54,10 +57,12 @@ class CreateUserCommand extends Command
             return Command::FAILURE;
         }
 
+        $role = $this->roleRepository->findOneByName(Role::ADMIN);
+
         $user = (new User)
             ->setUsername($username)
             ->setEmail($email)
-            ->setRoles([Role::ADMIN]);
+            ->setRoles([$role]);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         $io->success('User created successfully!');
