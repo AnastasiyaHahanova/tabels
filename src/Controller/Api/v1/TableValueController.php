@@ -84,7 +84,7 @@ class TableValueController extends AbstractV1Controller
         }
 
         $rowIndex = (int)$params->get('row_index');
-        $sum      = (float)$tableValueRepository->findSumByRow((int)$table->getId(), $rowIndex)['sum'];
+        $sum      = $tableValueRepository->findSumByRow((int)$table->getId(), $rowIndex)['sum'] ?? 0;
 
         return $this->jsonData([
             'row' => $rowIndex,
@@ -111,7 +111,7 @@ class TableValueController extends AbstractV1Controller
         }
 
         $columnIndex = (int)$params->get('column_index');
-        $sum         = (float)$tableValueRepository->findSumByColumn((int)$table->getId(), $columnIndex)['sum'];
+        $sum         = $tableValueRepository->findSumByColumn((int)$table->getId(), $columnIndex)['sum'] ?? 0;
 
         return $this->jsonData([
             'column' => $columnIndex,
@@ -141,7 +141,7 @@ class TableValueController extends AbstractV1Controller
         $tableId       = (int)$table->getId();
         $countOfValues = $tableValueRepository->findCountByRow($tableId, $rowIndex)['count'] ?? 0;
         $offset        = $countOfValues * 0.01 * $params->get('percentile');
-        $percentile    = (float)$tableValueRepository->findPercentileByRow($tableId, $rowIndex, $offset)['percentile'] ?? 0;
+        $percentile    = $tableValueRepository->findPercentileByRow($tableId, $rowIndex, $offset)['percentile'] ?? 0;
 
         return $this->jsonData([
             'row'        => $rowIndex,
@@ -171,7 +171,7 @@ class TableValueController extends AbstractV1Controller
         $columnIndex   = (int)$params->get('column_index');
         $countOfValues = $tableValueRepository->findCountByColumn((int)$table->getId(), $columnIndex)['count'] ?? 0;
         $offset        = $params->get('percentile') * 0.01 * $countOfValues;
-        $percentile    = (float)$tableValueRepository->findPercentileByColumn((int)$table->getId(), $columnIndex, $offset)['percentile'];
+        $percentile    = $tableValueRepository->findPercentileByColumn((int)$table->getId(), $columnIndex, $offset)['percentile'] ?? 0;
 
         return $this->jsonData([
             'column'     => $columnIndex,
@@ -198,7 +198,7 @@ class TableValueController extends AbstractV1Controller
         }
 
         $rowIndex = (int)$params->get('row_index');
-        $avg      = (float)$tableValueRepository->findAvgByRow($table->getId(), $rowIndex)['avg'];
+        $avg      = $tableValueRepository->findAvgByRow($table->getId(), $rowIndex)['avg'] ?? 0;
 
         return $this->jsonData([
             'row' => $rowIndex,
@@ -225,7 +225,7 @@ class TableValueController extends AbstractV1Controller
         }
 
         $columnIndex = (int)$params->get('column_index');
-        $avg         = (float)$tableValueRepository->findAvgByColumn((int)$table->getId(), $columnIndex)['avg'];
+        $avg         = $tableValueRepository->findAvgByColumn((int)$table->getId(), $columnIndex)['avg'] ?? 0;
 
         return $this->jsonData([
             'column' => $columnIndex,

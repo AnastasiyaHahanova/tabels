@@ -53,7 +53,7 @@ class GenerateCurlCommand extends Command
             'username' => $user->getUsername()
         ]);
 
-        file_put_contents(sprintf('%s/%s',$this->projectDir,self::FILENAME),$content);
+        file_put_contents(sprintf('%s/%s', $this->projectDir, self::FILENAME), $content);
 
         $io->success('Password changed successfully!');
 

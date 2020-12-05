@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Role
 {
-    const ADMIN = 'ROLE_ADMIN';
-    const USER  = 'ROLE_USER';
+    const ADMIN       = 'ROLE_ADMIN';
+    const USER        = 'ROLE_USER';
     const EXIST_ROLES = [
         self::ADMIN,
         self::USER
