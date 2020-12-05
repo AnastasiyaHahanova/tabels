@@ -12,10 +12,13 @@ class Role
 {
     const ADMIN       = 'ROLE_ADMIN';
     const USER        = 'ROLE_USER';
+    const VIEWER      = 'ROLE_VIEWER';
     const EXIST_ROLES = [
         self::ADMIN,
-        self::USER
+        self::USER,
+        self::VIEWER
     ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

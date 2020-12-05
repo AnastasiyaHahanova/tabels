@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Role;
+use App\Repository\RoleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -15,30 +16,55 @@ class DownloadRolesCommand extends Command
 {
     protected static $defaultName = 'download:roles';
     private          $entityManager;
+    private          $roleRepository;
 
     protected function configure()
     {
     }
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, RoleRepository $roleRepository)
     {
-        $this->entityManager = $entityManager;
+        $this->entityManager  = $entityManager;
+        $this->roleRepository = $roleRepository;
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-        foreach (Role::EXIST_ROLES as $roleName) {
-            $role = (new Role())
-                ->setName($roleName);
-            $this->entityManager->persist($role);
+        $io         = new SymfonyStyle($input, $output);
+        $rows       = $this->roleRepository->getRoleNames();
+        $existRoles = array_map(function ($r) {
+            return $r['name'];
+        }, $rows);
+
+        if (empty($existRoles)) {
+            $this->downLoadAll();
+        } else {
+            foreach (Role::EXIST_ROLES as $role) {
+                if (in_array($role, $existRoles)) {
+                    continue;
+                }
+
+                $this->createRole($role);
+            }
         }
 
         $this->entityManager->flush();
-
         $io->success('Roles successfully uploaded!');
 
         return Command::SUCCESS;
+    }
+
+    public function downLoadAll(): void
+    {
+        foreach (Role::EXIST_ROLES as $roleName) {
+            $this->createRole($roleName);
+        }
+    }
+
+    public function createRole(string $name): void
+    {
+        $role = (new Role())->setName($name);
+        $this->entityManager->persist($role);
     }
 }

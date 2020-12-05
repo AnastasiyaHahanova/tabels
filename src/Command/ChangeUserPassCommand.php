@@ -67,7 +67,7 @@ class ChangeUserPassCommand extends Command
         }
 
         $user->setPassword($this->encoder->encodePassword($user, $password));
-        $token = hash('ripemd320', sprintf('%s-%s-%s', $user->getUsername(), $password, microtime()));
+        $token = User::generateToken($user->getUsername(),$password);
         $user->setToken($token);
         $this->entityManager->flush();
 

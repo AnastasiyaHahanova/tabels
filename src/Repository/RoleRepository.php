@@ -23,4 +23,12 @@ class RoleRepository extends ServiceEntityRepository
     {
         return $this->findOneBy(['name' => $name]);
     }
+
+    public function getRoleNames():array
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r.name')
+            ->getQuery()
+            ->getResult();
+    }
 }

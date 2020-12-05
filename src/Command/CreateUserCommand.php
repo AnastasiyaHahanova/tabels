@@ -2,30 +2,32 @@
 
 namespace App\Command;
 
-use App\Entity\Role;
 use App\Entity\User;
-use App\Repository\RoleRepository;
+use App\Model\Entity\User\UserModel;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CreateUserCommand extends Command
 {
     protected static $defaultName = 'user:create';
 
     private $userRepository;
-    private $entityManager;
-    private $roleRepository;
+    private $userModel;
+    private $validator;
 
-    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager,RoleRepository $roleRepository)
+    public function __construct(
+        UserModel $userModel,
+        UserRepository $userRepository,
+        ValidatorInterface $validator)
     {
-        $this->roleRepository = $roleRepository;
         $this->userRepository = $userRepository;
-        $this->entityManager  = $entityManager;
+        $this->userModel      = $userModel;
+        $this->validator      = $validator;
         parent::__construct();
     }
 
@@ -40,16 +42,10 @@ class CreateUserCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io       = new SymfonyStyle($input, $output);
-        $username = $input->getArgument('username');
+        $username = $input->getArgument('username') ?? '';
         $email    = $input->getArgument('email') ?? '';
         $password = User::generatePassword();
-        if (empty($username)) {
-            $io->error('Empty username');
-
-            return Command::FAILURE;
-        }
-
-        $user = $this->userRepository->finOneByUsername($username);
+        $user     = $this->userRepository->finOneByUsername($username);
 
         if ($user) {
             $io->error(sprintf('User with username %s already exists', $username));
@@ -57,17 +53,20 @@ class CreateUserCommand extends Command
             return Command::FAILURE;
         }
 
-        $token = hash('ripemd320', sprintf('%s-%s-%s', $user->getUsername(), $password, microtime()));
-        $role = $this->roleRepository->findOneByName(Role::ADMIN);
-
         $user = (new User)
             ->setUsername($username)
             ->setEmail($email)
-            ->setToken($token)
-            ->setRoles([$role]);
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-        $io->success('User created successfully!');
+            ->setRawPassword($password);
+
+        $validationErrors = $this->validator->validate($user);
+        if ($validationErrors->count() > 0) {
+            $io->error((string)$validationErrors);
+
+            return Command::FAILURE;
+        }
+
+        $createdUser = $this->userModel->createUser($user);
+        $io->success(sprintf('User created successfully! ID : %s', $createdUser->getId()));
 
         return Command::SUCCESS;
     }

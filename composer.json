@@ -27,6 +27,8 @@
         "vimeo/psalm": "^4.2"
     },
     "require-dev": {
+        "symfony/browser-kit": "5.1.*",
+        "symfony/css-selector": "5.1.*",
         "symfony/maker-bundle": "^1.23",
         "symfony/phpunit-bridge": "^5.2",
         "symfony/web-server-bundle": "^4.4.2"

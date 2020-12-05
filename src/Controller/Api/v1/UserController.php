@@ -2,9 +2,8 @@
 
 namespace App\Controller\Api\v1;
 
-use App\Entity\Role;
 use App\Entity\User;
-use App\Repository\RoleRepository;
+use App\Model\Entity\User\UserModel;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -29,11 +28,10 @@ class UserController extends AbstractV1Controller
      * @param UserPasswordEncoderInterface $encoder
      * @return JsonResponse
      */
-    public function createUser(RoleRepository $roleRepository,
+    public function createUser(UserModel $userModel,
                                ValidatorInterface $validator,
                                EntityManagerInterface $entityManager,
-                               Request $request,
-                               UserPasswordEncoderInterface $encoder): JsonResponse
+                               Request $request): JsonResponse
     {
         $content = $request->getContent();
         $data    = json_decode($content, true);
@@ -41,30 +39,22 @@ class UserController extends AbstractV1Controller
             return $this->error('Invalid json', 'Validation error');
         }
 
-        $name             = $data['username'] ?? '';
-        $password         = $data['password'] ?? '';
-        $email            = $data['email'] ?? '';
-        $role             = $roleRepository->findOneByName(Role::USER);
+        $name     = $data['username'] ?? '';
+        $password = $data['password'] ?? '';
+        $email    = $data['email'] ?? '';
+
         $user             = (new User)
             ->setUsername($name)
             ->setEmail($email)
-            ->setRawPassword($password)
-            ->setRoles([$role]);
+            ->setRawPassword($password);
         $validationErrors = $validator->validate($user);
         if ($validationErrors->count() > 0) {
-            return $this->error((string)$validationErrors, 'Invalid user parameters');
+            return $this->error( (string)$validationErrors, 'Invalid user parameters');
         }
 
-        $entityManager->persist($user);
-        $entityManager->flush();
+        $createdUser       = $userModel->createUser($user);
 
-        $user->setPassword($encoder->encodePassword($user, $password));
-        $token = hash('ripemd320', sprintf('%s-%s-%s', $user->getUsername(), $password, microtime()));
-        $user->setToken($token);
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        return $this->jsonData(['id' => $user->getId()]);
+        return $this->jsonData(['id' => $createdUser->getId()]);
     }
 
     /**
