@@ -11,7 +11,7 @@ git clone git@gitlab.artvisio.com:anastasiya.h/tables.git
 
 2. Зайти в директорию, в которую был склонирован проект, и скопировать .env в .env.local, указав свои переменные окружения
 ```
- cp .env .env.mylocal 
+ cp .env .env.local 
 ```
 
 3. В консоли проекта запустить следующую команду
