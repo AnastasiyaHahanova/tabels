@@ -50,7 +50,6 @@ class DownloadRolesCommand extends Command
         }
 
         $this->entityManager->flush();
-        $io->success('Roles successfully uploaded!');
 
         return Command::SUCCESS;
     }

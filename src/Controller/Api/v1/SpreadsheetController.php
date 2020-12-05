@@ -2,19 +2,18 @@
 
 namespace App\Controller\Api\v1;
 
-use App\Entity\Table;
+use App\Entity\Spreadsheet;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class TableController extends AbstractV1Controller
+class SpreadsheetController extends AbstractV1Controller
     /**
      * @Route("api/v1/tables")
      */
@@ -26,7 +25,7 @@ class TableController extends AbstractV1Controller
      * @param Request                $request
      * @return JsonResponse
      */
-    public function createTable(ValidatorInterface $validator,
+    public function createSpreadsheet(ValidatorInterface $validator,
                                 EntityManagerInterface $entityManager,
                                 UserRepository $userRepository,
                                 Request $request): JsonResponse
@@ -41,21 +40,21 @@ class TableController extends AbstractV1Controller
             return $this->error(sprintf('No user with id %f exist', $userId));
         }
 
-        $table = (new Table())
+        $spreadsheet = (new Spreadsheet())
             ->setName($name)
             ->setColumns($columns)
             ->setUser($user);
 
-        $validationErrors = $validator->validate($table);
+        $validationErrors = $validator->validate($spreadsheet);
 
         if ($validationErrors->count() > 0) {
             return $this->error((string)$validationErrors);
         }
 
-        $entityManager->persist($table);
+        $entityManager->persist($spreadsheet);
         $entityManager->flush();
 
-        return $this->jsonData(['id' => $table->getId()]);
+        return $this->jsonData(['id' => $spreadsheet->getId()]);
     }
 
     /**
@@ -64,16 +63,16 @@ class TableController extends AbstractV1Controller
      * @param EntityManagerInterface $entityManager
      * @param UserRepository         $userRepository
      * @param Request                $request
-     * @param Table                  $table
+     * @param Spreadsheet            $spreadsheet
      * @return JsonResponse
      */
-    public function updateTable(ValidatorInterface $validator,
+    public function updateSpreadsheet(ValidatorInterface $validator,
                                 EntityManagerInterface $entityManager,
                                 UserRepository $userRepository,
-                                Request $request, Table $table): JsonResponse
+                                Request $request, Spreadsheet $spreadsheet): JsonResponse
     {
-        if ($table->isDeleted()) {
-            return $this->error(sprintf('No table found with ID %s', $table->getId()));
+        if ($spreadsheet->isDeleted()) {
+            return $this->error(sprintf('No table found with ID %s', $spreadsheet->getId()));
         }
 
         $content = $request->getContent();
@@ -88,39 +87,39 @@ class TableController extends AbstractV1Controller
                 return new JsonResponse(sprintf('No user with id %s exist', $data['user_id']));
             }
 
-            $table->setUser($user);
+            $spreadsheet->setUser($user);
         }
 
         if (isset($data['columns'])) {
-            $table->setColumns($data['columns']);
+            $spreadsheet->setColumns($data['columns']);
         }
 
         if (isset($data['name'])) {
-            $table->setName($data['name']);
+            $spreadsheet->setName($data['name']);
         }
 
-        $validationErrors = $validator->validate($table);
+        $validationErrors = $validator->validate($spreadsheet);
         if ($validationErrors->count() > 0) {
             return $this->error((string)$validationErrors);
         }
 
         $entityManager->flush();
 
-        return $this->jsonData(['id' => $table->getId()]);
+        return $this->jsonData(['id' => $spreadsheet->getId()]);
     }
 
     /**
      * @Rest\Delete("/{id}", name="tables.delete")
      * @Entity("table", options={"mapping": {"id": "id"}})
      * @param EntityManagerInterface $entityManager
-     * @param Table                  $table
+     * @param Spreadsheet                 $spreadsheet
      * @return JsonResponse
      */
-    public function deleteTable(EntityManagerInterface $entityManager, Table $table): JsonResponse
+    public function deleteSpreadsheet(EntityManagerInterface $entityManager, Spreadsheet $spreadsheet): JsonResponse
     {
-        $table->setDeleted(true);
+        $spreadsheet->setDeleted(true);
         $entityManager->flush();
 
-        return $this->jsonData(['id' => $table->getId()]);
+        return $this->jsonData(['id' => $spreadsheet->getId()]);
     }
 }

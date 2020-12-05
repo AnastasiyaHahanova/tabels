@@ -2,8 +2,8 @@
 
 namespace App\Controller\Api\v1;
 
-use App\Entity\Table;
-use App\Repository\TableValueRepository;
+use App\Entity\Spreadsheet;
+use App\Repository\SpreadsheetRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,7 +14,7 @@ use FOS\RestBundle\Request\ParamFetcherInterface;
 /**
  * @Route("/api/v1/tables")
  */
-class TableValueController extends AbstractV1Controller
+class CellController extends AbstractV1Controller
 {
 
     /**
@@ -28,17 +28,17 @@ class TableValueController extends AbstractV1Controller
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param TableValueRepository  $tableValueRepository
-     * @param Table                 $table
+     * @param SpreadsheetRepository  $spreadsheetValueRepository
+     * @param Spreadsheet                 $spreadsheet
      * @return JsonResponse
      */
-    public function getRangeOfCells(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): Response
+    public function getRangeOfCells(ParamFetcherInterface $params, SpreadsheetRepository $spreadsheetValueRepository, Spreadsheet $spreadsheet): Response
     {
         $result  = [];
-        $tableId = (int)$table->getId();
+        $spreadsheetId = (int)$spreadsheet->getId();
         $userId  = (int)$params->get('user_id');
-        if ($userId !== $table->getUser()->getId()) {
-            return $this->getAccessDeniedError($table->getName(), $userId);
+        if ($userId !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
 
         $rangeParameters = $this->extractRangeParameters(
@@ -55,7 +55,7 @@ class TableValueController extends AbstractV1Controller
         $leftTopColumn     = $rangeParameters['left_top_column'] ?? 0;
         $rightBottomRow    = $rangeParameters['right_bottom_row'] ?? 0;
         $rightBottomColumn = $rangeParameters['right_bottom_column'] ?? 0;
-        $rows              = $tableValueRepository->findByRange($tableId, $leftTopRow, $leftTopColumn, $rightBottomRow, $rightBottomColumn);
+        $rows              = $spreadsheetValueRepository->findByRange($spreadsheetId, $leftTopRow, $leftTopColumn, $rightBottomRow, $rightBottomColumn);
         foreach ($rows as $row) {
             $key          = sprintf('%s,%s', $row['row'], $row['column']);
             $result[$key] = $row['value'];
@@ -71,20 +71,20 @@ class TableValueController extends AbstractV1Controller
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param TableValueRepository  $tableValueRepository
-     * @param Table                 $table
+     * @param SpreadsheetRepository  $spreadsheetValueRepository
+     * @param Spreadsheet                 $spreadsheet
      *
      * @return JsonResponse
      */
-    public function sumRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
+    public function sumRow(ParamFetcherInterface $params, SpreadsheetRepository $spreadsheetValueRepository, Spreadsheet $spreadsheet): JsonResponse
     {
         $userId = (int)$params->get('user_id');
-        if ($userId !== $table->getUser()->getId()) {
-            return $this->getAccessDeniedError($table->getName(), $userId);
+        if ($userId !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
 
         $rowIndex = (int)$params->get('row_index');
-        $sum      = $tableValueRepository->findSumByRow((int)$table->getId(), $rowIndex)['sum'] ?? 0;
+        $sum      = $spreadsheetValueRepository->findSumByRow((int)$spreadsheet->getId(), $rowIndex)['sum'] ?? 0;
 
         return $this->jsonData([
             'row' => $rowIndex,
@@ -98,20 +98,20 @@ class TableValueController extends AbstractV1Controller
      * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
-     * @param TableValueRepository  $tableValueRepository
-     * @param Table                 $table
+     * @param SpreadsheetRepository  $spreadsheetValueRepository
+     * @param Spreadsheet                 $spreadsheet
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
-    public function sumColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
+    public function sumColumn(ParamFetcherInterface $params, SpreadsheetRepository $spreadsheetValueRepository, Spreadsheet $spreadsheet): JsonResponse
     {
         $userId = (int)$params->get('user_id');
-        if ($userId !== $table->getUser()->getId()) {
-            return $this->getAccessDeniedError($table->getName(), $userId);
+        if ($userId !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
 
         $columnIndex = (int)$params->get('column_index');
-        $sum         = $tableValueRepository->findSumByColumn((int)$table->getId(), $columnIndex)['sum'] ?? 0;
+        $sum         = $spreadsheetValueRepository->findSumByColumn((int)$spreadsheet->getId(), $columnIndex)['sum'] ?? 0;
 
         return $this->jsonData([
             'column' => $columnIndex,
@@ -127,21 +127,21 @@ class TableValueController extends AbstractV1Controller
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param TableValueRepository  $tableValueRepository
-     * @param Table                 $table
+     * @param SpreadsheetRepository  $spreadsheetValueRepository
+     * @param Spreadsheet                 $spreadsheet
      * @return JsonResponse
      */
-    public function percentileRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
+    public function percentileRow(ParamFetcherInterface $params, SpreadsheetRepository $spreadsheetValueRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        if ((int)$params->get('user_id') !== $table->getUser()->getId()) {
-            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
+        if ((int)$params->get('user_id') !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $params->get('user_id'));
         }
 
         $rowIndex      = (int)$params->get('row_index');
-        $tableId       = (int)$table->getId();
-        $countOfValues = $tableValueRepository->findCountByRow($tableId, $rowIndex)['count'] ?? 0;
+        $spreadsheetId       = (int)$spreadsheet->getId();
+        $countOfValues = $spreadsheetValueRepository->findCountByRow($spreadsheetId, $rowIndex)['count'] ?? 0;
         $offset        = $countOfValues * 0.01 * $params->get('percentile');
-        $percentile    = $tableValueRepository->findPercentileByRow($tableId, $rowIndex, $offset)['percentile'] ?? 0;
+        $percentile    = $spreadsheetValueRepository->findPercentileByRow($spreadsheetId, $rowIndex, $offset)['percentile'] ?? 0;
 
         return $this->jsonData([
             'row'        => $rowIndex,
@@ -157,21 +157,21 @@ class TableValueController extends AbstractV1Controller
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param TableValueRepository  $tableValueRepository
-     * @param Table                 $table
+     * @param SpreadsheetRepository  $spreadsheetValueRepository
+     * @param Spreadsheet                 $spreadsheet
      * @return JsonResponse
      */
-    public function percentileColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
+    public function percentileColumn(ParamFetcherInterface $params, SpreadsheetRepository $spreadsheetValueRepository, Spreadsheet $spreadsheet): JsonResponse
     {
         $userId = (int)$params->get('user_id');
-        if ($userId !== $table->getUser()->getId()) {
-            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
+        if ($userId !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $params->get('user_id'));
         }
 
         $columnIndex   = (int)$params->get('column_index');
-        $countOfValues = $tableValueRepository->findCountByColumn((int)$table->getId(), $columnIndex)['count'] ?? 0;
+        $countOfValues = $spreadsheetValueRepository->findCountByColumn((int)$spreadsheet->getId(), $columnIndex)['count'] ?? 0;
         $offset        = $params->get('percentile') * 0.01 * $countOfValues;
-        $percentile    = $tableValueRepository->findPercentileByColumn((int)$table->getId(), $columnIndex, $offset)['percentile'] ?? 0;
+        $percentile    = $spreadsheetValueRepository->findPercentileByColumn((int)$spreadsheet->getId(), $columnIndex, $offset)['percentile'] ?? 0;
 
         return $this->jsonData([
             'column'     => $columnIndex,
@@ -186,19 +186,19 @@ class TableValueController extends AbstractV1Controller
      * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
-     * @param TableValueRepository  $tableValueRepository
-     * @param Table                 $table
+     * @param SpreadsheetRepository  $spreadsheetValueRepository
+     * @param Spreadsheet                 $spreadsheet
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
-    public function averageRow(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
+    public function averageRow(ParamFetcherInterface $params, SpreadsheetRepository $spreadsheetValueRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        if ((int)$params->get('user_id') !== $table->getUser()->getId()) {
-            return $this->getAccessDeniedError($table->getName(), $params->get('user_id'));
+        if ((int)$params->get('user_id') !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $params->get('user_id'));
         }
 
         $rowIndex = (int)$params->get('row_index');
-        $avg      = $tableValueRepository->findAvgByRow((int)$table->getId(), $rowIndex)['avg'] ?? 0;
+        $avg      = $spreadsheetValueRepository->findAvgByRow((int)$spreadsheet->getId(), $rowIndex)['avg'] ?? 0;
 
         return $this->jsonData([
             'row' => $rowIndex,
@@ -212,20 +212,20 @@ class TableValueController extends AbstractV1Controller
      * @Rest\QueryParam(name="user_id", nullable=false,requirements="^\d+$", strict=true)
      * @Entity("table", options={"mapping": {"id": "id"}})
      *
-     * @param TableValueRepository  $tableValueRepository
-     * @param Table                 $table
+     * @param SpreadsheetRepository  $spreadsheetValueRepository
+     * @param Spreadsheet                 $spreadsheet
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
-    public function averageColumn(ParamFetcherInterface $params, TableValueRepository $tableValueRepository, Table $table): JsonResponse
+    public function averageColumn(ParamFetcherInterface $params, SpreadsheetRepository $spreadsheetValueRepository, Spreadsheet $spreadsheet): JsonResponse
     {
         $userId = (int)$params->get('user_id');
-        if ($userId !== $table->getUser()->getId()) {
-            return $this->getAccessDeniedError($table->getName(), $userId);
+        if ($userId !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
 
         $columnIndex = (int)$params->get('column_index');
-        $avg         = $tableValueRepository->findAvgByColumn((int)$table->getId(), $columnIndex)['avg'] ?? 0;
+        $avg         = $spreadsheetValueRepository->findAvgByColumn((int)$spreadsheet->getId(), $columnIndex)['avg'] ?? 0;
 
         return $this->jsonData([
             'column' => $columnIndex,
@@ -266,9 +266,9 @@ class TableValueController extends AbstractV1Controller
         return $rangeParameters;
     }
 
-    public function getAccessDeniedError(string $tableName, int $userId): JsonResponse
+    public function getAccessDeniedError(string $spreadsheetName, int $userId): JsonResponse
     {
-        return $this->error(sprintf('User with ID %s does not have access to the table %s', $userId, $tableName), 'Access denied');
+        return $this->error(sprintf('User with ID %s does not have access to the table %s', $userId, $spreadsheetName), 'Access denied');
     }
 
     public function formatValue(float $value): string

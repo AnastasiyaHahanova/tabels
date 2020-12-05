@@ -2,10 +2,7 @@
 
 namespace App\Tests\Functional;
 
-use App\Entity\Table;
-use App\Entity\User;
 use App\Repository\UserRepository;
-use App\Tests\TestParameters;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -30,26 +27,6 @@ class TableTest extends KernelTestCase
     public function loadTestData()
     {
         $this->assertTrue(true);
-
-//        $password = User::generatePassword();
-//        $username = 'TestUser';
-//        $token = User::generateToken($username,$password);
-//        $user = (new User())
-//            ->setUsername($username)
-//            ->setEmail('test@mail.ru')
-//            ->setToken($token);
-//        ;
-//        $this->entityManager->persist($user);
-//        $this->entityManager->flush();
-
-//        $user->
-//        $table = (new Table())
-//            ->setName('Test')
-//            ->setUser()
-//            ->setColumns(['']);
-//
-//        $this->entityManager->persist($table);
-//        $this->entityManager->flush();
 
     }
 

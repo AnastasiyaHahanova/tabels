@@ -2,16 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\TableRepository;
+use App\Repository\SpreadsheetRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\NameConstraints as TableNameAssert;
 
 /**
- * @ORM\Entity(repositoryClass=TableRepository::class)
- * @ORM\Table(name="`tables`")
+ * @ORM\Entity(repositoryClass=SpreadsheetRepository::class)
+ * @ORM\Table(name="`spreadsheet`")
  */
-class Table
+class Spreadsheet
 {
     /**
      * @ORM\Id

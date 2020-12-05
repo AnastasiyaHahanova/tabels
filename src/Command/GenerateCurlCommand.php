@@ -55,8 +55,6 @@ class GenerateCurlCommand extends Command
 
         file_put_contents(sprintf('%s/%s', $this->projectDir, self::FILENAME), $content);
 
-        $io->success('Password changed successfully!');
-
         return Command::SUCCESS;
     }
 }
