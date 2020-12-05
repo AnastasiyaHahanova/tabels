@@ -1,0 +1,57 @@
+twig:
+    exception_controller:  twig.controller.exception:showAction
+
+    form_themes:
+
+        # По умолчанию:
+        - form_div_layout.html.twig
+
+        # Bootstrap:
+        - bootstrap_3_layout.html.twig
+        - bootstrap_3_horizontal_layout.html.twig
+        - bootstrap_4_layout.html.twig
+        - bootstrap_4_horizontal_layout.html.twig
+
+        # Основание
+        - foundation_5_layout.html.twig
+
+        # Пример:
+        - form.html.twig
+
+    globals:
+
+        # Примеры:
+        foo:                 '@bar'
+        pi:                  3.14
+
+        # Опции примеров, но наиболее простой в использовании показан выше
+        some_variable_name:
+            # id сервиса, который должен быть значением
+            id:                   ~
+            # устновить сервис или оставить пустым
+            type:                 ~
+            value:                ~
+    autoescape:                ~
+
+    # См. http://twig.sensiolabs.org/doc/recipes.html#using-the-template-name-to-set-the-default-escaping-strategy
+    autoescape_service:        ~ # Example: 'my_service'
+    autoescape_service_method: ~ # use in combination with autoescape_service option
+    base_template_class:       ~ # Example: Twig_Template
+    cache:                     '%kernel.cache_dir%/twig'
+    charset:                   '%kernel.charset%'
+    debug:                     '%kernel.debug%'
+    strict_variables:          ~
+    auto_reload:               ~
+    optimizations:             ~
+    default_path: '%kernel.project_dir%/templates'
+    paths:
+        '%kernel.project_dir%/vendor/acme/foo-bar/templates': foo_bar
+
+    date:
+        format: d.m.Y, H:i:s
+        interval_format: '%%d days'
+        timezone: Asia/Tokyo
+    number_format:
+        decimals: 2
+        decimal_point: ','
+        thousands_separator: '.'
