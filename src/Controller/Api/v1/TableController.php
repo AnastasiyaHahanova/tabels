@@ -16,29 +16,33 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class TableController extends AbstractV1Controller
     /**
-     * @Route("/tables")
+     * @Route("api/v1/tables")
      */
 {
     /**
-     * @Rest\Post("/create", name="tables.create")
+     * @Rest\Post("/", name="tables.create")
      * @param EntityManagerInterface $entityManager
      * @param UserRepository         $userRepository
      * @param Request                $request
      * @return JsonResponse
      */
-    public function createTable(ValidatorInterface $validator, EntityManagerInterface $entityManager, UserRepository $userRepository, Request $request): JsonResponse
+    public function createTable(ValidatorInterface $validator,
+                                EntityManagerInterface $entityManager,
+                                UserRepository $userRepository,
+                                Request $request): JsonResponse
     {
         $content = $request->getContent();
         $data    = json_decode($content, true);
         $userId  = (int)$data['user_id'];
         $columns = $data['columns'] ?? [];
+        $name    = $data['name'] ?? '';
         $user    = $userRepository->findOneById($userId);
         if (empty($user)) {
-            return $this->error(sprintf('No user with id %s exist', $userId));
+            return $this->error(sprintf('No user with id %f exist', $userId));
         }
 
         $table = (new Table())
-            ->setName($content['name'])
+            ->setName($name)
             ->setColumns($columns)
             ->setUser($user);
 
@@ -74,25 +78,25 @@ class TableController extends AbstractV1Controller
             return new JsonResponse('Invalid json', Response::HTTP_BAD_REQUEST);
         }
 
-        if (isset($content['user_id'])) {
-            $user = $userRepository->findOneById((int)$content['user_id']);
+        if (isset($data['user_id'])) {
+            $user = $userRepository->findOneById((int)$data['user_id']);
             if (empty($user)) {
-                return new JsonResponse(sprintf('No user with id %s exist', $content['user_id']));
+                return new JsonResponse(sprintf('No user with id %s exist', $data['user_id']));
             }
 
             $table->setUser($user);
         }
 
-        if (isset($content['columns'])) {
-            $table->setColumns($content['columns']);
+        if (isset($data['columns'])) {
+            $table->setColumns($data['columns']);
         }
 
-        if (isset($content['name'])) {
-            $table->setName($content['name']);
+        if (isset($data['name'])) {
+            $table->setName($data['name']);
         }
 
         $validationErrors = $validator->validate($table);
-        if ($validationErrors) {
+        if ($validationErrors->count() > 0) {
             return $this->error((string)$validationErrors);
         }
 

@@ -31,10 +31,6 @@ class Table
 
     /**
      * @ORM\Column(type="array", nullable=true)
-     *  * @Assert\Type(
-     *     type="array",
-     *     message="The value {{ value }} is not a valid {{ type }}."
-     * )
      */
     private $columns = [];
 

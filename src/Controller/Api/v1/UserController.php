@@ -12,7 +12,6 @@ use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -82,10 +81,15 @@ class UserController extends AbstractV1Controller
                                ValidatorInterface $validator,
                                UserPasswordEncoderInterface $encoder): JsonResponse
     {
+        if($user->isDeleted())
+        {
+            return $this->error(sprintf('No user found with ID "%s"',$user->getId()),'Invalid user parameters');
+        }
+
         $json    = $request->getContent();
         $content = json_decode($json, true);
         if (!is_array($content)) {
-            return new JsonResponse('Invalid json', Response::HTTP_BAD_REQUEST);
+            return $this->error('Invalid json', 'Invalid user parameters');
         }
 
         if (isset($content['username'])) {
