@@ -42,7 +42,7 @@ class CreateUserCommand extends Command
         $io       = new SymfonyStyle($input, $output);
         $username = $input->getArgument('username');
         $email    = $input->getArgument('email') ?? '';
-
+        $password = User::generatePassword();
         if (empty($username)) {
             $io->error('Empty username');
 
@@ -57,11 +57,13 @@ class CreateUserCommand extends Command
             return Command::FAILURE;
         }
 
+        $token = hash('ripemd320', sprintf('%s-%s-%s', $user->getUsername(), $password, microtime()));
         $role = $this->roleRepository->findOneByName(Role::ADMIN);
 
         $user = (new User)
             ->setUsername($username)
             ->setEmail($email)
+            ->setToken($token)
             ->setRoles([$role]);
         $this->entityManager->persist($user);
         $this->entityManager->flush();

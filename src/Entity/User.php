@@ -80,6 +80,8 @@ class User implements UserInterface
 
     public const PASSWORD_LENGTH = 8;
 
+    public const NACL = 'iwRdkWAofFbHaPqMTZlSDLnsOtUcYQerhGKEICJyjNBVvgmpXzuxabc';
+
     public function getId(): ?int
     {
         return $this->id;
@@ -187,5 +189,11 @@ class User implements UserInterface
         $this->deleted = $deleted;
 
         return $this;
+    }
+
+    public static function generatePassword()
+    {
+
+        return substr(self::NACL,0,self::PASSWORD_LENGTH);
     }
 }
