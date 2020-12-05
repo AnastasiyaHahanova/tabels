@@ -271,7 +271,7 @@ class TableValueController extends AbstractV1Controller
         return $this->error(sprintf('User with ID %s does not have access to the table %s', $userId, $tableName), 'Access denied');
     }
 
-    public function formatValue(float $value): float
+    public function formatValue(float $value): string
     {
         return sprintf('%.2f', $value);
     }
