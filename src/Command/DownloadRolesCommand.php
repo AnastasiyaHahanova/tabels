@@ -31,7 +31,6 @@ class DownloadRolesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io         = new SymfonyStyle($input, $output);
         $rows       = $this->roleRepository->getRoleNames();
         $existRoles = array_map(function ($r) {
             return $r['name'];

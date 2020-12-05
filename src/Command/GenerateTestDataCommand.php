@@ -49,7 +49,6 @@ class GenerateTestDataCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io   = new SymfonyStyle($input, $output);
         $user = $this->userRepository->finOneByUsername(TestParameters::USERNAME);
         if (empty($user)) {
             $user = (new User())
