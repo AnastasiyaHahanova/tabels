@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -124,7 +124,7 @@ class UserController extends AbstractV1Controller
      * @Rest\Get("/list", name="users.list")
      * @Rest\QueryParam(name="page", nullable=true, requirements="^\d+$", strict=true)
      * @Rest\QueryParam(name="items_on_page", nullable=true, requirements="^\d+$", strict=true)
-     * @Security("is_granted('ROLE_ADMIN')")
+     * @IsGranted("ROLE_ADMIN")
      * @param PaginatorInterface $paginator
      * @param UserRepository     $userRepository
      * @param Request            $request
