@@ -37,7 +37,7 @@ class SecurityController extends AbstractV1Controller
         }
 
         if ($encoder->isPasswordValid($user, $password)) {
-            return $this->jsonData([
+            return $this->json([
                 'token' => $user->getToken()
             ]);
         }

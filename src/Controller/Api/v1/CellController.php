@@ -2,14 +2,20 @@
 
 namespace App\Controller\Api\v1;
 
+use App\Entity\Cell;
 use App\Entity\Spreadsheet;
 use App\Repository\CellRepository;
+use App\Repository\SpreadsheetRepository;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Request\ParamFetcherInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("/api/v1/spreadsheets")
@@ -61,7 +67,7 @@ class CellController extends AbstractV1Controller
             $result[$key] = $row['value'];
         }
 
-        return $this->jsonData($result);
+        return $this->json($result);
     }
 
     /**
@@ -86,7 +92,7 @@ class CellController extends AbstractV1Controller
         $rowIndex = (int)$params->get('row_index');
         $sum      = $cellRepository->findSumByRow((int)$spreadsheet->getId(), $rowIndex)['sum'] ?? 0;
 
-        return $this->jsonData([
+        return $this->json([
             'row' => $rowIndex,
             'sum' => $this->formatValue($sum)
         ]);
@@ -113,7 +119,7 @@ class CellController extends AbstractV1Controller
         $columnIndex = (int)$params->get('column_index');
         $sum         = $cellRepository->findSumByColumn((int)$spreadsheet->getId(), $columnIndex)['sum'] ?? 0;
 
-        return $this->jsonData([
+        return $this->json([
             'column' => $columnIndex,
             'sum'    => $this->formatValue($sum)
         ]);
@@ -143,7 +149,7 @@ class CellController extends AbstractV1Controller
         $offset        = $countOfValues * 0.01 * $params->get('percentile');
         $percentile    = $cellRepository->findPercentileByRow($spreadsheetId, $rowIndex, $offset)['percentile'] ?? 0;
 
-        return $this->jsonData([
+        return $this->json([
             'row'        => $rowIndex,
             'percentile' => $this->formatValue($percentile)
         ]);
@@ -173,7 +179,7 @@ class CellController extends AbstractV1Controller
         $offset        = $params->get('percentile') * 0.01 * $countOfValues;
         $percentile    = $cellRepository->findPercentileByColumn((int)$spreadsheet->getId(), $columnIndex, $offset)['percentile'] ?? 0;
 
-        return $this->jsonData([
+        return $this->json([
             'column'     => $columnIndex,
             'percentile' => $this->formatValue($percentile)
         ]);
@@ -200,7 +206,7 @@ class CellController extends AbstractV1Controller
         $rowIndex = (int)$params->get('row_index');
         $avg      = $cellRepository->findAvgByRow((int)$spreadsheet->getId(), $rowIndex)['avg'] ?? 0;
 
-        return $this->jsonData([
+        return $this->json([
             'row' => $rowIndex,
             'avg' => $this->formatValue($avg)
         ]);
@@ -227,7 +233,7 @@ class CellController extends AbstractV1Controller
         $columnIndex = (int)$params->get('column_index');
         $avg         = $cellRepository->findAvgByColumn((int)$spreadsheet->getId(), $columnIndex)['avg'] ?? 0;
 
-        return $this->jsonData([
+        return $this->json([
             'column' => $columnIndex,
             'avg'    => $this->formatValue($avg)
         ]);
@@ -264,6 +270,75 @@ class CellController extends AbstractV1Controller
         }
 
         return $rangeParameters;
+    }
+
+    /**
+     * @Rest\Post ("/cell", name="spreadsheets.columns.avg")*
+     * @param EntityManagerInterface $entityManager
+     * @param SpreadsheetRepository  $spreadsheetRepository
+     * @param Request                $request
+     * @return JsonResponse
+     */
+    public function setCellValue(Request $request,
+                                 EntityManagerInterface $entityManager,
+                                 SpreadsheetRepository $spreadsheetRepository,
+                                 UserRepository $userRepository,
+                                 CellRepository $cellRepository,
+                                 ValidatorInterface $validator): JsonResponse
+    {
+        $content = $request->getContent();
+        $data    = json_decode($content, true);
+        if (!is_array($data)) {
+            return $this->error('Invalid json');
+        }
+
+        $spreadsheetId = $data['spreadsheet'] ?? 0;
+        $spreadsheet   = $spreadsheetRepository->findOneById($spreadsheetId);
+
+        if (empty($spreadsheet)) {
+            return $this->error(sprintf('No spreadsheet found with ID %s', $spreadsheetId), 'Wrong parameters');
+        }
+
+        $userId = $data['user_id'] ?? 0;
+        $user   = $userRepository->findOneById($userId);
+
+        if (empty($user)) {
+            return $this->error(sprintf('No user found with ID %s', $userId), 'Wrong parameters');
+        }
+
+        if ($spreadsheet->getUser()->getId() !== $user->getId()) {
+            return $this->error($this->getAccessDeniedError($spreadsheet->getName(), $userId));
+        }
+
+        $row    = (int)$data['row'] ?? 0;
+        $column = (int)$data['column'] ?? 0;
+        $value  = $data['value'] ?? 0;
+
+        if (empty($row) || empty($column)) {
+            return $this->error('Row and column must not be empty', 'Wrong cell parameters');
+        }
+
+        $cell = $cellRepository->findOneByRowAndColumn($row, $column);
+
+        if ($cell) {
+            $cell->setValue($value);
+        } else {
+            $cell = (new Cell())
+                ->setRow($row)
+                ->setColumn($column)
+                ->setSpreadsheet($spreadsheet)
+                ->setValue($value);
+        }
+
+        $validationErrors = $validator->validate($cell);
+        if ($validationErrors->count() > 0) {
+            return $this->error((string)$validationErrors, 'Wrong cell parameters');
+        }
+
+        $entityManager->persist($cell);
+        $entityManager->flush();
+
+        return $this->json('Value successfully saved!');
     }
 
     public function getAccessDeniedError(string $spreadsheetName, int $userId): JsonResponse

@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\Role;
 use App\Entity\User;
 use App\Model\Entity\User\UserModel;
 use App\Repository\UserRepository;
@@ -65,7 +66,7 @@ class CreateUserCommand extends Command
             return Command::FAILURE;
         }
 
-        $createdUser = $this->userModel->createUser($user);
+        $createdUser = $this->userModel->createUser($user, Role::ADMIN);
         $io->success(sprintf('User created successfully! ID : %s', $createdUser->getId()));
 
         return Command::SUCCESS;

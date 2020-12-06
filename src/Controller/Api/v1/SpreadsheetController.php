@@ -54,7 +54,7 @@ class SpreadsheetController extends AbstractV1Controller
         $entityManager->persist($spreadsheet);
         $entityManager->flush();
 
-        return $this->jsonData(['id' => $spreadsheet->getId()]);
+        return $this->json(['id' => $spreadsheet->getId()]);
     }
 
     /**
@@ -105,7 +105,7 @@ class SpreadsheetController extends AbstractV1Controller
 
         $entityManager->flush();
 
-        return $this->jsonData(['id' => $spreadsheet->getId()]);
+        return $this->json(['id' => $spreadsheet->getId()]);
     }
 
     /**
@@ -120,6 +120,6 @@ class SpreadsheetController extends AbstractV1Controller
         $spreadsheet->setDeleted(true);
         $entityManager->flush();
 
-        return $this->jsonData(['id' => $spreadsheet->getId()]);
+        return $this->json(['id' => $spreadsheet->getId()]);
     }
 }

@@ -49,6 +49,7 @@ class GenerateCurlCommand extends Command
 
         $content = $this->twig->render('Curl/curl.html.twig', [
             'host'     => $host,
+            'user_id'  => $user->getId(),
             'token'    => $user->getToken(),
             'username' => $user->getUsername()
         ]);

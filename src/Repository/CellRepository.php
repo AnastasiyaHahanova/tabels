@@ -34,7 +34,7 @@ class CellRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
                     ->select('t.row,t.column,t.value')
-                    ->where('t.table = :spreadsheet')
+                    ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.row >= :left_top_row')
                     ->andWhere('t.row <= :right_bottom_row')
                     ->andWhere('t.column >= :left_top_column')
@@ -60,7 +60,7 @@ class CellRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
                     ->select('t.row,t.column,t.value')
-                    ->where('t.table = :spreadsheet')
+                    ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
@@ -80,7 +80,7 @@ class CellRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
                     ->select('t.row,t.column,t.value')
-                    ->where('t.table = :spreadsheet')
+                    ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.column = :column_index')
                     ->setParameters(
                         [
@@ -102,7 +102,7 @@ class CellRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
                     ->select('SUM(t.value) as sum')
-                    ->where('t.table = :spreadsheet')
+                    ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
@@ -125,7 +125,7 @@ class CellRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
                     ->select('SUM(t.value) as sum')
-                    ->where('t.table = :spreadsheet')
+                    ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.column = :column_index')
                     ->setParameters(
                         [
@@ -148,7 +148,7 @@ class CellRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
                     ->select('AVG(t.value) as avg')
-                    ->where('t.table = :spreadsheet')
+                    ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
@@ -171,7 +171,7 @@ class CellRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
                     ->select('AVG(t.value) as avg')
-                    ->where('t.table = :spreadsheet')
+                    ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.column = :column_index')
                     ->setParameters(
                         [
@@ -194,7 +194,7 @@ class CellRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
                     ->select('COUNT(t.value) as count')
-                    ->where('t.table = :spreadsheet')
+                    ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
@@ -217,7 +217,7 @@ class CellRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
                     ->select('COUNT(t.value) as count')
-                    ->where('t.table = :spreadsheet')
+                    ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.column = :column_index')
                     ->setParameters(
                         [
@@ -241,7 +241,7 @@ class CellRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
                     ->select('(t.value) as percentile')
-                    ->where('t.table = :spreadsheet')
+                    ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.column = :column_index')
                     ->setParameters(
                         [
@@ -268,7 +268,7 @@ class CellRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
                     ->select('(t.value) as percentile')
-                    ->where('t.table = :spreadsheet')
+                    ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
@@ -294,7 +294,7 @@ class CellRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
                     ->select('COUNT(t.value) as percentile')
-                    ->where('t.table = :spreadsheet')
+                    ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
@@ -304,5 +304,10 @@ class CellRepository extends ServiceEntityRepository
                     )
                     ->getQuery()
                     ->getSingleResult();
+    }
+
+    public function findOneByRowAndColumn(int $rowIndex, int $columnIndex): ?Cell
+    {
+        return $this->findOneBy(['row' => $rowIndex, 'column' => $columnIndex]);
     }
 }

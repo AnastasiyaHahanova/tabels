@@ -54,7 +54,7 @@ class UserController extends AbstractV1Controller
 
         $createdUser = $userModel->createUser($user);
 
-        return $this->jsonData(['id' => $createdUser->getId()]);
+        return $this->json(['id' => $createdUser->getId()]);
     }
 
     /**
@@ -104,7 +104,7 @@ class UserController extends AbstractV1Controller
 
         $entityManager->flush();
 
-        return $this->jsonData(['id' => $user->getId()]);
+        return $this->json(['id' => $user->getId()]);
     }
 
     /**
@@ -117,7 +117,7 @@ class UserController extends AbstractV1Controller
         $user->setDeleted(true);
         $entityManager->flush();
 
-        return $this->jsonData(['id' => $user->getId()]);
+        return $this->json(['id' => $user->getId()]);
     }
 
     /**
@@ -148,7 +148,7 @@ class UserController extends AbstractV1Controller
             'users'         => $users
         ];
 
-        return $this->jsonData($result);
+        return $this->json($result);
     }
 
     public function formatUsersData(User $user): array
