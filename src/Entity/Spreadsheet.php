@@ -2,16 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\TableRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\SpreadsheetRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\NameConstraints as TableNameAssert;
 
 /**
- * @ORM\Entity(repositoryClass=TableRepository::class)
- * @ORM\Table(name="`tables`")
+ * @ORM\Entity(repositoryClass=SpreadsheetRepository::class)
+ * @ORM\Table(name="`spreadsheet`")
  */
-class Table
+class Spreadsheet
 {
     /**
      * @ORM\Id
@@ -22,6 +22,10 @@ class Table
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @TableNameAssert(
+     *     message="The name of the table {{ value }} has wrong format."
+     * )
      */
     private $name = '';
 
@@ -70,7 +74,7 @@ class Table
         return $this;
     }
 
-    public function getDeleted(): bool
+    public function isDeleted(): bool
     {
         return $this->deleted;
     }

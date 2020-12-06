@@ -3,63 +3,108 @@
 namespace App\Controller\Api\v1;
 
 use App\Entity\User;
+use App\Model\Entity\User\UserModel;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @Route("/users")
+ * @Route("api/v1/users")
  */
-class UserController extends AbstractController
+class UserController extends AbstractV1Controller
 {
     /**
-     * @Rest\Post("/create", name="users.create")
+     * @Rest\Post("/", name="users.create")
+     * @param EntityManagerInterface       $entityManager
+     * @param Request                      $request
+     * @param UserPasswordEncoderInterface $encoder
      * @return JsonResponse
      */
-    public function createUser(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    public function createUser(UserModel $userModel,
+                               ValidatorInterface $validator,
+                               EntityManagerInterface $entityManager,
+                               Request $request): JsonResponse
     {
-        $content  = $request->request->all();
-        $username = $content['name'];
-        $password = $content['password'];
-        $email    = $content['email'];
-        $user     = (new User)
-            ->setUsername($username)
-            ->setPassword($password)
-            ->setEmail($email);
-        $entityManager->persist($user);
-        $entityManager->flush();
+        $content = $request->getContent();
+        $data    = json_decode($content, true);
+        if (!is_array($data)) {
+            return $this->error('Invalid json', 'Validation error');
+        }
 
-        return new JsonResponse(['id' => $user->getId()], Response::HTTP_OK);
+        $name     = $data['username'] ?? '';
+        $password = $data['password'] ?? '';
+        $email    = $data['email'] ?? '';
+
+        $user             = (new User)
+            ->setUsername($name)
+            ->setEmail($email)
+            ->setRawPassword($password);
+        $validationErrors = $validator->validate($user);
+        if ($validationErrors->count() > 0) {
+            return $this->error((string)$validationErrors, 'Invalid user parameters');
+        }
+
+        $createdUser = $userModel->createUser($user);
+
+        return $this->jsonData(['id' => $createdUser->getId()]);
     }
 
     /**
      * @Rest\Put("/{id}", name="users.update")
      * @Entity("user", options={"mapping": {"id": "id"}})
+     * @param EntityManagerInterface       $entityManager
+     * @param Request                      $request
+     * @param UserPasswordEncoderInterface $encoder
+     * @param User                         $user
      * @return JsonResponse
      */
-    public function updateUser(EntityManagerInterface $entityManager, Request $request, User $user): JsonResponse
+    public function updateUser(User $user,
+                               Request $request,
+                               EntityManagerInterface $entityManager,
+                               ValidatorInterface $validator,
+                               UserPasswordEncoderInterface $encoder): JsonResponse
     {
-        $content = $request->request->all();
+        if ($user->isDeleted()) {
+            return $this->error(sprintf('No user found with ID %s', $user->getId()), 'Invalid user parameters');
+        }
+
+        $json    = $request->getContent();
+        $content = json_decode($json, true);
+        if (!is_array($content)) {
+            return $this->error('Invalid json', 'Invalid user parameters');
+        }
+
         if (isset($content['username'])) {
             $user->setUsername($content['username']);
         }
 
         if (isset($content['password'])) {
-            $user->setPassword($content['password']);
+            $user->setRawPassword($content['password']);
+            $user->setPassword($encoder->encodePassword($user, $content['password']));
         }
 
         if (isset($content['email'])) {
             $user->setEmail($content['email']);
         }
 
+        $validationErrors = $validator->validate($user);
+        if ($validationErrors->count() > 0) {
+            $errors = (string)($validationErrors);
+
+            return $this->error($errors, 'Invalid user parameters');
+        }
+
         $entityManager->flush();
 
-        return new JsonResponse(['id' => $user->getId()], Response::HTTP_OK);
+        return $this->jsonData(['id' => $user->getId()]);
     }
 
     /**
@@ -69,9 +114,49 @@ class UserController extends AbstractController
      */
     public function deleteUser(EntityManagerInterface $entityManager, User $user): JsonResponse
     {
-        $entityManager->remove($user);
+        $user->setDeleted(true);
         $entityManager->flush();
 
-        return new JsonResponse(['id' => $user->getId()], Response::HTTP_OK);
+        return $this->jsonData(['id' => $user->getId()]);
+    }
+
+    /**
+     * @Rest\Get("/list", name="users.list")
+     * @Rest\QueryParam(name="page", nullable=true, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="items_on_page", nullable=true, requirements="^\d+$", strict=true)
+     * @Security("is_granted('ROLE_ADMIN')")
+     * @param PaginatorInterface $paginator
+     * @param UserRepository     $userRepository
+     * @param Request            $request
+     * @return JsonResponse
+     */
+    public function getUserList(Request $request, PaginatorInterface $paginator, UserRepository $userRepository): JsonResponse
+    {
+        $page           = $request->request->get('page') ?? 1;
+        $itemsOnPage    = $request->request->get('items_on_page') ?? 20;
+        $allUsersQuery  = $userRepository->createQueryBuilder('u');
+        $usersPaginator = $paginator->paginate($allUsersQuery, $request->query->getInt('page', $page), $itemsOnPage);
+        $users          = [];
+        foreach ($usersPaginator->getItems() as $user) {
+            $users[] = $this->formatUsersData($user);
+        }
+
+        $result = [
+            'total_count'   => $usersPaginator->getTotalItemCount(),
+            'page'          => $page,
+            'items_on_page' => $itemsOnPage,
+            'users'         => $users
+        ];
+
+        return $this->jsonData($result);
+    }
+
+    public function formatUsersData(User $user): array
+    {
+        return [
+            'username' => $user->getUsername(),
+            'email'    => $user->getEmail(),
+            'roles'    => $user->getRoles()
+        ];
     }
 }

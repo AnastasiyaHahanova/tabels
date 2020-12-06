@@ -1,0 +1,62 @@
+stages:
+    - build
+    - linter/codestyle
+
+build:
+    stage: build
+    script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - docker build --build-arg SSH_PRIVATE_KEY="$(cat $HOME/.ssh/id_rsa)" -t $CI_REGISTRY/$CI_PROJECT_PATH .
+        - docker push $CI_REGISTRY/$CI_PROJECT_PATH
+    only:
+        - master
+
+linter-noverify:
+    stage: linter/codestyle
+    script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - docker pull gitlab.artvisio.com:4567/cdnnow/noverify-linter
+        - docker run --rm -v "$(pwd)/src":/code gitlab.artvisio.com:4567/cdnnow/noverify-linter
+            -exclude-checks accessLevel,caseContinue,deprecated,misspellComment,phpdoc,phpdocLint,phpdocType,redundantCast,undefined,complexity,callStatic
+            /code/
+    only:
+        - master
+
+linter-psalm:
+    stage: linter/codestyle
+    script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - docker pull gitlab.artvisio.com:4567/cdnnow/psalm-linter:1.0
+        - container_id=$(docker create $CI_REGISTRY/$CI_PROJECT_PATH)
+        - docker cp $container_id:/app/vendor "$(pwd)"/vendor
+        - docker rm -v $container_id
+        - docker run --rm -v "$(pwd)":/code gitlab.artvisio.com:4567/cdnnow/psalm-linter:1.0
+            /code/src/Controller
+            /code/src/Entity
+            /code/src/Security
+            /code/src/Command
+            /code/src/EventListener
+            /code/src/EventSubscriber
+    only:
+        - master
+
+codestyle-phpstorm:
+    stage: linter/codestyle
+    script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - docker pull gitlab.artvisio.com:4567/cdnnow/phpstorm-formatter
+        - docker run --rm -v "$(pwd)/src":/home/developer/workplace gitlab.artvisio.com:4567/cdnnow/phpstorm-formatter:1.0
+    only:
+        - master
+
+codestyle-cs-fixer:
+    stage: linter/codestyle
+    script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - docker pull gitlab.artvisio.com:4567/cdnnow/php-cs-fixer:1.0
+        - docker run --rm -v "$(pwd)/src":/code gitlab.artvisio.com:4567/cdnnow/php-cs-fixer:1.0
+            /code/Controller
+            /code/Entity
+            /code/Repository
+    only:
+        - master

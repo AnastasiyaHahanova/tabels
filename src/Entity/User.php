@@ -3,8 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\NameConstraints as UsernameAssert;
+use App\Validator\PasswordConstraints as PasswordAssert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -20,6 +25,10 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @UsernameAssert(
+     *     message="The username {{ value }} has wrong format."
+     * )
      */
     private $username = '';
 
@@ -30,13 +39,48 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Email(
+     *     message = "The email {{ value }} is not a valid email."
+     * )
      */
     private $email = '';
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Type(
+     *     type="string",
+     *     message="The value {{ value }} is not a valid {{ type }}."
+     * )
      */
     private $token = '';
+
+    /**
+     * @var Collection|Role[]
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\Role")
+     * @ORM\JoinTable(
+     *     name="user_role",
+     *     joinColumns={@ORM\JoinColumn(name="user", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="role", referencedColumnName="id")}
+     * )
+     */
+    private $roles;
+
+    /**
+     * @PasswordAssert(
+     *     message="The password {{ value }} has wrong format."
+     * )
+     */
+    private $rawPassword;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $deleted = false;
+
+    public const PASSWORD_LENGTH = 8;
+
+    public const NACL = 'iwRdkWAofFbHaPqMTZlSDLnsOtUcYQerhGKEICJyjNBVvgmpXzuxabc';
 
     public function getId(): ?int
     {
@@ -91,16 +135,70 @@ class User implements UserInterface
         return $this;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 
-    public function getRoles():array
+    public function getRoles(): array
     {
-        return array('ROLE_USER');
+        $roles = [];
+        foreach ($this->roles as $role) {
+            $roles[] = $role->getName();
+        }
+
+        return $roles;
     }
 
-    public function getSalt()
+    public function setRoles(array $roles): self
     {
+        $collection = new ArrayCollection();
+        foreach ($roles as $role) {
+            if (!$collection->contains($role)) {
+                $collection->add($role);
+            }
+        }
+
+        $this->roles = $collection;
+
+        return $this;
+    }
+
+    public function getSalt(): void
+    {
+    }
+
+    public function getRawPassword(): string
+    {
+        return $this->rawPassword;
+    }
+
+    public function setRawPassword(string $rawPassword): self
+    {
+        $this->rawPassword = $rawPassword;
+
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): User
+    {
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    public static function generatePassword(): string
+    {
+
+        return substr(self::NACL, 0, self::PASSWORD_LENGTH);
+    }
+
+    public static function generateToken(string $username, string $password): string
+    {
+        return hash('ripemd320', sprintf('%s-%s-%s', $username, $password, microtime()));
     }
 }
