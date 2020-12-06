@@ -41,7 +41,7 @@ class CellRepository extends ServiceEntityRepository
                     ->andWhere('t.column <= :right_bottom_column')
                     ->setParameters(
                         [
-                            'spreadsheet'            => $spreadsheet,
+                            'spreadsheet'         => $spreadsheet,
                             'left_top_row'        => $leftTopRow,
                             'left_top_column'     => $leftTopColumn,
                             'right_bottom_row'    => $rightBottomRow,
@@ -64,8 +64,8 @@ class CellRepository extends ServiceEntityRepository
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
-                            'spreadsheet'  => $spreadsheet,
-                            'row_index' => $rowIndex
+                            'spreadsheet' => $spreadsheet,
+                            'row_index'   => $rowIndex
                         ]
                     )
                     ->getQuery()->getResult();
@@ -84,7 +84,7 @@ class CellRepository extends ServiceEntityRepository
                     ->andWhere('t.column = :column_index')
                     ->setParameters(
                         [
-                            'spreadsheet'     => $spreadsheet,
+                            'spreadsheet'  => $spreadsheet,
                             'column_index' => $columnIndex
                         ]
                     )
@@ -106,8 +106,8 @@ class CellRepository extends ServiceEntityRepository
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
-                            'spreadsheet'  => $spreadsheet,
-                            'row_index' => $rowIndex
+                            'spreadsheet' => $spreadsheet,
+                            'row_index'   => $rowIndex
                         ]
                     )
                     ->getQuery()
@@ -129,7 +129,7 @@ class CellRepository extends ServiceEntityRepository
                     ->andWhere('t.column = :column_index')
                     ->setParameters(
                         [
-                            'spreadsheet'     => $spreadsheet,
+                            'spreadsheet'  => $spreadsheet,
                             'column_index' => $columnIndex
                         ]
                     )
@@ -152,8 +152,8 @@ class CellRepository extends ServiceEntityRepository
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
-                            'spreadsheet'  => $spreadsheet,
-                            'row_index' => $rowIndex
+                            'spreadsheet' => $spreadsheet,
+                            'row_index'   => $rowIndex
                         ]
                     )
                     ->getQuery()
@@ -175,7 +175,7 @@ class CellRepository extends ServiceEntityRepository
                     ->andWhere('t.column = :column_index')
                     ->setParameters(
                         [
-                            'spreadsheet'     => $spreadsheet,
+                            'spreadsheet'  => $spreadsheet,
                             'column_index' => $columnIndex
                         ]
                     )
@@ -198,8 +198,8 @@ class CellRepository extends ServiceEntityRepository
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
-                            'spreadsheet'  => $spreadsheet,
-                            'row_index' => $rowIndex
+                            'spreadsheet' => $spreadsheet,
+                            'row_index'   => $rowIndex
                         ]
                     )
                     ->getQuery()
@@ -221,7 +221,7 @@ class CellRepository extends ServiceEntityRepository
                     ->andWhere('t.column = :column_index')
                     ->setParameters(
                         [
-                            'spreadsheet'     => $spreadsheet,
+                            'spreadsheet'  => $spreadsheet,
                             'column_index' => $columnIndex
                         ]
                     )
@@ -245,7 +245,7 @@ class CellRepository extends ServiceEntityRepository
                     ->andWhere('t.column = :column_index')
                     ->setParameters(
                         [
-                            'spreadsheet'     => $spreadsheet,
+                            'spreadsheet'  => $spreadsheet,
                             'column_index' => $columnIndex
                         ]
                     )
@@ -272,8 +272,8 @@ class CellRepository extends ServiceEntityRepository
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
-                            'spreadsheet'  => $spreadsheet,
-                            'row_index' => $rowIndex
+                            'spreadsheet' => $spreadsheet,
+                            'row_index'   => $rowIndex
                         ]
                     )
                     ->orderBy('t.value', 'ASC')
@@ -298,8 +298,8 @@ class CellRepository extends ServiceEntityRepository
                     ->andWhere('t.row = :row_index')
                     ->setParameters(
                         [
-                            'spreadsheet'  => $spreadsheet,
-                            'row_index' => $rowIndex
+                            'spreadsheet' => $spreadsheet,
+                            'row_index'   => $rowIndex
                         ]
                     )
                     ->getQuery()

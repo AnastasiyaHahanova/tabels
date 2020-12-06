@@ -28,7 +28,7 @@ class CellController extends AbstractV1Controller
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param CellRepository $cellRepository
+     * @param CellRepository        $cellRepository
      * @param Spreadsheet           $spreadsheet
      * @return JsonResponse
      */
@@ -71,7 +71,7 @@ class CellController extends AbstractV1Controller
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param CellRepository $cellRepository
+     * @param CellRepository        $cellRepository
      * @param Spreadsheet           $spreadsheet
      *
      * @return JsonResponse
@@ -98,7 +98,7 @@ class CellController extends AbstractV1Controller
      * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
-     * @param CellRepository $cellRepository
+     * @param CellRepository        $cellRepository
      * @param Spreadsheet           $spreadsheet
      * @param ParamFetcherInterface $params
      * @return JsonResponse
@@ -127,7 +127,7 @@ class CellController extends AbstractV1Controller
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param CellRepository $cellRepository
+     * @param CellRepository        $cellRepository
      * @param Spreadsheet           $spreadsheet
      * @return JsonResponse
      */
@@ -157,7 +157,7 @@ class CellController extends AbstractV1Controller
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
-     * @param CellRepository $cellRepository
+     * @param CellRepository        $cellRepository
      * @param Spreadsheet           $spreadsheet
      * @return JsonResponse
      */
@@ -186,7 +186,7 @@ class CellController extends AbstractV1Controller
      * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
-     * @param CellRepository $cellRepository
+     * @param CellRepository        $cellRepository
      * @param Spreadsheet           $spreadsheet
      * @param ParamFetcherInterface $params
      * @return JsonResponse
@@ -210,9 +210,9 @@ class CellController extends AbstractV1Controller
      * @Rest\Get("/{id}/columns/avg", name="spreadsheets.columns.avg")
      * @Rest\QueryParam(name="column_index", nullable=false,requirements="^\d+$", strict=true)
      * @Rest\QueryParam(name="user_id", nullable=false,requirements="^\d+$", strict=true)
-     * @Entity("spreadsheets", options={"mapping": {"id": "id"}})
+     * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
-     * @param CellRepository $cellRepository
+     * @param CellRepository        $cellRepository
      * @param Spreadsheet           $spreadsheet
      * @param ParamFetcherInterface $params
      * @return JsonResponse
