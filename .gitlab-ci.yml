@@ -33,7 +33,6 @@ linter-psalm:
         - docker run --rm -v "$(pwd)":/code gitlab.artvisio.com:4567/cdnnow/psalm-linter:1.0
             /code/src/Controller
             /code/src/Entity
-            /code/src/Repository
             /code/src/Security
             /code/src/Command
             /code/src/EventListener
