@@ -15,11 +15,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SpreadsheetController extends AbstractV1Controller
     /**
-     * @Route("api/v1/tables")
+     * @Route("api/v1/spreadsheets")
      */
 {
     /**
-     * @Rest\Post("/", name="tables.create")
+     * @Rest\Post("/", name="spreadsheets.create")
      * @param EntityManagerInterface $entityManager
      * @param UserRepository         $userRepository
      * @param Request                $request
@@ -58,8 +58,8 @@ class SpreadsheetController extends AbstractV1Controller
     }
 
     /**
-     * @Rest\Put("/{id}", name="tables.update")
-     * @Entity("table", options={"mapping": {"id": "id"}})
+     * @Rest\Put("/{id}", name="spreadsheets.update")
+     * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      * @param EntityManagerInterface $entityManager
      * @param UserRepository         $userRepository
      * @param Request                $request
@@ -109,8 +109,8 @@ class SpreadsheetController extends AbstractV1Controller
     }
 
     /**
-     * @Rest\Delete("/{id}", name="tables.delete")
-     * @Entity("table", options={"mapping": {"id": "id"}})
+     * @Rest\Delete("/{id}", name="spreadsheets.delete")
+     * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      * @param EntityManagerInterface $entityManager
      * @param Spreadsheet            $spreadsheet
      * @return JsonResponse
