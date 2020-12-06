@@ -32,11 +32,11 @@ curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d 
 
 ####Обновить таблицу
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"name":"NewTable","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/14
+curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"name":"NewTable","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}
 ```
 ####Удалить таблицу
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X DELETE  http://{{ host }}/api/v1/spreadsheets/14
+curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X DELETE  http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}
 ```
 
 
@@ -45,48 +45,48 @@ curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X DELETE  
 ***
 ###Создать или обновить ячейку
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"row":"1","column":"1","value":"15","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/1/cells
+curl -i -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"row":"1","column":"1","value":"15","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/cells
 ```
 
 ###Удалить ячейку
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"row":"1","column":"1","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/1/cells
+curl -i -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"row":"1","column":"1","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/cells
 ```
 
 ###Получить диапазон ячеек
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/1/range_of_cells?start_range=1,1:10,15&horizontal_offset=1&vertical_offset=1&user_id={{ user_id }}&"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/range_of_cells?start_range=1,1:10,15&horizontal_offset=1&vertical_offset=1&user_id={{ user_id }}&"
 ```
 
 ###Вычислить сумму
 ####По строке
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/1/rows/sum?user_id={{ user_id }}&row_index=1"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/rows/sum?user_id={{ user_id }}&row_index=1"
 ```
 
 ####По столбцу
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/1/columns/sum?user_id={{ user_id }}&column_index=1"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/columns/sum?user_id={{ user_id }}&column_index=1"
 ```
 
 ###Вычислить среднее
 ####По строке
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/1/rows/avg?user_id={{ user_id }}&row_index=1"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/rows/avg?user_id={{ user_id }}&row_index=1"
 ```
 
 ####По столбцу
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/1/columns/avg?user_id={{ user_id }}&column_index=1"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/columns/avg?user_id={{ user_id }}&column_index=1"
 ```
 
 ###Вычислить перцентиль
 ####По строке:
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/1/rows/percentile?percentile=30&user_id={{ user_id }}&row_index=1"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/rows/percentile?percentile=30&user_id={{ user_id }}&row_index=1"
 ```
 
 ####По столбцу:
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/1/columns/percentile?percentile=30&user_id={{ user_id }}&column_index=1"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/columns/percentile?percentile=30&user_id={{ user_id }}&column_index=1"
 ```

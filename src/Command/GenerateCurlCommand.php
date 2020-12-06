@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Repository\SpreadsheetRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -15,14 +16,16 @@ class GenerateCurlCommand extends Command
     protected static $defaultName = 'generate:curl';
     private          $projectDir;
     private          $userRepository;
+    private          $spreadsheetRepository;
     private          $twig;
     private const FILENAME = 'CURL.md';
 
-    public function __construct(string $projectDir, UserRepository $userRepository, Environment $twig)
+    public function __construct(string $projectDir, UserRepository $userRepository, SpreadsheetRepository $spreadsheetRepository, Environment $twig)
     {
-        $this->userRepository = $userRepository;
-        $this->projectDir     = $projectDir;
-        $this->twig           = $twig;
+        $this->spreadsheetRepository = $spreadsheetRepository;
+        $this->userRepository        = $userRepository;
+        $this->projectDir            = $projectDir;
+        $this->twig                  = $twig;
         parent::__construct('environment');
     }
 
@@ -31,27 +34,48 @@ class GenerateCurlCommand extends Command
         $this
             ->setDescription('Change user password')
             ->addArgument('username', InputArgument::REQUIRED, 'Username')
-            ->addArgument('host', InputArgument::REQUIRED, 'Host');
+            ->addArgument('host', InputArgument::REQUIRED, 'Host')
+            ->addArgument('spreadsheet', InputArgument::OPTIONAL, 'Spreadsheet Name');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io       = new SymfonyStyle($input, $output);
-        $username = $input->getArgument('username');
-        $host     = $input->getArgument('host');
-        $user     = $this->userRepository->finOneByUsername($username);
-
+        $io              = new SymfonyStyle($input, $output);
+        $spreadsheetId     = 1;
+        $host            = $input->getArgument('host');
+        $username        = $input->getArgument('username');
+        $spreadsheetName = $input->getArgument('spreadsheet');
+        $user            = $this->userRepository->finOneByUsername($username);
         if (empty($user)) {
             $io->error(sprintf('No user found with username %s ', $username));
 
             return Command::FAILURE;
         }
 
+        if ($spreadsheetName) {
+            $spreadsheet = $this->spreadsheetRepository->findOneByName($spreadsheetName);
+
+            if (empty($spreadsheet)) {
+                $io->error(sprintf('No spreadsheet found with name %s ', $spreadsheetName));
+
+                return Command::FAILURE;
+            }
+
+            if ($user->getId() !== $spreadsheet->getUser()->getId()) {
+                $io->error(sprintf('User with username %s does not have access to the spreadsheet %s ', $username, $spreadsheetName));
+
+                return Command::FAILURE;
+            }
+
+            $spreadsheetId = $spreadsheet->getId();
+        }
+
         $content = $this->twig->render('Curl/curl.html.twig', [
-            'host'     => $host,
-            'user_id'  => $user->getId(),
-            'token'    => $user->getToken(),
-            'username' => $user->getUsername()
+            'host'        => $host,
+            'spreadsheet' => $spreadsheetId,
+            'user_id'     => $user->getId(),
+            'token'       => $user->getToken(),
+            'username'    => $user->getUsername()
         ]);
 
         file_put_contents(sprintf('%s/%s', $this->projectDir, self::FILENAME), $content);
