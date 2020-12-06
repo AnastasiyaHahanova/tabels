@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=CellRepository::class)
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="unique_row_column_idx", columns={"rowIndex", "columnIndex"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="unique_row_column_idx", columns={"rowIndex", "columnIndex","spreadsheet"})})
  */
 class Cell
 {

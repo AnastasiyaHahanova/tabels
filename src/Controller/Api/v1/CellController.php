@@ -5,7 +5,6 @@ namespace App\Controller\Api\v1;
 use App\Entity\Cell;
 use App\Entity\Spreadsheet;
 use App\Repository\CellRepository;
-use App\Repository\SpreadsheetRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
@@ -146,7 +145,8 @@ class CellController extends AbstractV1Controller
         $rowIndex      = (int)$params->get('row_index');
         $spreadsheetId = (int)$spreadsheet->getId();
         $countOfValues = $cellRepository->findCountByRow($spreadsheetId, $rowIndex)['count'] ?? 0;
-        $offset        = $countOfValues * 0.01 * $params->get('percentile');
+        $offset        = round($countOfValues * 0.01 * $params->get('percentile'));
+        $offset        = $offset ? $offset - 1 : 0;
         $percentile    = $cellRepository->findPercentileByRow($spreadsheetId, $rowIndex, $offset)['percentile'] ?? 0;
 
         return $this->json([
@@ -176,7 +176,8 @@ class CellController extends AbstractV1Controller
 
         $columnIndex   = (int)$params->get('column_index');
         $countOfValues = $cellRepository->findCountByColumn((int)$spreadsheet->getId(), $columnIndex)['count'] ?? 0;
-        $offset        = $params->get('percentile') * 0.01 * $countOfValues;
+        $offset        = round((int)$params->get('percentile') * 0.01 * $countOfValues);
+        $offset        = $offset ? $offset - 1 : 0;
         $percentile    = $cellRepository->findPercentileByColumn((int)$spreadsheet->getId(), $columnIndex, $offset)['percentile'] ?? 0;
 
         return $this->json([

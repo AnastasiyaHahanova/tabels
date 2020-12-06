@@ -13,7 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -45,29 +44,42 @@ class GenerateTestDataCommand extends Command
 
     protected function configure()
     {
+        $this->addArgument('username', InputArgument::OPTIONAL, 'Username')
+             ->addArgument('spreadsheet', InputArgument::OPTIONAL, 'Spreadsheet Name');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $user = $this->userRepository->finOneByUsername(TestParameters::USERNAME);
+        $io             = new SymfonyStyle($input, $output);
+        $customUsername = $input->getArgument('username');
+        $username       = $customUsername ? $customUsername : TestParameters::USERNAME;
+        $email          = $customUsername ? sprintf('%mail.ru', $customUsername) : TestParameters::USER_EMAIL;
+        $user           = $this->userRepository->finOneByUsername($username);
         if (empty($user)) {
             $user = (new User())
-                ->setUsername(TestParameters::USERNAME)
-                ->setEmail(TestParameters::USER_EMAIL)
+                ->setUsername($username)
+                ->setEmail($email)
                 ->setRawPassword(TestParameters::USER_PASSWORD);
             $this->userModel->createUser($user);
         }
 
-        $spreadsheet = $this->spreadsheetRepository->findOneByName(TestParameters::TABLE_NAME);
-        if (empty($spreadsheet)) {
-            $spreadsheet = (new Spreadsheet())
-                ->setName(TestParameters::TABLE_NAME)
-                ->setUser($user);
-            $this->entityManager->persist($spreadsheet);
-            $this->entityManager->flush();
+        $customSpreadsheetName = $input->getArgument('spreadsheet');
+        $spreadsheetName       = $customSpreadsheetName ? $customSpreadsheetName : TestParameters::TABLE_NAME;
+        $spreadsheet           = $this->spreadsheetRepository->findOneByName($spreadsheetName);
+
+        if ($spreadsheet) {
+            $io->error(sprintf('The spreadsheet with name %s already exists. Enter a new name of spreadsheet to prevent overwriting the saved data.', $spreadsheetName));
+
+            return Command::FAILURE;
         }
 
-        $tens = 10;
+        $spreadsheet = (new Spreadsheet())
+            ->setName($spreadsheetName)
+            ->setUser($user);
+        $this->entityManager->persist($spreadsheet);
+        $this->entityManager->flush();
+
+        $tens = 0;
         for ($i = 1; $i <= 100; $i++) {
             if (($tens % 10) === 0) {
                 $tens += 10;

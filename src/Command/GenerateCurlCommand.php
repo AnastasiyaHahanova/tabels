@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment;
 
 class GenerateCurlCommand extends Command
@@ -17,12 +18,14 @@ class GenerateCurlCommand extends Command
     private          $projectDir;
     private          $userRepository;
     private          $spreadsheetRepository;
+    private          $fileSystem;
     private          $twig;
-    private const FILENAME = 'CURL.md';
+    private const SUBDIR = 'curl';
 
-    public function __construct(string $projectDir, UserRepository $userRepository, SpreadsheetRepository $spreadsheetRepository, Environment $twig)
+    public function __construct(string $projectDir, Filesystem $fileSystem, UserRepository $userRepository, SpreadsheetRepository $spreadsheetRepository, Environment $twig)
     {
         $this->spreadsheetRepository = $spreadsheetRepository;
+        $this->fileSystem            = $fileSystem;
         $this->userRepository        = $userRepository;
         $this->projectDir            = $projectDir;
         $this->twig                  = $twig;
@@ -41,7 +44,7 @@ class GenerateCurlCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io              = new SymfonyStyle($input, $output);
-        $spreadsheetId     = 1;
+        $spreadsheetId   = 1;
         $host            = $input->getArgument('host');
         $username        = $input->getArgument('username');
         $spreadsheetName = $input->getArgument('spreadsheet');
@@ -78,7 +81,14 @@ class GenerateCurlCommand extends Command
             'username'    => $user->getUsername()
         ]);
 
-        file_put_contents(sprintf('%s/%s', $this->projectDir, self::FILENAME), $content);
+        $fileName = strtolower(sprintf('curl_for_%s_%s.md', $username, $spreadsheetName));
+        $filePath = sprintf('%s/%s/%s', $this->projectDir, self::SUBDIR, $fileName);
+        $dir      = dirname($filePath);
+        if (!is_dir($dir)) {
+            $this->fileSystem->mkdir($dir);
+        }
+
+        file_put_contents($filePath, $content);
 
         return Command::SUCCESS;
     }
