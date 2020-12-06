@@ -43,6 +43,16 @@ curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X DELETE  
 ##Операции над значениями
 
 ***
+###Создать или обновить ячейку
+```
+curl -i -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"row":"1","column":"1","value":"15","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/1/cells
+```
+
+###Удалить ячейку
+```
+curl -i -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"row":"1","column":"1","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/1/cells
+```
+
 ###Получить диапазон ячеек
 ```
 curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/1/range_of_cells?start_range=1,1:10,15&horizontal_offset=1&vertical_offset=1&user_id={{ user_id }}&"

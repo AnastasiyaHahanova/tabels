@@ -273,30 +273,27 @@ class CellController extends AbstractV1Controller
     }
 
     /**
-     * @Rest\Post ("/cell", name="spreadsheets.columns.avg")*
+     * @Rest\Post ("/{id}/cells", name="spreadsheets.cell.set_value")
      * @param EntityManagerInterface $entityManager
-     * @param SpreadsheetRepository  $spreadsheetRepository
+     * @param CellRepository         $cellRepository
+     * @param UserRepository         $userRepository
+     * @param ValidatorInterface     $validator
      * @param Request                $request
+     * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      * @return JsonResponse
      */
     public function setCellValue(Request $request,
                                  EntityManagerInterface $entityManager,
-                                 SpreadsheetRepository $spreadsheetRepository,
                                  UserRepository $userRepository,
                                  CellRepository $cellRepository,
-                                 ValidatorInterface $validator): JsonResponse
+                                 ValidatorInterface $validator,
+                                 Spreadsheet $spreadsheet
+    ): JsonResponse
     {
         $content = $request->getContent();
         $data    = json_decode($content, true);
         if (!is_array($data)) {
             return $this->error('Invalid json');
-        }
-
-        $spreadsheetId = $data['spreadsheet'] ?? 0;
-        $spreadsheet   = $spreadsheetRepository->findOneById($spreadsheetId);
-
-        if (empty($spreadsheet)) {
-            return $this->error(sprintf('No spreadsheet found with ID %s', $spreadsheetId), 'Wrong parameters');
         }
 
         $userId = $data['user_id'] ?? 0;
@@ -332,13 +329,65 @@ class CellController extends AbstractV1Controller
 
         $validationErrors = $validator->validate($cell);
         if ($validationErrors->count() > 0) {
-            return $this->error((string)$validationErrors, 'Wrong cell parameters');
+            return $this->error((string)$validationErrors);
         }
 
         $entityManager->persist($cell);
         $entityManager->flush();
 
         return $this->json('Value successfully saved!');
+    }
+
+    /**
+     * @Rest\Put ("/{id}/cells", name="spreadsheets.cell.delete_value")
+     * @param EntityManagerInterface $entityManager
+     * @param Spreadsheet            $spreadsheet
+     * @param CellRepository         $cellRepository
+     * @param UserRepository         $userRepository
+     * @param Request                $request
+     * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
+     * @return JsonResponse
+     */
+    public function deleteCellValue(Request $request,
+                                    EntityManagerInterface $entityManager,
+                                    Spreadsheet $spreadsheet,
+                                    UserRepository $userRepository,
+                                    CellRepository $cellRepository): JsonResponse
+    {
+        $content = $request->getContent();
+        $data    = json_decode($content, true);
+        if (!is_array($data)) {
+            return $this->error('Invalid json');
+        }
+
+        $userId = $data['user_id'] ?? 0;
+        $user   = $userRepository->findOneById($userId);
+
+        if (empty($user)) {
+            return $this->error(sprintf('No user found with ID %s', $userId));
+        }
+
+        if ($spreadsheet->getUser()->getId() !== $user->getId()) {
+            return $this->error($this->getAccessDeniedError($spreadsheet->getName(), $userId));
+        }
+
+        $row    = (int)$data['row'] ?? 0;
+        $column = (int)$data['column'] ?? 0;
+
+        if (empty($row) || empty($column)) {
+            return $this->error('Row and column must not be empty');
+        }
+
+        $cell = $cellRepository->findOneByRowAndColumn($row, $column);
+
+        if (empty($cell)) {
+            return $this->error(sprintf('No cell found with row %s and column %s', $row, $column));
+        }
+
+        $entityManager->remove($cell);
+        $entityManager->flush();
+
+        return $this->json('Value successfully deleted!');
     }
 
     public function getAccessDeniedError(string $spreadsheetName, int $userId): JsonResponse
