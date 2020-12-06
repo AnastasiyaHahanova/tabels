@@ -46,7 +46,7 @@ class CreateUserCommand extends Command
         $username = $input->getArgument('username') ?? '';
         $email    = $input->getArgument('email') ?? '';
         $password = User::generatePassword();
-        $user     = $this->userRepository->finOneByUsername($username);
+        $user     = $this->userRepository->findOneByUsername($username);
 
         if ($user) {
             $io->error(sprintf('User with username %s already exists', $username));

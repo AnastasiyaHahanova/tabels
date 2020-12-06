@@ -31,7 +31,7 @@ class SecurityController extends AbstractV1Controller
         $username = $data['username'] ?? '';
         $password = $data['password'] ?? '';
 
-        $user = $userRepository->finOneByUsername($username);
+        $user = $userRepository->findOneByUsername($username);
         if (empty($user)) {
             return $this->error(sprintf('No user with username "%s"', $username), 'Access denied');
         }

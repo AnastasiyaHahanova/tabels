@@ -39,7 +39,7 @@ class ChangeUserPassCommand extends Command
     {
         $io       = new SymfonyStyle($input, $output);
         $username = $input->getArgument('username');
-        $user     = $this->userRepository->finOneByUsername($username);
+        $user     = $this->userRepository->findOneByUsername($username);
 
         if (empty($user)) {
             $io->error(sprintf('No user found with username %s ', $username));

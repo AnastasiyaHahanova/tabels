@@ -48,7 +48,7 @@ class GenerateCurlCommand extends Command
         $host            = $input->getArgument('host');
         $username        = $input->getArgument('username');
         $spreadsheetName = $input->getArgument('spreadsheet');
-        $user            = $this->userRepository->finOneByUsername($username);
+        $user            = $this->userRepository->findOneByUsername($username);
         if (empty($user)) {
             $io->error(sprintf('No user found with username %s ', $username));
 

@@ -15,17 +15,22 @@ class CreateUserCommandTest extends KernelTestCase
     private $application;
     private $userRepository;
 
-    public function setUp(): void
+//    public function setUp(): void
+//    {
+//        self::bootKernel();
+//        $this->application    = new Application(self::$kernel);
+//        $this->userRepository = self::$container->get(UserRepository::class);
+//        $this->entityManager  = self::$container->get(EntityManagerInterface::class);
+//        $this->application->setAutoExit(false);
+//    }
+
+    public function testExecute(): void
     {
         self::bootKernel();
         $this->application    = new Application(self::$kernel);
         $this->userRepository = self::$container->get(UserRepository::class);
         $this->entityManager  = self::$container->get(EntityManagerInterface::class);
         $this->application->setAutoExit(false);
-    }
-
-    public function testExecute(): void
-    {
         $username = sprintf('TestUser%s', rand(1, 100));
         $this->runCommand('download:roles', []);
         $this->runCommand('user:create', [
@@ -33,7 +38,7 @@ class CreateUserCommandTest extends KernelTestCase
             'email'    => sprintf('%s@mail.ru', $username)
         ]);
 
-        $user = $this->userRepository->finOneByUsername($username);
+        $user = $this->userRepository->findOneBy(['username'=>$username]);
         $this->assertNotEmpty($user);
         $this->assertInstanceOf(User::class, $user);
     }

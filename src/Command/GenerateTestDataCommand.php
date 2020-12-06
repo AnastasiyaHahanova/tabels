@@ -54,7 +54,7 @@ class GenerateTestDataCommand extends Command
         $customUsername = $input->getArgument('username');
         $username       = $customUsername ? $customUsername : TestParameters::USERNAME;
         $email          = $customUsername ? sprintf('%mail.ru', $customUsername) : TestParameters::USER_EMAIL;
-        $user           = $this->userRepository->finOneByUsername($username);
+        $user           = $this->userRepository->findOneByUsername($username);
         if (empty($user)) {
             $user = (new User())
                 ->setUsername($username)
