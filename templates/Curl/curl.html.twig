@@ -8,12 +8,12 @@ curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X GET  htt
 
 ####Создать пользователя
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"username":"{{ username }}","password":"34asasasj1","email":"{{ username }}@mail.ru"}' http://{{ host }}/api/v1/users/
+curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"username":"New{{ username }}","password":"34asasasj1","email":"{{ username }}@mail.ru"}' http://{{ host }}/api/v1/users/
 ```
 
 ####Отредактировать пользователя
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}"  -X PUT -d '{"username":"New {{ username }}","password":"3433333j1","email":"{{ username }}@mail.ru"}' http://{{ host }}/api/v1/users/1
+curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}"  -X PUT -d '{"username":"New{{ username }}","password":"3433333j1","email":"{{ username }}@mail.ru"}' http://{{ host }}/api/v1/users/1
 ```
 
 ####Удалить пользователя
