@@ -30,7 +30,7 @@ class UserController extends AbstractV1Controller
      */
     public function createUser(UserModel $userModel,
                                ValidatorInterface $validator,
-                               EntityManagerInterface $entityManager,
+                               UserRepository $userRepository,
                                Request $request): JsonResponse
     {
         $content = $request->getContent();
@@ -42,6 +42,11 @@ class UserController extends AbstractV1Controller
         $name     = $data['username'] ?? '';
         $password = $data['password'] ?? '';
         $email    = $data['email'] ?? '';
+
+        $user = $userRepository->findOneByUsername($name);
+        if ($user) {
+            return $this->error(sprintf('User with username %s already exists', $name));
+        }
 
         $user             = (new User)
             ->setUsername($name)
