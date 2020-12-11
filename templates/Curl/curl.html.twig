@@ -13,7 +13,7 @@ curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d 
 
 ####Отредактировать пользователя
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}"  -X PUT -d '{"username":"New{{ username }}","password":"3433333j1","email":"{{ username }}@mail.ru"}' http://{{ host }}/api/v1/users/1
+curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}"  -X PUT -d '{"username":"Newest{{ username }}","password":"3433333j1","email":"{{ username }}@mail.ru"}' http://{{ host }}/api/v1/users/1
 ```
 
 ####Удалить пользователя
@@ -27,12 +27,12 @@ curl -i -H "X-AUTH-TOKEN: {{ token }}" -X DELETE http://{{ host }}/api/v1/users/
 
 ####Создать таблицу
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"name":"MyTable","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/
+curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"name":"NewTable","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/
 ```
 
 ####Обновить таблицу
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"name":"NewTable","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}
+curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"name":"NewestTable","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}
 ```
 ####Удалить таблицу
 ```
