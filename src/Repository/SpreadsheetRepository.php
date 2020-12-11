@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Spreadsheet;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -22,6 +23,11 @@ class SpreadsheetRepository extends ServiceEntityRepository
     public function findOneByName(string $name): ?Spreadsheet
     {
         return $this->findOneBy(['name' => $name]);
+    }
+
+    public function findOneByNameAndUser(string $name,User $user): ?Spreadsheet
+    {
+        return $this->findOneBy(['name' => $name,'user'=>$user]);
     }
 
     public function findOneById(int $id): ?Spreadsheet

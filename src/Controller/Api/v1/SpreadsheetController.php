@@ -3,6 +3,7 @@
 namespace App\Controller\Api\v1;
 
 use App\Entity\Spreadsheet;
+use App\Repository\SpreadsheetRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -27,6 +28,7 @@ class SpreadsheetController extends AbstractV1Controller
      */
     public function createSpreadsheet(ValidatorInterface $validator,
                                       EntityManagerInterface $entityManager,
+                                      SpreadsheetRepository $spreadsheetRepository,
                                       UserRepository $userRepository,
                                       Request $request): JsonResponse
     {
@@ -38,6 +40,12 @@ class SpreadsheetController extends AbstractV1Controller
         $user    = $userRepository->findOneById($userId);
         if (empty($user)) {
             return $this->error(sprintf('No user with id %f exist', $userId));
+        }
+
+        $spreadsheet = $spreadsheetRepository->findOneByNameAndUser($name,$user);
+        if($spreadsheet)
+        {
+            return $this->error(sprintf('The spreadsheet with name %s and user % already exists',$spreadsheet->getName(),$user->getUsername()));
         }
 
         $spreadsheet = (new Spreadsheet())
