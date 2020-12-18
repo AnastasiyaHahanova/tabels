@@ -4,14 +4,12 @@ namespace App\Tests\Functional;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class CreateUserCommandTest extends KernelTestCase
 {
-    private $entityManager;
     private $application;
     private $userRepository;
 
@@ -20,7 +18,6 @@ class CreateUserCommandTest extends KernelTestCase
         self::bootKernel();
         $this->application    = new Application(self::$kernel);
         $this->userRepository = self::$container->get(UserRepository::class);
-        $this->entityManager  = self::$container->get(EntityManagerInterface::class);
         $this->application->setAutoExit(false);
     }
 

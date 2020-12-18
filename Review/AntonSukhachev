@@ -1,0 +1,6 @@
+1) При создании пользователя через API,ему не присваивается нужная роль
+https://gitlab.artvisio.com/anton.s/spreadsheets/-/blob/master/src/Controller/UserController.php#L58
+
+2) Нет проверки на право доступа пользователя к таблице,в которой хранятся ячейки
+https://gitlab.artvisio.com/anton.s/spreadsheets/-/blob/master/src/Controller/CellController.php#L16
+
