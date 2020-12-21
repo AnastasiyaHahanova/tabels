@@ -19,7 +19,12 @@ git clone git@gitlab.artvisio.com:anastasiya.h/tables.git
 sh bin/install.sh 
 ```
 
-4. Прочитать документацию для грамотного использования
+4. Запустить приложение, выполнив следующую команду 
+```
+php -S 127.0.0.1:8000 -t public
+```
+
+5. Прочитать документацию для грамотного использования
 ```
 https://gist.github.com/AnastasiyaHahanova/5b470e8c739fb844dd883e63e8e5982a
 ```
@@ -38,7 +43,8 @@ php bin/console user:create <YOUR_USERNAME>
 php bin/console change:user:pass <USERNAME>
 ```
    
-3. Запустить команду, указав USERNAME созданного пользователя и ИМЯ ХОСТА, на котором развернут проект
+3. Запустить команду, указав USERNAME созданного пользователя и хост со значением 127.0.0.1:8001, если вы воспользовались командой 4 в разделе установка, 
+    или, если у вас настроен стек LEMP/LAMP, необходимо указать ИМЯ ХОСТА, на котором развернут проект
 ```
 php bin/console generate:curl <USERNAME> <HOST>
 ```
