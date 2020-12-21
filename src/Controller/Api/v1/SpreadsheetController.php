@@ -29,20 +29,14 @@ class SpreadsheetController extends AbstractV1Controller
     public function createSpreadsheet(ValidatorInterface $validator,
                                       EntityManagerInterface $entityManager,
                                       SpreadsheetRepository $spreadsheetRepository,
-                                      UserRepository $userRepository,
                                       Request $request): JsonResponse
     {
         $content = $request->getContent();
         $data    = json_decode($content, true);
-        $userId  = (int)$data['user_id'];
         $columns = $data['columns'] ?? [];
         $name    = $data['name'] ?? '';
-        $user    = $userRepository->findOneById($userId);
-        if (empty($user)) {
-            return $this->error(sprintf('No user with id %f exist', $userId));
-        }
 
-        $spreadsheet = $spreadsheetRepository->findOneByNameAndUser($name, $user);
+        $spreadsheet = $spreadsheetRepository->findOneByNameAndUser($name, $this->getUser());
         if ($spreadsheet) {
             return $this->error(sprintf('The spreadsheet with name %s and user %s already exists', $spreadsheet->getName(), $user->getUsername()));
         }
@@ -50,7 +44,7 @@ class SpreadsheetController extends AbstractV1Controller
         $spreadsheet = (new Spreadsheet())
             ->setName($name)
             ->setColumns($columns)
-            ->setUser($user);
+            ->setUser($this->getUser());
 
         $validationErrors = $validator->validate($spreadsheet);
 

@@ -40,9 +40,9 @@ class CellController extends AbstractV1Controller
     {
         $result        = [];
         $spreadsheetId = (int)$spreadsheet->getId();
-        $userId        = $this->getUser()->getId();
-        if ($userId !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
+        $user = $this->getUser();
+        if ($user->getId() !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
         $rangeParameters = $this->extractRangeParameters(
@@ -81,9 +81,9 @@ class CellController extends AbstractV1Controller
      */
     public function sumRow(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        $userId = $this->getUser()->getId();
-        if ($userId !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
+        $user = $this->getUser();
+        if ($user->getId() !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
         $rowIndex = (int)$params->get('row_index');
@@ -107,9 +107,9 @@ class CellController extends AbstractV1Controller
      */
     public function sumColumn(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        $userId = $this->getUser()->getId();
-        if ($userId !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
+        $user = $this->getUser();
+        if ($user->getId() !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
         $columnIndex = (int)$params->get('column_index');
@@ -134,9 +134,9 @@ class CellController extends AbstractV1Controller
      */
     public function percentileRow(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        $userId = $this->getUser()->getId();
-        if ($userId !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
+        $user = $this->getUser();
+        if ($user->getId() !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
         $rowIndex      = (int)$params->get('row_index');
@@ -165,9 +165,9 @@ class CellController extends AbstractV1Controller
      */
     public function percentileColumn(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        $userId = $this->getUser()->getId();
-        if ($userId !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
+        $user = $this->getUser();
+        if ($user->getId() !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
         $columnIndex   = (int)$params->get('column_index');
@@ -195,9 +195,9 @@ class CellController extends AbstractV1Controller
      */
     public function averageRow(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        $userId = $this->getUser()->getId();
-        if ($userId !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
+        $user = $this->getUser();
+        if ($user->getId() !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
         $rowIndex = (int)$params->get('row_index');
@@ -221,9 +221,9 @@ class CellController extends AbstractV1Controller
      */
     public function averageColumn(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        $userId = $this->getUser()->getId();
-        if ($userId !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
+        $user = $this->getUser();
+        if ($user->getId() !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
         $columnIndex = (int)$params->get('column_index');
@@ -291,9 +291,9 @@ class CellController extends AbstractV1Controller
             return $this->error('Invalid json');
         }
 
-        $userId = $this->getUser()->getId();
-        if ($spreadsheet->getUser()->getId() !== $userId) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
+        $user = $this->getUser();
+        if ($spreadsheet->getUser()->getId() !== $user->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
         if (!isset($data['row']) || !isset($data['column']) || !isset($data['value'])) {
@@ -347,9 +347,9 @@ class CellController extends AbstractV1Controller
             return $this->error('Invalid json');
         }
 
-        $userId = $this->getUser()->getId();
-        if ($spreadsheet->getUser()->getId() !== $userId) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
+        $user = $this->getUser();
+        if ($spreadsheet->getUser()->getId() !== $user->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
         if (!isset($data['row']) || !isset($data['column'])) {
@@ -374,9 +374,9 @@ class CellController extends AbstractV1Controller
         return $this->json('Value successfully deleted!');
     }
 
-    public function getAccessDeniedError(string $spreadsheetName, int $userId): JsonResponse
+    public function getAccessDeniedError(string $spreadsheetName, string $username): JsonResponse
     {
-        return $this->error(sprintf('User with ID %s does not have access to the spreadsheet %s', $userId, $spreadsheetName), 'Access denied');
+        return $this->error(sprintf('User %s does not have access to the spreadsheet %s', $username, $spreadsheetName), 'Access denied');
     }
 
     public function formatValue(float $value): string
