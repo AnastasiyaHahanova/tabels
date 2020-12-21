@@ -25,9 +25,9 @@ class CellController extends AbstractV1Controller
     /**
      * @Rest\Get("/{id}/range_of_cells", name="spreadsheets.range_of_cells")
      *
-     * @Rest\QueryParam(name="start_range", nullable=false,requirements="^\d+,\d+:\d+,\d+$", strict=true)
-     * @Rest\QueryParam(name="horizontal_offset", nullable=true, requirements="^\d+$", strict=true)
-     * @Rest\QueryParam(name="vertical_offset", nullable=true, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="start_range", nullable=false,requirements="^[1-9]\d*,[1-9]\d*:[1-9]\d*,[1-9]\d*$", strict=true)
+     * @Rest\QueryParam(name="horizontal_offset", nullable=true, requirements="^[1-9]\d*$", strict=true)
+     * @Rest\QueryParam(name="vertical_offset", nullable=true, requirements="^[1-9]\d*$", strict=true)
      *
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
@@ -70,7 +70,7 @@ class CellController extends AbstractV1Controller
 
     /**
      * @Rest\Get("/{id}/rows/sum", name="spreadsheets.rows.sum")
-     * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="row_index", nullable=false, requirements="^[1-9]\d*$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -97,7 +97,7 @@ class CellController extends AbstractV1Controller
 
     /**
      * @Rest\Get("/{id}/columns/sum", name="spreadsheets.columns.sum")
-     * @Rest\QueryParam(name="column_index", nullable=false, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="column_index", nullable=false, requirements="^[1-9]\d*$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param CellRepository        $cellRepository
@@ -123,8 +123,8 @@ class CellController extends AbstractV1Controller
 
     /**
      * @Rest\Get("/{id}/rows/percentile", name="spreadsheets.rows.percentile")
-     * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
-     * @Rest\QueryParam(name="percentile", nullable=false, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="row_index", nullable=false, requirements="^[1-9]\d*$", strict=true)
+     * @Rest\QueryParam(name="percentile", nullable=false, requirements="^[1-9]\d*$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -154,7 +154,7 @@ class CellController extends AbstractV1Controller
 
     /**
      * @Rest\Get("/{id}/columns/percentile", name="spreadsheets.columns.percentile")
-     * @Rest\QueryParam(name="column_index", nullable=false, requirements="^\d+$", strict=true,)
+     * @Rest\QueryParam(name="column_index", nullable=false, requirements="^[1-9]\d*$", strict=true,)
      * @Rest\QueryParam(name="percentile", nullable=false, requirements="^\d{1,2}$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
@@ -185,7 +185,7 @@ class CellController extends AbstractV1Controller
 
     /**
      * @Rest\Get("/{id}/rows/avg", name="spreadsheets.rows.avg")
-     * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="row_index", nullable=false, requirements="^[1-9]\d*$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param CellRepository        $cellRepository
@@ -211,7 +211,7 @@ class CellController extends AbstractV1Controller
 
     /**
      * @Rest\Get("/{id}/columns/avg", name="spreadsheets.columns.avg")
-     * @Rest\QueryParam(name="column_index", nullable=false,requirements="^\d+$", strict=true)
+     * @Rest\QueryParam(name="column_index", nullable=false,requirements="^[1-9]\d*$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param CellRepository        $cellRepository
