@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,9 +11,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\NameConstraints as UsernameAssert;
 use App\Validator\PasswordConstraints as PasswordAssert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false, hardDelete=true)
  */
 class User implements UserInterface
 {
@@ -77,6 +80,11 @@ class User implements UserInterface
      * @ORM\Column(type="boolean")
      */
     private $deleted = false;
+
+    /**
+     * @ORM\Column(name="deletedAt", type="datetime", nullable=true)
+     */
+    private $deletedAt;
 
     public const PASSWORD_LENGTH = 8;
 
@@ -191,9 +199,20 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getDeletedAt() :\DateTime
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(DateTime $deletedAt):self
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
     public static function generatePassword(): string
     {
-
         return substr(self::NACL, 0, self::PASSWORD_LENGTH);
     }
 

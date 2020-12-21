@@ -40,7 +40,6 @@ class SecurityController extends AbstractV1Controller
         }
 
         return $this->error('Invalid credentials', 'Access denied');
-
     }
 
 }

@@ -134,7 +134,7 @@ class SpreadsheetController extends AbstractV1Controller
             return $this->error('You do not have access to perform this operation','Access denied');
         }
 
-        $spreadsheet->setDeleted(true);
+        $entityManager->remove($spreadsheet);
         $entityManager->flush();
 
         return $this->json(['id' => $spreadsheet->getId()]);

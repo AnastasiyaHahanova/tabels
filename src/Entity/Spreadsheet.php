@@ -3,13 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\SpreadsheetRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\NameConstraints as TableNameAssert;
-
+use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * @ORM\Entity(repositoryClass=SpreadsheetRepository::class)
  * @ORM\Table(name="`spreadsheet`")
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false, hardDelete=true)
  */
 class Spreadsheet
 {
@@ -44,6 +46,11 @@ class Spreadsheet
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
+
+    /**
+     * @ORM\Column(name="deletedAt", type="datetime", nullable=true)
+     */
+    private $deletedAt;
 
     public function getId(): ?int
     {
@@ -94,6 +101,18 @@ class Spreadsheet
     public function setUser(User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getDeletedAt() :\DateTime
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(DateTime $deletedAt):self
+    {
+        $this->deletedAt = $deletedAt;
 
         return $this;
     }

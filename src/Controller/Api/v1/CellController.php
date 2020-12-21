@@ -160,7 +160,7 @@ class CellController extends AbstractV1Controller
      *
      * @param ParamFetcherInterface $params
      * @param CellRepository        $cellRepository
-     * @param int                   $id
+     * @param Spreadsheet $spreadsheet
      * @return JsonResponse
      */
     public function percentileColumn(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
