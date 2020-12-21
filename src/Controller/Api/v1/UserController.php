@@ -64,6 +64,7 @@ class UserController extends AbstractV1Controller
 
     /**
      * @Rest\Put("/{id}", name="users.update")
+     * @IsGranted("ROLE_ADMIN")
      * @Entity("user", options={"mapping": {"id": "id"}})
      * @param EntityManagerInterface       $entityManager
      * @param Request                      $request
@@ -115,6 +116,7 @@ class UserController extends AbstractV1Controller
     /**
      * @Rest\Delete("/{id}", name="users.delete")
      * @Entity("user", options={"mapping": {"id": "id"}})
+     * @IsGranted("ROLE_ADMIN")
      * @return JsonResponse
      */
     public function deleteUser(EntityManagerInterface $entityManager, User $user): JsonResponse
