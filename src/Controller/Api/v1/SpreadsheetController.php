@@ -84,7 +84,7 @@ class SpreadsheetController extends AbstractV1Controller
 
         if($this->getUser()->getId() !== $spreadsheet->getUser()->getId())
         {
-            return $this->error('Гou do not have access to perform this operation','Access denied');
+            return $this->error('You do not have access to perform this operation','Access denied');
         }
 
         $content = $request->getContent();
@@ -131,7 +131,7 @@ class SpreadsheetController extends AbstractV1Controller
     {
         if($this->getUser()->getId() !== $spreadsheet->getUser()->getId())
         {
-            return $this->error('Гou do not have access to perform this operation','Access denied');
+            return $this->error('You do not have access to perform this operation','Access denied');
         }
 
         $spreadsheet->setDeleted(true);
