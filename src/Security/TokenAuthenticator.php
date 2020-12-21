@@ -78,7 +78,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): JsonResponse
     {
         $data = [
-            'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
+            'message' => 'Invalid credentials. Unknown token used.'
         ];
 
         return new JsonResponse($data, Response::HTTP_FORBIDDEN);
@@ -97,5 +97,4 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     {
         return false;
     }
-
 }

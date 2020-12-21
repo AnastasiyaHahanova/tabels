@@ -35,7 +35,7 @@ php bin/console user:create <YOUR_USERNAME>
 2. Задать пользователю свой пароль
 
 ```
-php bin/console change:user:pass
+php bin/console change:user:pass <USERNAME>
 ```
    
 3. Запустить команду, указав USERNAME созданного пользователя и ИМЯ ХОСТА, на котором развернут проект

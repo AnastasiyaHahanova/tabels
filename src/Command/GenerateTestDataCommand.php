@@ -95,7 +95,7 @@ class GenerateTestDataCommand extends Command
         }
 
         $this->entityManager->flush();
-        $io->success('Test data generates successfully!');
+        $io->success('Test data generated successfully!');
 
         return Command::SUCCESS;
     }
