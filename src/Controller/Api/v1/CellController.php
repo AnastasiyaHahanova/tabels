@@ -144,7 +144,7 @@ class CellController extends AbstractV1Controller
         $countOfValues = $cellRepository->findCountByRow($spreadsheetId, $rowIndex)['count'] ?? 0;
         $offset        = round($countOfValues * 0.01 * $params->get('percentile'));
         $offset        = $offset ? $offset - 1 : 0;
-        $percentile    = $cellRepository->findPercentileByRow($spreadsheetId, $rowIndex, $offset)['percentile'] ?? 0;
+        $percentile    = $cellRepository->findPercentileByRow($spreadsheetId, $rowIndex, (int)$offset)['percentile'] ?? 0;
 
         return $this->json([
             'row'        => $rowIndex,
@@ -160,7 +160,7 @@ class CellController extends AbstractV1Controller
      *
      * @param ParamFetcherInterface $params
      * @param CellRepository        $cellRepository
-     * @param Spreadsheet $spreadsheet
+     * @param Spreadsheet           $spreadsheet
      * @return JsonResponse
      */
     public function percentileColumn(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
@@ -174,7 +174,7 @@ class CellController extends AbstractV1Controller
         $countOfValues = $cellRepository->findCountByColumn((int)$spreadsheet->getId(), $columnIndex)['count'] ?? 0;
         $offset        = round((int)$params->get('percentile') * 0.01 * $countOfValues);
         $offset        = $offset ? $offset - 1 : 0;
-        $percentile    = $cellRepository->findPercentileByColumn((int)$spreadsheet->getId(), $columnIndex, $offset)['percentile'] ?? 0;
+        $percentile    = $cellRepository->findPercentileByColumn((int)$spreadsheet->getId(), $columnIndex, (int)$offset)['percentile'] ?? 0;
 
         return $this->json([
             'column'     => $columnIndex,

@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\NameConstraints as TableNameAssert;
 use Gedmo\Mapping\Annotation as Gedmo;
+
 /**
  * @ORM\Entity(repositoryClass=SpreadsheetRepository::class)
  * @ORM\Table(name="`spreadsheet`")
@@ -105,12 +106,12 @@ class Spreadsheet
         return $this;
     }
 
-    public function getDeletedAt() :\DateTime
+    public function getDeletedAt(): \DateTime
     {
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(DateTime $deletedAt):self
+    public function setDeletedAt(DateTime $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
 

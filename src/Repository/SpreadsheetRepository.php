@@ -37,6 +37,6 @@ class SpreadsheetRepository extends ServiceEntityRepository
 
     public function findOneByIdAndUser(int $id, User $user): ?Spreadsheet
     {
-        return $this->findOneBy(['id'   => $id, 'user' => $user]);
+        return $this->findOneBy(['id' => $id, 'user' => $user]);
     }
 }

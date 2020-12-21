@@ -122,7 +122,7 @@ class UserController extends AbstractV1Controller
         $entityManager->remove($user);
         $entityManager->flush();
 
-        return $this->json(['message'=>'User deleted successfully!','id' => $user->getId()]);
+        return $this->json(['message' => 'User deleted successfully!', 'id' => $user->getId()]);
     }
 
     /**

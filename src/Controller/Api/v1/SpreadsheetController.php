@@ -44,7 +44,7 @@ class SpreadsheetController extends AbstractV1Controller
 
         $spreadsheet = $spreadsheetRepository->findOneByNameAndUser($name, $user);
         if ($spreadsheet) {
-            return $this->error(sprintf('The spreadsheet with name %s and user % already exists', $spreadsheet->getName(), $user->getUsername()));
+            return $this->error(sprintf('The spreadsheet with name %s and user %s already exists', $spreadsheet->getName(), $user->getUsername()));
         }
 
         $spreadsheet = (new Spreadsheet())
@@ -82,9 +82,8 @@ class SpreadsheetController extends AbstractV1Controller
             return $this->error(sprintf('No table found with ID %s', $spreadsheet->getId()));
         }
 
-        if($this->getUser()->getId() !== $spreadsheet->getUser()->getId())
-        {
-            return $this->error('You do not have access to perform this operation','Access denied');
+        if ($this->getUser()->getId() !== $spreadsheet->getUser()->getId()) {
+            return $this->error('You do not have access to perform this operation', 'Access denied');
         }
 
         $content = $request->getContent();
@@ -129,9 +128,8 @@ class SpreadsheetController extends AbstractV1Controller
      */
     public function deleteSpreadsheet(EntityManagerInterface $entityManager, Spreadsheet $spreadsheet): JsonResponse
     {
-        if($this->getUser()->getId() !== $spreadsheet->getUser()->getId())
-        {
-            return $this->error('You do not have access to perform this operation','Access denied');
+        if ($this->getUser()->getId() !== $spreadsheet->getUser()->getId()) {
+            return $this->error('You do not have access to perform this operation', 'Access denied');
         }
 
         $entityManager->remove($spreadsheet);

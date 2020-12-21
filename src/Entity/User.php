@@ -199,12 +199,12 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getDeletedAt() :\DateTime
+    public function getDeletedAt(): \DateTime
     {
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(DateTime $deletedAt):self
+    public function setDeletedAt(DateTime $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
 

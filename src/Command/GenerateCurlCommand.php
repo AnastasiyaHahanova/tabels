@@ -89,7 +89,8 @@ class GenerateCurlCommand extends Command
         }
 
         file_put_contents($filePath, $content);
-        $io->success(sprintf( 'Requests generated successfully! Check the directory %s/%s',$this->projectDir,self::SUBDIR));
+        $io->success(sprintf('Requests generated successfully! Check the directory %s/%s', $this->projectDir, self::SUBDIR));
+
         return Command::SUCCESS;
     }
 }
