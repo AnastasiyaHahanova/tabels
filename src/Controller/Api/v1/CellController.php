@@ -280,7 +280,6 @@ class CellController extends AbstractV1Controller
      */
     public function setCellValue(Request $request,
                                  EntityManagerInterface $entityManager,
-                                 UserRepository $userRepository,
                                  CellRepository $cellRepository,
                                  ValidatorInterface $validator,
                                  Spreadsheet $spreadsheet
@@ -297,13 +296,13 @@ class CellController extends AbstractV1Controller
             return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
 
-        $row    = (int)$data['row'] ?? 0;
-        $column = (int)$data['column'] ?? 0;
-        $value  = $data['value'] ?? 0;
-
-        if (empty($row) || empty($column)) {
-            return $this->error('Row and column must not be empty', 'Wrong cell parameters');
+        if (!isset($data['row']) || !isset($data['column']) || !isset($data['value'])) {
+            return $this->error('Row, column, value parameters must not be empty');
         }
+
+        $row    = (int)$data['row'];
+        $column = (int)$data['column'];
+        $value  = $data['value'];
 
         $cell = $cellRepository->findOneByRowAndColumn($row, $column);
 
@@ -333,7 +332,6 @@ class CellController extends AbstractV1Controller
      * @param EntityManagerInterface $entityManager
      * @param Spreadsheet            $spreadsheet
      * @param CellRepository         $cellRepository
-     * @param UserRepository         $userRepository
      * @param Request                $request
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      * @return JsonResponse

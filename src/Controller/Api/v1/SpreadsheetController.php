@@ -82,6 +82,11 @@ class SpreadsheetController extends AbstractV1Controller
             return $this->error(sprintf('No table found with ID %s', $spreadsheet->getId()));
         }
 
+        if($this->getUser()->getId() !== $spreadsheet->getUser()->getId())
+        {
+            return $this->error('Гou do not have access to perform this operation','Access denied');
+        }
+
         $content = $request->getContent();
         $data    = json_decode($content, true);
         if (!is_array($data)) {
@@ -124,6 +129,11 @@ class SpreadsheetController extends AbstractV1Controller
      */
     public function deleteSpreadsheet(EntityManagerInterface $entityManager, Spreadsheet $spreadsheet): JsonResponse
     {
+        if($this->getUser()->getId() !== $spreadsheet->getUser()->getId())
+        {
+            return $this->error('Гou do not have access to perform this operation','Access denied');
+        }
+
         $spreadsheet->setDeleted(true);
         $entityManager->flush();
 

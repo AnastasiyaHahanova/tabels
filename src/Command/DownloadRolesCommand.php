@@ -6,21 +6,14 @@ use App\Entity\Role;
 use App\Repository\RoleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class DownloadRolesCommand extends Command
 {
     protected static $defaultName = 'download:roles';
     private          $entityManager;
     private          $roleRepository;
-
-    protected function configure()
-    {
-    }
 
     public function __construct(EntityManagerInterface $entityManager, RoleRepository $roleRepository)
     {

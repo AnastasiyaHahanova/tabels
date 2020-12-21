@@ -21,7 +21,7 @@ class AbstractV1Controller extends AbstractController
     {
         return new JsonResponse([
             'title'          => $title,
-            'invalid-params' => $errors
+            'errors' => $errors
         ], Response::HTTP_BAD_REQUEST);
     }
 
