@@ -53,7 +53,7 @@ class GenerateTestDataCommand extends Command
         $io             = new SymfonyStyle($input, $output);
         $customUsername = $input->getArgument('username');
         $username       = $customUsername ? $customUsername : TestParameters::USERNAME;
-        $email          = $customUsername ? sprintf('%mail.ru', $customUsername) : TestParameters::USER_EMAIL;
+        $email          = $customUsername ? sprintf('%s_mail.ru', $customUsername) : TestParameters::USER_EMAIL;
         $user           = $this->userRepository->findOneByUsername($username);
         if (empty($user)) {
             $user = (new User())
