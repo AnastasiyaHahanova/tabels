@@ -38,7 +38,7 @@ class SpreadsheetController extends AbstractV1Controller
 
         $spreadsheet = $spreadsheetRepository->findOneByNameAndUser($name, $this->getUser());
         if ($spreadsheet) {
-            return $this->error(sprintf('The spreadsheet with name %s and user %s already exists', $spreadsheet->getName(), $user->getUsername()));
+            return $this->error(sprintf('The spreadsheet with name %s and user %s already exists', $spreadsheet->getName(), $this->getUser()->getUsername()));
         }
 
         $spreadsheet = (new Spreadsheet())
