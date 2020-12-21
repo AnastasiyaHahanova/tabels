@@ -25,13 +25,18 @@ class SpreadsheetRepository extends ServiceEntityRepository
         return $this->findOneBy(['name' => $name]);
     }
 
-    public function findOneByNameAndUser(string $name,User $user): ?Spreadsheet
+    public function findOneByNameAndUser(string $name, User $user): ?Spreadsheet
     {
-        return $this->findOneBy(['name' => $name,'user'=>$user]);
+        return $this->findOneBy(['name' => $name, 'user' => $user]);
     }
 
     public function findOneById(int $id): ?Spreadsheet
     {
         return $this->findOneBy(['id' => $id]);
+    }
+
+    public function findOneByIdAndUser(int $id, User $user): ?Spreadsheet
+    {
+        return $this->findOneBy(['id'   => $id, 'user' => $user]);
     }
 }

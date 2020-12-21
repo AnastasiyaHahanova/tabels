@@ -10,13 +10,13 @@ https://gitlab.artvisio.com/anton.sidorenko/homework_excel/-/blob/master/src/Rep
 https://gitlab.artvisio.com/anton.sidorenko/homework_excel/-/blob/master/src/Repository/UserRepository.php#L39
 
 4) Не указан тип возвращаемого значения
-https://gitlab.artvisio.com/anton.sidorenko/homework_excel/-/blob/master/src/Repository/UserRepository.php#L39,
+- https://gitlab.artvisio.com/anton.sidorenko/homework_excel/-/blob/master/src/Repository/UserRepository.php#L39,
 
-https://gitlab.artvisio.com/anton.sidorenko/homework_excel/-/blob/master/src/Repository/UserRepository.php#L48,
+- https://gitlab.artvisio.com/anton.sidorenko/homework_excel/-/blob/master/src/Repository/UserRepository.php#L48,
 
-https://gitlab.artvisio.com/anton.sidorenko/homework_excel/-/blob/master/src/Repository/SheetRepository.php#L40,
+- https://gitlab.artvisio.com/anton.sidorenko/homework_excel/-/blob/master/src/Repository/SheetRepository.php#L40,
 
-https://gitlab.artvisio.com/anton.sidorenko/homework_excel/-/blob/master/src/Repository/SheetRepository.php#L50,
+- https://gitlab.artvisio.com/anton.sidorenko/homework_excel/-/blob/master/src/Repository/SheetRepository.php#L50,
 
 5) Var Dump
 https://gitlab.artvisio.com/anton.sidorenko/homework_excel/-/blob/master/src/EventListener/AuthenticationFailedListener.php#L11

@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @Route("api/v1/users")
+ * @Route("/users")
  */
 class UserController extends AbstractV1Controller
 {

@@ -14,10 +14,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * @Route("/spreadsheets")
+ */
 class SpreadsheetController extends AbstractV1Controller
-    /**
-     * @Route("api/v1/spreadsheets")
-     */
 {
     /**
      * @Rest\Post("/", name="spreadsheets.create")
@@ -42,10 +42,9 @@ class SpreadsheetController extends AbstractV1Controller
             return $this->error(sprintf('No user with id %f exist', $userId));
         }
 
-        $spreadsheet = $spreadsheetRepository->findOneByNameAndUser($name,$user);
-        if($spreadsheet)
-        {
-            return $this->error(sprintf('The spreadsheet with name %s and user % already exists',$spreadsheet->getName(),$user->getUsername()));
+        $spreadsheet = $spreadsheetRepository->findOneByNameAndUser($name, $user);
+        if ($spreadsheet) {
+            return $this->error(sprintf('The spreadsheet with name %s and user % already exists', $spreadsheet->getName(), $user->getUsername()));
         }
 
         $spreadsheet = (new Spreadsheet())

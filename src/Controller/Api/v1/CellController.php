@@ -17,7 +17,7 @@ use FOS\RestBundle\Request\ParamFetcherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @Route("/api/v1/spreadsheets")
+ * @Route("/spreadsheets")
  */
 class CellController extends AbstractV1Controller
 {
@@ -28,7 +28,6 @@ class CellController extends AbstractV1Controller
      * @Rest\QueryParam(name="start_range", nullable=false,requirements="^\d+,\d+:\d+,\d+$", strict=true)
      * @Rest\QueryParam(name="horizontal_offset", nullable=true, requirements="^\d+$", strict=true)
      * @Rest\QueryParam(name="vertical_offset", nullable=true, requirements="^\d+$", strict=true)
-     * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      *
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
@@ -41,7 +40,7 @@ class CellController extends AbstractV1Controller
     {
         $result        = [];
         $spreadsheetId = (int)$spreadsheet->getId();
-        $userId        = (int)$params->get('user_id');
+        $userId        = $this->getUser()->getId();
         if ($userId !== $spreadsheet->getUser()->getId()) {
             return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
@@ -72,7 +71,6 @@ class CellController extends AbstractV1Controller
     /**
      * @Rest\Get("/{id}/rows/sum", name="spreadsheets.rows.sum")
      * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
-     * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -83,7 +81,7 @@ class CellController extends AbstractV1Controller
      */
     public function sumRow(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        $userId = (int)$params->get('user_id');
+        $userId = $this->getUser()->getId();
         if ($userId !== $spreadsheet->getUser()->getId()) {
             return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
@@ -100,7 +98,6 @@ class CellController extends AbstractV1Controller
     /**
      * @Rest\Get("/{id}/columns/sum", name="spreadsheets.columns.sum")
      * @Rest\QueryParam(name="column_index", nullable=false, requirements="^\d+$", strict=true)
-     * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param CellRepository        $cellRepository
@@ -110,7 +107,7 @@ class CellController extends AbstractV1Controller
      */
     public function sumColumn(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        $userId = (int)$params->get('user_id');
+        $userId = $this->getUser()->getId();
         if ($userId !== $spreadsheet->getUser()->getId()) {
             return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
@@ -128,7 +125,6 @@ class CellController extends AbstractV1Controller
      * @Rest\Get("/{id}/rows/percentile", name="spreadsheets.rows.percentile")
      * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
      * @Rest\QueryParam(name="percentile", nullable=false, requirements="^\d+$", strict=true)
-     * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -138,8 +134,9 @@ class CellController extends AbstractV1Controller
      */
     public function percentileRow(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        if ((int)$params->get('user_id') !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $params->get('user_id'));
+        $userId = $this->getUser()->getId();
+        if ($userId !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
 
         $rowIndex      = (int)$params->get('row_index');
@@ -159,19 +156,18 @@ class CellController extends AbstractV1Controller
      * @Rest\Get("/{id}/columns/percentile", name="spreadsheets.columns.percentile")
      * @Rest\QueryParam(name="column_index", nullable=false, requirements="^\d+$", strict=true,)
      * @Rest\QueryParam(name="percentile", nullable=false, requirements="^\d{1,2}$", strict=true)
-     * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
      * @param CellRepository        $cellRepository
-     * @param Spreadsheet           $spreadsheet
+     * @param int                   $id
      * @return JsonResponse
      */
     public function percentileColumn(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        $userId = (int)$params->get('user_id');
+        $userId = $this->getUser()->getId();
         if ($userId !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $params->get('user_id'));
+            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
 
         $columnIndex   = (int)$params->get('column_index');
@@ -190,7 +186,6 @@ class CellController extends AbstractV1Controller
     /**
      * @Rest\Get("/{id}/rows/avg", name="spreadsheets.rows.avg")
      * @Rest\QueryParam(name="row_index", nullable=false, requirements="^\d+$", strict=true)
-     * @Rest\QueryParam(name="user_id", nullable=false, requirements="^\d+$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param CellRepository        $cellRepository
@@ -200,8 +195,9 @@ class CellController extends AbstractV1Controller
      */
     public function averageRow(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        if ((int)$params->get('user_id') !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $params->get('user_id'));
+        $userId = $this->getUser()->getId();
+        if ($userId !== $spreadsheet->getUser()->getId()) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
 
         $rowIndex = (int)$params->get('row_index');
@@ -216,7 +212,6 @@ class CellController extends AbstractV1Controller
     /**
      * @Rest\Get("/{id}/columns/avg", name="spreadsheets.columns.avg")
      * @Rest\QueryParam(name="column_index", nullable=false,requirements="^\d+$", strict=true)
-     * @Rest\QueryParam(name="user_id", nullable=false,requirements="^\d+$", strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param CellRepository        $cellRepository
@@ -226,7 +221,7 @@ class CellController extends AbstractV1Controller
      */
     public function averageColumn(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
-        $userId = (int)$params->get('user_id');
+        $userId = $this->getUser()->getId();
         if ($userId !== $spreadsheet->getUser()->getId()) {
             return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
@@ -297,15 +292,9 @@ class CellController extends AbstractV1Controller
             return $this->error('Invalid json');
         }
 
-        $userId = $data['user_id'] ?? 0;
-        $user   = $userRepository->findOneById($userId);
-
-        if (empty($user)) {
-            return $this->error(sprintf('No user found with ID %s', $userId), 'Wrong parameters');
-        }
-
-        if ($spreadsheet->getUser()->getId() !== $user->getId()) {
-            return $this->error($this->getAccessDeniedError($spreadsheet->getName(), $userId));
+        $userId = $this->getUser()->getId();
+        if ($spreadsheet->getUser()->getId() !== $userId) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
 
         $row    = (int)$data['row'] ?? 0;
@@ -352,7 +341,6 @@ class CellController extends AbstractV1Controller
     public function deleteCellValue(Request $request,
                                     EntityManagerInterface $entityManager,
                                     Spreadsheet $spreadsheet,
-                                    UserRepository $userRepository,
                                     CellRepository $cellRepository): JsonResponse
     {
         $content = $request->getContent();
@@ -361,22 +349,19 @@ class CellController extends AbstractV1Controller
             return $this->error('Invalid json');
         }
 
-        $userId = $data['user_id'] ?? 0;
-        $user   = $userRepository->findOneById($userId);
-
-        if (empty($user)) {
-            return $this->error(sprintf('No user found with ID %s', $userId));
+        $userId = $this->getUser()->getId();
+        if ($spreadsheet->getUser()->getId() !== $userId) {
+            return $this->getAccessDeniedError($spreadsheet->getName(), $userId);
         }
 
-        if ($spreadsheet->getUser()->getId() !== $user->getId()) {
-            return $this->error($this->getAccessDeniedError($spreadsheet->getName(), $userId));
-        }
-
-        $row    = (int)$data['row'] ?? 0;
-        $column = (int)$data['column'] ?? 0;
-
-        if (empty($row) || empty($column)) {
+        if (!isset($data['row']) || !isset($data['column'])) {
             return $this->error('Row and column must not be empty');
+        }
+
+        $row    = $data['row'];
+        $column = $data['column'];
+        if (!is_integer($row) || !is_integer($column)) {
+            return $this->error('Invalid coordinates of cell');
         }
 
         $cell = $cellRepository->findOneByRowAndColumn($row, $column);
