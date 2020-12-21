@@ -40,7 +40,7 @@ class CellController extends AbstractV1Controller
     {
         $result        = [];
         $spreadsheetId = (int)$spreadsheet->getId();
-        $user = $this->getUser();
+        $user          = $this->getUser();
         if ($user->getId() !== $spreadsheet->getUser()->getId()) {
             return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
