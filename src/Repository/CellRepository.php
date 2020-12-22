@@ -97,9 +97,9 @@ class CellRepository extends ServiceEntityRepository
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function findSumByRow(int $spreadsheet, int $rowIndex): array
+    public function findSumByRow(int $spreadsheet, int $rowIndex): float
     {
-        return $this->createQueryBuilder('t')
+        $result = $this->createQueryBuilder('t')
                     ->select('SUM(t.value) as sum')
                     ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.row = :row_index')
@@ -110,7 +110,8 @@ class CellRepository extends ServiceEntityRepository
                         ]
                     )
                     ->getQuery()
-                    ->getSingleResult();
+                    ->getSingleScalarResult();
+        return ($result === null) ? 0 : $result;
     }
 
     /**
@@ -119,9 +120,9 @@ class CellRepository extends ServiceEntityRepository
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function findSumByColumn(int $spreadsheet, int $columnIndex): array
+    public function findSumByColumn(int $spreadsheet, int $columnIndex): float
     {
-        return $this->createQueryBuilder('t')
+        $result = $this->createQueryBuilder('t')
                     ->select('SUM(t.value) as sum')
                     ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.column = :column_index')
@@ -132,7 +133,8 @@ class CellRepository extends ServiceEntityRepository
                         ]
                     )
                     ->getQuery()
-                    ->getSingleResult();
+                    ->getSingleScalarResult();
+        return ($result === null) ? 0 : $result;
     }
 
     /**
@@ -141,9 +143,9 @@ class CellRepository extends ServiceEntityRepository
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function findAvgByRow(int $spreadsheet, int $rowIndex): array
+    public function findAvgByRow(int $spreadsheet, int $rowIndex): float
     {
-        return $this->createQueryBuilder('t')
+        $result = $this->createQueryBuilder('t')
                     ->select('AVG(t.value) as avg')
                     ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.row = :row_index')
@@ -154,7 +156,8 @@ class CellRepository extends ServiceEntityRepository
                         ]
                     )
                     ->getQuery()
-                    ->getSingleResult();
+                    ->getSingleScalarResult();
+        return ($result === null) ? 0 : $result;
     }
 
     /**
@@ -176,8 +179,8 @@ class CellRepository extends ServiceEntityRepository
                         ]
                     )
                     ->getQuery()
-                    ->getSingleResult();
-        return ($result['avg'] === null) ? 0 : $result['avg'];
+                    ->getSingleScalarResult();
+        return ($result === null) ? 0 : $result;
     }
 
     /**
@@ -186,7 +189,7 @@ class CellRepository extends ServiceEntityRepository
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function findCountByRow(int $spreadsheet, int $rowIndex): array
+    public function findCountByRow(int $spreadsheet, int $rowIndex): float
     {
         return $this->createQueryBuilder('t')
                     ->select('COUNT(t.value) as count')
@@ -199,7 +202,7 @@ class CellRepository extends ServiceEntityRepository
                         ]
                     )
                     ->getQuery()
-                    ->getSingleResult();
+                    ->getSingleScalarResult();
     }
 
     /**
@@ -208,7 +211,7 @@ class CellRepository extends ServiceEntityRepository
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function findCountByColumn(int $spreadsheet, int $columnIndex): array
+    public function findCountByColumn(int $spreadsheet, int $columnIndex): float
     {
         return $this->createQueryBuilder('t')
                     ->select('COUNT(t.value) as count')
@@ -221,7 +224,7 @@ class CellRepository extends ServiceEntityRepository
                         ]
                     )
                     ->getQuery()
-                    ->getSingleResult();
+                    ->getSingleScalarResult();
     }
 
     /**
@@ -231,9 +234,9 @@ class CellRepository extends ServiceEntityRepository
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function findPercentileByColumn(int $spreadsheet, int $columnIndex, int $offset): array
+    public function findPercentileByColumn(int $spreadsheet, int $columnIndex, int $offset): float
     {
-        return $this->createQueryBuilder('t')
+        $result = $this->createQueryBuilder('t')
                     ->select('(t.value) as percentile')
                     ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.column = :column_index')
@@ -247,7 +250,8 @@ class CellRepository extends ServiceEntityRepository
                     ->setMaxResults(1)
                     ->setFirstResult($offset)
                     ->getQuery()
-                    ->getSingleResult();
+                    ->getSingleScalarResult();
+        return ($result === null) ? 0 : $result;
     }
 
     /**
@@ -257,9 +261,9 @@ class CellRepository extends ServiceEntityRepository
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function findPercentileByRow(int $spreadsheet, int $rowIndex, int $offset): array
+    public function findPercentileByRow(int $spreadsheet, int $rowIndex, int $offset): float
     {
-        return $this->createQueryBuilder('t')
+        $result = $this->createQueryBuilder('t')
                     ->select('(t.value) as percentile')
                     ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.row = :row_index')
@@ -273,29 +277,8 @@ class CellRepository extends ServiceEntityRepository
                     ->setMaxResults(1)
                     ->setFirstResult($offset)
                     ->getQuery()
-                    ->getSingleResult();
-    }
-
-    /**
-     * @param int $rowIndex
-     * @param int $spreadsheet
-     * @throws NoResultException
-     * @throws NonUniqueResultException
-     */
-    public function countOfValuesByRow(int $rowIndex, int $spreadsheet): array
-    {
-        return $this->createQueryBuilder('t')
-                    ->select('COUNT(t.value) as percentile')
-                    ->where('t.spreadsheet = :spreadsheet')
-                    ->andWhere('t.row = :row_index')
-                    ->setParameters(
-                        [
-                            'spreadsheet' => $spreadsheet,
-                            'row_index'   => $rowIndex
-                        ]
-                    )
-                    ->getQuery()
-                    ->getSingleResult();
+                    ->getSingleScalarResult();
+        return ($result === null) ? 0 : $result;
     }
 
     public function findOneByRowAndColumn(int $rowIndex, int $columnIndex): ?Cell

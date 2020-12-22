@@ -88,7 +88,7 @@ class CellController extends AbstractV1Controller
 
         $index         = (int)$params->get('index');
         $parameterName = $params->get('parameter_name');
-        $sum = ($parameterName === 'row') ? $cellRepository->findSumByRow((int)$spreadsheet->getId(), $index)['sum'] : $cellRepository->findSumByColumn((int)$spreadsheet->getId(), $index)['sum'];
+        $sum = ($parameterName === 'row') ? $cellRepository->findSumByRow((int)$spreadsheet->getId(), $index) : $cellRepository->findSumByColumn((int)$spreadsheet->getId(), $index);
 
         return $this->json([
             $parameterName => $index,
@@ -119,12 +119,12 @@ class CellController extends AbstractV1Controller
         $parameterName = $params->get('parameter_name');
         $percentilePercent = (int)$params->get('percentile');
         $spreadsheetId     = (int)$spreadsheet->getId();
-        $countOfValues     = ($parameterName === 'column') ? $cellRepository->findCountByColumn($spreadsheetId, $index)['count'] : $countOfValues = $cellRepository->findCountByRow($spreadsheetId, $index)['count'];
+        $countOfValues     = ($parameterName === 'column') ? $cellRepository->findCountByColumn($spreadsheetId, $index) : $countOfValues = $cellRepository->findCountByRow($spreadsheetId, $index);
         $percentile        = 0;
         if ($countOfValues) {
             $offset     = round($percentilePercent * 0.01 * $countOfValues);
             $offset     = $offset ? $offset - 1 : 0;
-            $percentile = ($parameterName === 'column') ? $cellRepository->findPercentileByColumn($spreadsheetId, $index, (int)$offset)['percentile'] : $cellRepository->findPercentileByRow($spreadsheetId, $index, (int)$offset)['percentile'];
+            $percentile = ($parameterName === 'column') ? $cellRepository->findPercentileByColumn($spreadsheetId, $index, (int)$offset) : $cellRepository->findPercentileByRow($spreadsheetId, $index, (int)$offset);
         }
 
         $message = sprintf('%s percent percentile', $percentilePercent);

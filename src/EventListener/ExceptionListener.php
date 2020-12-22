@@ -6,6 +6,7 @@ use FOS\RestBundle\Exception\InvalidParameterException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ExceptionListener
 {
@@ -37,6 +38,16 @@ class ExceptionListener
                 $response->setContent($content);
                 $response->headers->replace(['Content-Type' => 'application/json']);
                 $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+                break;
+            case $exception instanceof NotFoundHttpException:
+                $message = $this->replaceRequirements($exception->getMessage());
+                $content = json_encode([
+                    'title'  => 'Not found',
+                    'detail' => $message
+                ]);
+                $response->setContent($content);
+                $response->headers->replace(['Content-Type' => 'application/json']);
+                $response->setStatusCode(Response::HTTP_NOT_FOUND);
                 break;
             default :
                 $content = json_encode([
