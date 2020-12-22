@@ -92,7 +92,7 @@ class CellController extends AbstractV1Controller
 
         return $this->json([
             $parameterName => "$index",
-            'sum'          => sprintf('%s',$this->formatValue($sum))
+            'sum'          => sprintf('%s', $this->formatValue($sum))
         ]);
     }
 

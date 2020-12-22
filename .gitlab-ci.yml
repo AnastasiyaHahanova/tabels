@@ -36,7 +36,6 @@ linter-psalm:
             /code/src/Security
             /code/src/Command
             /code/src/EventListener
-            /code/src/EventSubscriber
     only:
         - master
 
