@@ -96,7 +96,6 @@ class CellRepository extends ServiceEntityRepository
      * @param int $spreadsheet
      * @throws NoResultException
      * @throws NonUniqueResultException
-     * @return Cell[]|[]
      */
     public function findSumByRow(int $spreadsheet, int $rowIndex): array
     {
@@ -119,7 +118,6 @@ class CellRepository extends ServiceEntityRepository
      * @param int $spreadsheet
      * @throws NoResultException
      * @throws NonUniqueResultException
-     * @return Cell[]|[]
      */
     public function findSumByColumn(int $spreadsheet, int $columnIndex): array
     {
@@ -142,7 +140,6 @@ class CellRepository extends ServiceEntityRepository
      * @param int $spreadsheet
      * @throws NoResultException
      * @throws NonUniqueResultException
-     * @return Cell[]|[]
      */
     public function findAvgByRow(int $spreadsheet, int $rowIndex): array
     {
@@ -165,11 +162,10 @@ class CellRepository extends ServiceEntityRepository
      * @param int $spreadsheet
      * @throws NoResultException
      * @throws NonUniqueResultException
-     * @return Cell[]|[]
      */
-    public function findAvgByColumn(int $spreadsheet, int $columnIndex): array
+    public function findAvgByColumn(int $spreadsheet, int $columnIndex): float
     {
-        return $this->createQueryBuilder('t')
+        $result = $this->createQueryBuilder('t')
                     ->select('AVG(t.value) as avg')
                     ->where('t.spreadsheet = :spreadsheet')
                     ->andWhere('t.column = :column_index')
@@ -181,6 +177,7 @@ class CellRepository extends ServiceEntityRepository
                     )
                     ->getQuery()
                     ->getSingleResult();
+        return ($result['avg'] === null) ? 0 : $result['avg'];
     }
 
     /**
@@ -188,7 +185,6 @@ class CellRepository extends ServiceEntityRepository
      * @param int $spreadsheet
      * @throws NoResultException
      * @throws NonUniqueResultException
-     * @return Cell[]|[]
      */
     public function findCountByRow(int $spreadsheet, int $rowIndex): array
     {
@@ -211,7 +207,6 @@ class CellRepository extends ServiceEntityRepository
      * @param int $spreadsheet
      * @throws NoResultException
      * @throws NonUniqueResultException
-     * @return Cell[]|[]
      */
     public function findCountByColumn(int $spreadsheet, int $columnIndex): array
     {
@@ -235,7 +230,6 @@ class CellRepository extends ServiceEntityRepository
      * @param int $offset
      * @throws NoResultException
      * @throws NonUniqueResultException
-     * @return Cell[]|[]
      */
     public function findPercentileByColumn(int $spreadsheet, int $columnIndex, int $offset): array
     {
@@ -262,7 +256,6 @@ class CellRepository extends ServiceEntityRepository
      * @param int $offset
      * @throws NoResultException
      * @throws NonUniqueResultException
-     * @return Cell[]|[]
      */
     public function findPercentileByRow(int $spreadsheet, int $rowIndex, int $offset): array
     {
@@ -288,7 +281,6 @@ class CellRepository extends ServiceEntityRepository
      * @param int $spreadsheet
      * @throws NoResultException
      * @throws NonUniqueResultException
-     * @return Cell[]|[]
      */
     public function countOfValuesByRow(int $rowIndex, int $spreadsheet): array
     {

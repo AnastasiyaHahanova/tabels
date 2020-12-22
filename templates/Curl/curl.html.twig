@@ -1,6 +1,13 @@
 ##Работа с пользователями
 
 ***
+
+| Параметр        | Тип       | Описание                                                                                                        |
+| :-------------  |:----------| :--------------- |
+| username        | строка    | Имя пользователя |
+| password        | строка    | Пароль           |
+| email           | строка    | Почта            |
+
 ####Получить список пользователей
 ```
 curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X GET  http://{{ host }}/api/v1/users/list
@@ -27,12 +34,17 @@ curl -i -H "X-AUTH-TOKEN: {{ token }}" -X DELETE http://{{ host }}/api/v1/users/
 
 ####Создать таблицу
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"name":"NewTable","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/
+curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"name":"NewTable"}' http://{{ host }}/api/v1/spreadsheets/
 ```
 
 ####Обновить таблицу
+
+| Параметр        | Тип    | Описание                                                                                                        |
+| :-------------  |:-------| :---------------- |
+| name            | строка | Название таблицы  |
+
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"name":"NewestTable","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}
+curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"name":"NewestTable"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}
 ```
 ####Удалить таблицу
 ```
@@ -41,52 +53,83 @@ curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X DELETE  
 
 
 ##Операции над значениями
-
 ***
+
+| Параметр        | Тип                       | Описание                                                                                                        |
+| :-------------  |:--------------------------| :------------ |
+| row             | целое положительное число | Номер строки  |
+| column          | целое положительное число | Номер столбца |
+
+
 ###Создать или обновить ячейку
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"row":"1","column":"1","value":"15","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/cells
+curl -i -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"row":"1","column":"1","value":"15"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/cells
 ```
 
 ###Удалить ячейку
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"row":"1","column":"1","user_id":"{{ user_id }}"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/cells
+curl -i -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"row":"1","column":"1"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/cells
 ```
 
 ###Получить диапазон ячеек
+| Параметр          | Тип                       | Описание                                                                                                        |
+| :-------------    |:--------------------------| :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| start_range       | строка                    | Диапазон ячеек таблицы, которые необходимо получить. Отправляется в формате [координаты верхнего левого угла : координаты правого нижнего угла]. Пример "1,1:10,10"|
+| horizontal_offset | целое положительное число | Параметр помогает найти выше указанный диапазон со сдвигом по горизонтали                                                                                          |
+| vertical_offset   | целое положительное число | Параметр помогает найти выше указанный диапазон со сдвигом по вертикали
+
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/range_of_cells?start_range=1,1:10,15&horizontal_offset=1&vertical_offset=1&user_id={{ user_id }}&"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/range_of_cells?start_range=1,1:10,15&horizontal_offset=1&vertical_offset=1"
 ```
 
+
 ###Вычислить сумму
+
+| Параметр        | Тип                                   | Описание                                                                                                        |
+| -------------   |:-------------------------------------| :--------------------------------------------------------------------------------------------------------------- |
+| parameter_name  | строка                                | Определяет способ выбора ячеек таблицы. По столбцу, при значении равном "column", по строке при значении "row"  |
+| index           | целое положительное число             | Номер строки или столбца, с ячейками которых будут производится вычисления                                      |
+
 ####По строке
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/rows/sum?user_id={{ user_id }}&row_index=1"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/sum?parameter_name=row&index=1"
 ```
 
 ####По столбцу
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/columns/sum?user_id={{ user_id }}&column_index=1"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/sum?parameter_name=column&index=1"
 ```
 
 ###Вычислить среднее
+
+| Параметр        | Тип                                   | Описание                                                                                                        |
+| -------------   |:--------------------------------------| :-------------------------------------------------------------------------------------------------------------- |
+| parameter_name  | строка                                | Определяет способ выбора ячеек таблицы. По столбцу, при значении равном "column", по строке при значении "row"  |
+| index           | целое положительное число             | Номер строки или столбца, с ячейками которых будут производится вычисления                                      |
+
 ####По строке
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/rows/avg?user_id={{ user_id }}&row_index=1"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/avg?parameter_name=row&index=1"
 ```
 
 ####По столбцу
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/columns/avg?user_id={{ user_id }}&column_index=1"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/avg?parameter_name=column&index=1"
 ```
 
 ###Вычислить перцентиль
+| Параметр        | Тип                                   | Описание                                                                                                        |
+| -------------   |:--------------------------------------| :-------------------------------------------------------------------------------------------------------------- |
+| parameter_name  | строка                                | Определяет способ выбора ячеек таблицы. По столбцу, при значении равном "column", по строке при значении "row"  |
+| index           | целое положительное число             | Номер строки или столбца, с ячейками которых будут производится вычисления                                      |
+| percentile      | целое положительное число от 1 до 100 | Процентиль, который необходимо вычислить                                                                        |
+
 ####По строке:
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/rows/percentile?percentile=30&user_id={{ user_id }}&row_index=1"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/percentile?percentile=30&parameter_name=row&index=1"
 ```
 
 ####По столбцу:
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/columns/percentile?percentile=30&user_id={{ user_id }}&column_index=1"
+curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/percentile?percentile=30&parameter_name=column&index=1"
 ```

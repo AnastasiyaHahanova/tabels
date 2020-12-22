@@ -69,62 +69,38 @@ class CellController extends AbstractV1Controller
     }
 
     /**
-     * @Rest\Get("/{id}/rows/sum", name="spreadsheets.rows.sum")
-     * @Rest\QueryParam(name="row_index", nullable=false, requirements="^[1-9]\d*$", strict=true)
+     * @Rest\Get("/{id}/sum", name="spreadsheets.sum")
+     * @Rest\QueryParam(name="index", nullable=false, requirements="^[1-9]\d*$", strict=true)
+     * @Rest\QueryParam(name="parameter_name", nullable=false,requirements="(row|column)",strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
-     * @param ParamFetcherInterface $params
      * @param CellRepository        $cellRepository
      * @param Spreadsheet           $spreadsheet
-     *
+     * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
-    public function sumRow(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
+    public function sum(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
         $user = $this->getUser();
         if ($user->getId() !== $spreadsheet->getUser()->getId()) {
             return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
-        $rowIndex = (int)$params->get('row_index');
-        $sum      = $cellRepository->findSumByRow((int)$spreadsheet->getId(), $rowIndex)['sum'] ?? 0;
+        $index         = (int)$params->get('index');
+        $parameterName = $params->get('parameter_name');
+        $sum = ($parameterName === 'row') ? $cellRepository->findSumByRow((int)$spreadsheet->getId(), $index)['sum'] : $cellRepository->findSumByColumn((int)$spreadsheet->getId(), $index)['sum'];
 
         return $this->json([
-            'row' => $rowIndex,
-            'sum' => $this->formatValue($sum)
+            $parameterName => $index,
+            'sum'          => $this->formatValue($sum)
         ]);
     }
 
     /**
-     * @Rest\Get("/{id}/columns/sum", name="spreadsheets.columns.sum")
-     * @Rest\QueryParam(name="column_index", nullable=false, requirements="^[1-9]\d*$", strict=true)
-     * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
-     *
-     * @param CellRepository        $cellRepository
-     * @param Spreadsheet           $spreadsheet
-     * @param ParamFetcherInterface $params
-     * @return JsonResponse
-     */
-    public function sumColumn(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
-    {
-        $user = $this->getUser();
-        if ($user->getId() !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
-        }
-
-        $columnIndex = (int)$params->get('column_index');
-        $sum         = $cellRepository->findSumByColumn((int)$spreadsheet->getId(), $columnIndex)['sum'] ?? 0;
-
-        return $this->json([
-            'column' => $columnIndex,
-            'sum'    => $this->formatValue($sum)
-        ]);
-    }
-
-    /**
-     * @Rest\Get("/{id}/rows/percentile", name="spreadsheets.rows.percentile")
-     * @Rest\QueryParam(name="row_index", nullable=false, requirements="^[1-9]\d*$", strict=true)
-     * @Rest\QueryParam(name="percentile", nullable=false, requirements="^[1-9]\d*$", strict=true)
+     * @Rest\Get("/{id}/percentile", name="spreadsheets.percentile")
+     * @Rest\QueryParam(name="index", nullable=false, requirements="^[1-9]\d*$", strict=true, default="1")
+     * @Rest\QueryParam(name="percentile", nullable=false, requirements="^[1-9]?[0-9]$|^100$", strict=true, default="95")
+     * @Rest\QueryParam(name="parameter_name", nullable=false, requirements="(row|column)",strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
      * @param ParamFetcherInterface $params
@@ -132,106 +108,57 @@ class CellController extends AbstractV1Controller
      * @param Spreadsheet           $spreadsheet
      * @return JsonResponse
      */
-    public function percentileRow(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
+    public function percentile(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
         $user = $this->getUser();
         if ($user->getId() !== $spreadsheet->getUser()->getId()) {
             return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
-        $rowIndex      = (int)$params->get('row_index');
-        $spreadsheetId = (int)$spreadsheet->getId();
-        $countOfValues = $cellRepository->findCountByRow($spreadsheetId, $rowIndex)['count'] ?? 0;
-        $offset        = round($countOfValues * 0.01 * $params->get('percentile'));
-        $offset        = $offset ? $offset - 1 : 0;
-        $percentile    = $cellRepository->findPercentileByRow($spreadsheetId, $rowIndex, (int)$offset)['percentile'] ?? 0;
-
-        return $this->json([
-            'row'        => $rowIndex,
-            'percentile' => $this->formatValue($percentile)
-        ]);
-    }
-
-    /**
-     * @Rest\Get("/{id}/columns/percentile", name="spreadsheets.columns.percentile")
-     * @Rest\QueryParam(name="column_index", nullable=false, requirements="^[1-9]\d*$", strict=true,)
-     * @Rest\QueryParam(name="percentile", nullable=false, requirements="^\d{1,2}$", strict=true)
-     * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
-     *
-     * @param ParamFetcherInterface $params
-     * @param CellRepository        $cellRepository
-     * @param Spreadsheet           $spreadsheet
-     * @return JsonResponse
-     */
-    public function percentileColumn(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
-    {
-        $user = $this->getUser();
-        if ($user->getId() !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
+        $index         = (int)$params->get('index');
+        $parameterName = $params->get('parameter_name');
+        $percentilePercent = (int)$params->get('percentile');
+        $spreadsheetId     = (int)$spreadsheet->getId();
+        $countOfValues     = ($parameterName === 'column') ? $cellRepository->findCountByColumn($spreadsheetId, $index)['count'] : $countOfValues = $cellRepository->findCountByRow($spreadsheetId, $index)['count'];
+        $percentile        = 0;
+        if ($countOfValues) {
+            $offset     = round($percentilePercent * 0.01 * $countOfValues);
+            $offset     = $offset ? $offset - 1 : 0;
+            $percentile = ($parameterName === 'column') ? $cellRepository->findPercentileByColumn($spreadsheetId, $index, (int)$offset)['percentile'] : $cellRepository->findPercentileByRow($spreadsheetId, $index, (int)$offset)['percentile'];
         }
 
-        $columnIndex   = (int)$params->get('column_index');
-        $countOfValues = $cellRepository->findCountByColumn((int)$spreadsheet->getId(), $columnIndex)['count'] ?? 0;
-        $offset        = round((int)$params->get('percentile') * 0.01 * $countOfValues);
-        $offset        = $offset ? $offset - 1 : 0;
-        $percentile    = $cellRepository->findPercentileByColumn((int)$spreadsheet->getId(), $columnIndex, (int)$offset)['percentile'] ?? 0;
+        $message = sprintf('%s percent percentile', $percentilePercent);
 
         return $this->json([
-            'column'     => $columnIndex,
-            'percentile' => $this->formatValue($percentile)
+            $parameterName => $index,
+            $message       => $this->formatValue($percentile)
         ]);
 
     }
 
     /**
-     * @Rest\Get("/{id}/rows/avg", name="spreadsheets.rows.avg")
-     * @Rest\QueryParam(name="row_index", nullable=false, requirements="^[1-9]\d*$", strict=true)
+     * @Rest\Get("/{id}/avg", name="spreadsheets.avg")
+     * @Rest\QueryParam(name="index", nullable=false, requirements="^[1-9]\d*$", strict=true, default="1")
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
-     *
+     * @Rest\QueryParam(name="parameter_name", nullable=false,requirements="(row|column)",strict=true)
      * @param CellRepository        $cellRepository
      * @param Spreadsheet           $spreadsheet
      * @param ParamFetcherInterface $params
      * @return JsonResponse
      */
-    public function averageRow(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
+    public function average(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
     {
         $user = $this->getUser();
         if ($user->getId() !== $spreadsheet->getUser()->getId()) {
             return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
-        $rowIndex = (int)$params->get('row_index');
-        $avg      = $cellRepository->findAvgByRow((int)$spreadsheet->getId(), $rowIndex)['avg'] ?? 0;
-
+        $parameterName = $params->get('parameter_name');
+        $index = (int)$params->get('index');
+        $avg   = ($parameterName === 'column') ? $cellRepository->findAvgByColumn((int)$spreadsheet->getId(), $index) : $cellRepository->findAvgByRow((int)$spreadsheet->getId(), $index);
         return $this->json([
-            'row' => $rowIndex,
-            'avg' => $this->formatValue($avg)
-        ]);
-    }
-
-    /**
-     * @Rest\Get("/{id}/columns/avg", name="spreadsheets.columns.avg")
-     * @Rest\QueryParam(name="column_index", nullable=false,requirements="^[1-9]\d*$", strict=true)
-     * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
-     *
-     * @param CellRepository        $cellRepository
-     * @param Spreadsheet           $spreadsheet
-     * @param ParamFetcherInterface $params
-     * @return JsonResponse
-     */
-    public function averageColumn(ParamFetcherInterface $params, CellRepository $cellRepository, Spreadsheet $spreadsheet): JsonResponse
-    {
-        $user = $this->getUser();
-        if ($user->getId() !== $spreadsheet->getUser()->getId()) {
-            return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
-        }
-
-        $columnIndex = (int)$params->get('column_index');
-        $avg         = $cellRepository->findAvgByColumn((int)$spreadsheet->getId(), $columnIndex)['avg'] ?? 0;
-
-        return $this->json([
-            'column' => $columnIndex,
-            'avg'    => $this->formatValue($avg)
+            $parameterName => $index,
+            'avg'          => $this->formatValue($avg)
         ]);
     }
 
