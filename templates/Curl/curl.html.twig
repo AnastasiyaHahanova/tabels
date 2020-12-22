@@ -10,22 +10,22 @@
 
 ####Получить список пользователей
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X GET  http://{{ host }}/api/v1/users/list
+curl -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X GET  http://{{ host }}/api/v1/users/list | python -mjson.tool
 ```
 
 ####Создать пользователя
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"username":"New{{ username }}","password":"34asasasj1","email":"{{ username }}@mail.ru"}' http://{{ host }}/api/v1/users/
+curl -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"username":"New{{ username }}","password":"34asasasj1","email":"{{ username }}@mail.ru"}' http://{{ host }}/api/v1/users/  | python -mjson.tool
 ```
 
 ####Отредактировать пользователя
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}"  -X PUT -d '{"username":"Newest{{ username }}","password":"3433333j1","email":"{{ username }}@mail.ru"}' http://{{ host }}/api/v1/users/1
+curl -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}"  -X PUT -d '{"username":"Newest{{ username }}","password":"3433333j1","email":"{{ username }}@mail.ru"}' http://{{ host }}/api/v1/users/1 | python -mjson.tool
 ```
 
 ####Удалить пользователя
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" -X DELETE http://{{ host }}/api/v1/users/1
+curl -H "X-AUTH-TOKEN: {{ token }}" -X DELETE http://{{ host }}/api/v1/users/1 | python -mjson.tool
 ```
 
 
@@ -34,7 +34,7 @@ curl -i -H "X-AUTH-TOKEN: {{ token }}" -X DELETE http://{{ host }}/api/v1/users/
 
 ####Создать таблицу
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"name":"NewTable"}' http://{{ host }}/api/v1/spreadsheets/
+curl -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"name":"NewTable"}' http://{{ host }}/api/v1/spreadsheets/ | python -mjson.tool
 ```
 
 ####Обновить таблицу
@@ -44,11 +44,11 @@ curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X POST -d 
 | name            | строка | Название таблицы  |
 
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"name":"NewestTable"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}
+curl -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"name":"NewestTable"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }} | python -mjson.tool
 ```
 ####Удалить таблицу
 ```
-curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X DELETE  http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}
+curl -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X DELETE  http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }} | python -mjson.tool
 ```
 
 
@@ -63,12 +63,12 @@ curl -i -H "Accept: application/json" -H "X-AUTH-TOKEN: {{ token }}" -X DELETE  
 
 ###Создать или обновить ячейку
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"row":"1","column":"1","value":"15"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/cells
+curl -H "X-AUTH-TOKEN: {{ token }}" -X POST -d '{"row":1,"column":1,"value":15}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/cells | python -mjson.tool
 ```
 
 ###Удалить ячейку
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"row":"1","column":"1"}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/cells
+curl -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"row":1,"column":1}' http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/cells | python -mjson.tool
 ```
 
 ###Получить диапазон ячеек
@@ -79,7 +79,7 @@ curl -i -H "X-AUTH-TOKEN: {{ token }}" -X PUT -d '{"row":"1","column":"1"}' http
 | vertical_offset   | целое положительное число | Параметр помогает найти выше указанный диапазон со сдвигом по вертикали
 
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/range_of_cells?start_range=1,1:10,15&horizontal_offset=1&vertical_offset=1"
+curl -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/range_of_cells?start_range=1,1:10,15&horizontal_offset=1&vertical_offset=1" | python -mjson.tool
 ```
 
 
@@ -92,12 +92,12 @@ curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{
 
 ####По строке
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/sum?parameter_name=row&index=1"
+curl -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/sum?parameter_name=row&index=1" | python -mjson.tool
 ```
 
 ####По столбцу
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/sum?parameter_name=column&index=1"
+curl -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/sum?parameter_name=column&index=1" | python -mjson.tool
 ```
 
 ###Вычислить среднее
@@ -109,12 +109,12 @@ curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{
 
 ####По строке
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/avg?parameter_name=row&index=1"
+curl -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/avg?parameter_name=row&index=1" | python -mjson.tool
 ```
 
 ####По столбцу
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/avg?parameter_name=column&index=1"
+curl -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/avg?parameter_name=column&index=1" | python -mjson.tool
 ```
 
 ###Вычислить перцентиль
@@ -126,10 +126,10 @@ curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{
 
 ####По строке:
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/percentile?percentile=30&parameter_name=row&index=1"
+curl -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/percentile?percentile=30&parameter_name=row&index=1" | python -mjson.tool
 ```
 
 ####По столбцу:
 ```
-curl -i -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/percentile?percentile=30&parameter_name=column&index=1"
+curl -H "X-AUTH-TOKEN: {{ token }}" "http://{{ host }}/api/v1/spreadsheets/{{ spreadsheet }}/percentile?percentile=30&parameter_name=column&index=1" | python -mjson.tool
 ```

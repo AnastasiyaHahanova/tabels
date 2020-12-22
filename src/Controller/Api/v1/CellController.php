@@ -91,15 +91,15 @@ class CellController extends AbstractV1Controller
         $sum           = ($parameterName === 'row') ? $cellRepository->findSumByRow((int)$spreadsheet->getId(), $index) : $cellRepository->findSumByColumn((int)$spreadsheet->getId(), $index);
 
         return $this->json([
-            $parameterName => $index,
-            'sum'          => $this->formatValue($sum)
+            $parameterName => "$index",
+            'sum'          => sprintf('%s',$this->formatValue($sum))
         ]);
     }
 
     /**
      * @Rest\Get("/{id}/percentile", name="spreadsheets.percentile")
      * @Rest\QueryParam(name="index", nullable=false, requirements="^[1-9]\d*$", strict=true, default="1")
-     * @Rest\QueryParam(name="percentile", nullable=false, requirements="^[1-9]?[0-9]$|^100$", strict=true, default="95")
+     * @Rest\QueryParam(name="percentile", nullable=false, requirements="^[0-9][0-9]?$|^100$", strict=true, default="95")
      * @Rest\QueryParam(name="parameter_name", nullable=false, requirements="(row|column)",strict=true)
      * @Entity("spreadsheet", options={"mapping": {"id": "id"}})
      *
@@ -270,7 +270,7 @@ class CellController extends AbstractV1Controller
                                     CellRepository $cellRepository): JsonResponse
     {
         $content = $request->getContent();
-        $data    = json_decode($content, true);
+        $data    = json_decode($content, JSON_NUMERIC_CHECK);
         if (!is_array($data)) {
             return $this->error('Invalid json');
         }
