@@ -100,17 +100,18 @@ class CellRepository extends ServiceEntityRepository
     public function findSumByRow(int $spreadsheet, int $rowIndex): float
     {
         $result = $this->createQueryBuilder('t')
-                    ->select('SUM(t.value) as sum')
-                    ->where('t.spreadsheet = :spreadsheet')
-                    ->andWhere('t.row = :row_index')
-                    ->setParameters(
-                        [
-                            'spreadsheet' => $spreadsheet,
-                            'row_index'   => $rowIndex
-                        ]
-                    )
-                    ->getQuery()
-                    ->getSingleScalarResult();
+                       ->select('SUM(t.value) as sum')
+                       ->where('t.spreadsheet = :spreadsheet')
+                       ->andWhere('t.row = :row_index')
+                       ->setParameters(
+                           [
+                               'spreadsheet' => $spreadsheet,
+                               'row_index'   => $rowIndex
+                           ]
+                       )
+                       ->getQuery()
+                       ->getSingleScalarResult();
+
         return ($result === null) ? 0 : $result;
     }
 
@@ -123,17 +124,18 @@ class CellRepository extends ServiceEntityRepository
     public function findSumByColumn(int $spreadsheet, int $columnIndex): float
     {
         $result = $this->createQueryBuilder('t')
-                    ->select('SUM(t.value) as sum')
-                    ->where('t.spreadsheet = :spreadsheet')
-                    ->andWhere('t.column = :column_index')
-                    ->setParameters(
-                        [
-                            'spreadsheet'  => $spreadsheet,
-                            'column_index' => $columnIndex
-                        ]
-                    )
-                    ->getQuery()
-                    ->getSingleScalarResult();
+                       ->select('SUM(t.value) as sum')
+                       ->where('t.spreadsheet = :spreadsheet')
+                       ->andWhere('t.column = :column_index')
+                       ->setParameters(
+                           [
+                               'spreadsheet'  => $spreadsheet,
+                               'column_index' => $columnIndex
+                           ]
+                       )
+                       ->getQuery()
+                       ->getSingleScalarResult();
+
         return ($result === null) ? 0 : $result;
     }
 
@@ -146,17 +148,18 @@ class CellRepository extends ServiceEntityRepository
     public function findAvgByRow(int $spreadsheet, int $rowIndex): float
     {
         $result = $this->createQueryBuilder('t')
-                    ->select('AVG(t.value) as avg')
-                    ->where('t.spreadsheet = :spreadsheet')
-                    ->andWhere('t.row = :row_index')
-                    ->setParameters(
-                        [
-                            'spreadsheet' => $spreadsheet,
-                            'row_index'   => $rowIndex
-                        ]
-                    )
-                    ->getQuery()
-                    ->getSingleScalarResult();
+                       ->select('AVG(t.value) as avg')
+                       ->where('t.spreadsheet = :spreadsheet')
+                       ->andWhere('t.row = :row_index')
+                       ->setParameters(
+                           [
+                               'spreadsheet' => $spreadsheet,
+                               'row_index'   => $rowIndex
+                           ]
+                       )
+                       ->getQuery()
+                       ->getSingleScalarResult();
+
         return ($result === null) ? 0 : $result;
     }
 
@@ -169,17 +172,18 @@ class CellRepository extends ServiceEntityRepository
     public function findAvgByColumn(int $spreadsheet, int $columnIndex): float
     {
         $result = $this->createQueryBuilder('t')
-                    ->select('AVG(t.value) as avg')
-                    ->where('t.spreadsheet = :spreadsheet')
-                    ->andWhere('t.column = :column_index')
-                    ->setParameters(
-                        [
-                            'spreadsheet'  => $spreadsheet,
-                            'column_index' => $columnIndex
-                        ]
-                    )
-                    ->getQuery()
-                    ->getSingleScalarResult();
+                       ->select('AVG(t.value) as avg')
+                       ->where('t.spreadsheet = :spreadsheet')
+                       ->andWhere('t.column = :column_index')
+                       ->setParameters(
+                           [
+                               'spreadsheet'  => $spreadsheet,
+                               'column_index' => $columnIndex
+                           ]
+                       )
+                       ->getQuery()
+                       ->getSingleScalarResult();
+
         return ($result === null) ? 0 : $result;
     }
 
@@ -237,20 +241,21 @@ class CellRepository extends ServiceEntityRepository
     public function findPercentileByColumn(int $spreadsheet, int $columnIndex, int $offset): float
     {
         $result = $this->createQueryBuilder('t')
-                    ->select('(t.value) as percentile')
-                    ->where('t.spreadsheet = :spreadsheet')
-                    ->andWhere('t.column = :column_index')
-                    ->setParameters(
-                        [
-                            'spreadsheet'  => $spreadsheet,
-                            'column_index' => $columnIndex
-                        ]
-                    )
-                    ->orderBy('t.value', 'ASC')
-                    ->setMaxResults(1)
-                    ->setFirstResult($offset)
-                    ->getQuery()
-                    ->getSingleScalarResult();
+                       ->select('(t.value) as percentile')
+                       ->where('t.spreadsheet = :spreadsheet')
+                       ->andWhere('t.column = :column_index')
+                       ->setParameters(
+                           [
+                               'spreadsheet'  => $spreadsheet,
+                               'column_index' => $columnIndex
+                           ]
+                       )
+                       ->orderBy('t.value', 'ASC')
+                       ->setMaxResults(1)
+                       ->setFirstResult($offset)
+                       ->getQuery()
+                       ->getSingleScalarResult();
+
         return ($result === null) ? 0 : $result;
     }
 
@@ -264,20 +269,21 @@ class CellRepository extends ServiceEntityRepository
     public function findPercentileByRow(int $spreadsheet, int $rowIndex, int $offset): float
     {
         $result = $this->createQueryBuilder('t')
-                    ->select('(t.value) as percentile')
-                    ->where('t.spreadsheet = :spreadsheet')
-                    ->andWhere('t.row = :row_index')
-                    ->setParameters(
-                        [
-                            'spreadsheet' => $spreadsheet,
-                            'row_index'   => $rowIndex
-                        ]
-                    )
-                    ->orderBy('t.value', 'ASC')
-                    ->setMaxResults(1)
-                    ->setFirstResult($offset)
-                    ->getQuery()
-                    ->getSingleScalarResult();
+                       ->select('(t.value) as percentile')
+                       ->where('t.spreadsheet = :spreadsheet')
+                       ->andWhere('t.row = :row_index')
+                       ->setParameters(
+                           [
+                               'spreadsheet' => $spreadsheet,
+                               'row_index'   => $rowIndex
+                           ]
+                       )
+                       ->orderBy('t.value', 'ASC')
+                       ->setMaxResults(1)
+                       ->setFirstResult($offset)
+                       ->getQuery()
+                       ->getSingleScalarResult();
+
         return ($result === null) ? 0 : $result;
     }
 

@@ -88,7 +88,7 @@ class CellController extends AbstractV1Controller
 
         $index         = (int)$params->get('index');
         $parameterName = $params->get('parameter_name');
-        $sum = ($parameterName === 'row') ? $cellRepository->findSumByRow((int)$spreadsheet->getId(), $index) : $cellRepository->findSumByColumn((int)$spreadsheet->getId(), $index);
+        $sum           = ($parameterName === 'row') ? $cellRepository->findSumByRow((int)$spreadsheet->getId(), $index) : $cellRepository->findSumByColumn((int)$spreadsheet->getId(), $index);
 
         return $this->json([
             $parameterName => $index,
@@ -115,8 +115,8 @@ class CellController extends AbstractV1Controller
             return $this->getAccessDeniedError($spreadsheet->getName(), $user->getUsername());
         }
 
-        $index         = (int)$params->get('index');
-        $parameterName = $params->get('parameter_name');
+        $index             = (int)$params->get('index');
+        $parameterName     = $params->get('parameter_name');
         $percentilePercent = (int)$params->get('percentile');
         $spreadsheetId     = (int)$spreadsheet->getId();
         $countOfValues     = ($parameterName === 'column') ? $cellRepository->findCountByColumn($spreadsheetId, $index) : $countOfValues = $cellRepository->findCountByRow($spreadsheetId, $index);
@@ -154,8 +154,9 @@ class CellController extends AbstractV1Controller
         }
 
         $parameterName = $params->get('parameter_name');
-        $index = (int)$params->get('index');
-        $avg   = ($parameterName === 'column') ? $cellRepository->findAvgByColumn((int)$spreadsheet->getId(), $index) : $cellRepository->findAvgByRow((int)$spreadsheet->getId(), $index);
+        $index         = (int)$params->get('index');
+        $avg           = ($parameterName === 'column') ? $cellRepository->findAvgByColumn((int)$spreadsheet->getId(), $index) : $cellRepository->findAvgByRow((int)$spreadsheet->getId(), $index);
+
         return $this->json([
             $parameterName => $index,
             'avg'          => $this->formatValue($avg)
