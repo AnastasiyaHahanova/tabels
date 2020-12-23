@@ -91,8 +91,8 @@ class CellController extends AbstractV1Controller
         $sum           = ($parameterName === 'row') ? $cellRepository->findSumByRow((int)$spreadsheet->getId(), $index) : $cellRepository->findSumByColumn((int)$spreadsheet->getId(), $index);
 
         return $this->json([
-            $parameterName => "$index",
-            'sum'          => sprintf('%s', $this->formatValue($sum))
+            $parameterName => $index,
+            'sum'          => $this->formatValue($sum)
         ]);
     }
 
@@ -270,7 +270,7 @@ class CellController extends AbstractV1Controller
                                     CellRepository $cellRepository): JsonResponse
     {
         $content = $request->getContent();
-        $data    = json_decode($content, JSON_NUMERIC_CHECK);
+        $data    = json_decode($content, true);
         if (!is_array($data)) {
             return $this->error('Invalid json');
         }
