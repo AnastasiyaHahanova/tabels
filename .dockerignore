@@ -1,0 +1,7 @@
+.env.local
+.env.test
+.idea
+.git
+vendor
+var
+node_modules
